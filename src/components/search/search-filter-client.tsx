@@ -10,7 +10,6 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { DEFAULT_FILTER_VALUE, ResponsiveComboBox } from "../shared/combobox";
 import { MultiSelect } from "../shared/multi-select";
-import SearchBox from "./search-box";
 
 interface SearchFilterProps {
   tagList: TagFilterItem[];
@@ -106,9 +105,7 @@ export function SearchFilterClient({
   }));
 
   return (
-    <div className="grid md:grid-cols-[1fr_1fr_1fr_1fr_1fr_0.5fr] gap-2 z-10 items-center">
-      <SearchBox urlPrefix={urlPrefix} />
-
+    <div className="grid gap-2 md:grid-cols-[1fr_1fr_1fr_1fr_0.5fr] md:items-center">
       <ResponsiveComboBox
         filterItemList={categoryFilterItemList}
         placeholder="All Categories"

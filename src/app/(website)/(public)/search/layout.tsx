@@ -1,24 +1,25 @@
 import Container from "@/components/container";
+import SearchBox from "@/components/search/search-box";
 import { SearchFilter } from "@/components/search/search-filter";
-import { HeaderSection } from "@/components/shared/header-section";
 
 export default function SearchLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
     <div className="mb-16">
-      <div className="mt-8">
-        <div className="w-full flex flex-col items-center justify-center gap-8">
-          <HeaderSection
-            labelAs="h1"
-            label="Search"
-            titleAs="h2"
-            title="Search anything you want"
-          />
+      <div className="mt-8 flex w-full flex-col items-center justify-center gap-8">
+        <Container className="w-full">
+          <div className="flex flex-col items-center gap-8">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Search
+            </h1>
 
-          <div className="w-full">
-            <SearchFilter urlPrefix="/search" />
+            <SearchBox urlPrefix="/search" />
           </div>
+        </Container>
+
+        <div className="w-full">
+          <SearchFilter urlPrefix="/search" />
         </div>
       </div>
 
