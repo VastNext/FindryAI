@@ -7,27 +7,28 @@ export default function BuiltWithButton() {
   return (
     <Link
       target="_blank"
-      href="https://mkdirs.com?utm_source=demo&utm_medium=website&utm_campaign=built-with-mkdirs-button&utm_content=built-with-mkdirs"
+      rel="noopener noreferrer"
+      href="https://vastnext.com"
       className={cn(
         buttonVariants({ variant: "outline", size: "sm" }),
         "px-4 rounded-md",
       )}
     >
-      <span>Built with</span>
+      <span>Built by</span>
       <span>
-        <LogoMkdirs className="size-4 rounded-full" />
+        <LogoVastNext className="size-4 rounded-full" />
       </span>
-      <span className="font-bold">Mkdirs</span>
+      <span className="font-bold">VastNext</span>
     </Link>
   );
 }
 
-function LogoMkdirs({ className }: { className?: string }) {
+function LogoVastNext({ className }: { className?: string }) {
   return (
     <Image
-      src="/logo_mkdirs.png"
-      alt="Logo"
-      title="Logo"
+      src="/brand/vastnext-mark.svg"
+      alt="VastNext"
+      title="VastNext"
       width={96}
       height={96}
       className={cn("size-8 rounded-md", className)}
