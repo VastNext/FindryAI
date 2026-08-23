@@ -1,6 +1,6 @@
 # 截图、上传、下架脚本使用说明
 
-> 适用：dir.vastnext.com（mkdirs 模板 + Sanity CMS）
+> 适用：Findry AI（Next.js + Sanity CMS）
 > 四脚本配套使用：opencli 自动截图 / 人工介入截图 → 上传 Sanity → 下架问题站点
 
 ## 前置准备
@@ -167,7 +167,7 @@ node scripts/upload-screenshots.mjs
 
 **文件**：`scripts/unpublish-items.mjs`（Node.js + next-sanity）
 
-**机制**：`publishDate` 置 `null`（mkdirs 的下架开关，`src/actions/unpublish.ts` 同款逻辑）
+**机制**：`publishDate` 置 `null`（Findry AI 的下架开关，`src/actions/unpublish.ts` 同款逻辑）
 **记录**：追加到 `docs/unpublished-sites.md`（可追溯）
 
 ### 用法（三种输入方式）

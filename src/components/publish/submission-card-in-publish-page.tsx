@@ -3,6 +3,7 @@
 import { PublishNowButton } from "@/components/publish/publish-now-button";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { siteConfig } from "@/config/site";
 import type { ItemInfo } from "@/types";
 import { CalendarDaysIcon, PartyPopperIcon } from "lucide-react";
 import Link from "next/link";
@@ -69,7 +70,7 @@ export default function SubmissionCardInPublishPage({
                     >
                       {item.pricePlan === 'sponsor' ? (
                         <Link
-                          href={`mailto:support@example.com?subject=Schedule%20Publication%20Time%20for%20${encodeURIComponent(item.name)}`}
+                          href={`mailto:${siteConfig.mail}?subject=Schedule%20Publication%20Time%20for%20${encodeURIComponent(item.name)}`}
                           className="flex items-center justify-center space-x-2"
                         >
                           <CalendarDaysIcon className="w-4 h-6 icon-scale" />

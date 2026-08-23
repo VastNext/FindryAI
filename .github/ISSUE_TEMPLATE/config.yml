@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Mkdirs Community Support
-    url: https://github.com/MkThingsHQ/mkdirs/discussions
-    about: Please ask and answer questions here.
-  - name: Mkdirs Documentation
-    url: https://docs.mkdirs.com
-    about: Please check out the documentation here.
-  - name: Mkdirs Video Tutorials
-    url: https://www.youtube.com/@MkdirsHQ
-    about: Please check out the video tutorials here.
+  - name: Findry AI Support
+    url: https://github.com/VastNext/FindryAI/issues
+    about: Report issues and request improvements here.
+  - name: Findry AI Website
+    url: https://findryai.com
+    about: Visit the production website.
+  - name: VastNext
+    url: https://vastnext.com
+    about: Learn more about the team behind Findry AI.

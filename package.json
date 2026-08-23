@@ -1,17 +1,17 @@
 {
-  "name": "mkdirs",
+  "name": "findryai",
   "version": "1.0.0",
   "private": true,
-  "description": "An open-source, AI-powered directory website template built with Next.js",
+  "description": "A curated AI tools directory built by VastNext",
   "license": "Apache-2.0",
-  "homepage": "https://mkdirs.com",
+  "homepage": "https://findryai.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MkThingsHQ/mkdirs.git"
+    "url": "https://github.com/VastNext/FindryAI.git"
   },
   "author": {
-    "name": "Mkdirs",
-    "url": "https://github.com/MkdirsHQ"
+    "name": "VastNext",
+    "url": "https://vastnext.com"
   },
   "scripts": {
     "dev": "next dev",

@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Mkdirs is a Next.js 14 directory website template with Sanity CMS, enabling AI-powered directory sites with listings, payments, authentication, blog, and newsletter features.
+Findry AI is a Next.js 14 AI tools directory built by VastNext, with Sanity CMS, listings, payments, authentication, blog, and email capabilities.
 
 ## Commands
 
 - **Dev server**: `pnpm dev`
 - **Build**: `pnpm build`
 - **Start production**: `pnpm start`
-- **Lint**: `pnpm lint` (Biome - checks and auto-fixes)
+- **Lint**: `pnpm lint` (read-only Biome checks)
 - **Lint with unsafe fixes**: `pnpm lint:fix`
 - **Format**: `pnpm format` (Biome)
 - **Generate Sanity types**: `pnpm typegen` (run after schema changes)

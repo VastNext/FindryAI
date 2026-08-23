@@ -4,7 +4,7 @@
 
 ## 项目概览
 
-Mkdirs 者，以 Next.js 十四（App Router）所造目录网站之模板也。内含 Sanity 内容管理、AI 助投、Stripe 支付、NextAuth 五代认证、博客暨邮件列表。包管理器用 **pnpm**（有 `pnpm-lock.yaml` 为凭）。
+Findry AI 者，以 Next.js 十四（App Router）所造之 AI 工具目录网站也。内含 Sanity 内容管理、AI 助投、Stripe 支付、NextAuth 五代认证、博客暨邮件能力。包管理器用 **pnpm**（有 `pnpm-lock.yaml` 为凭）。
 
 ## 版本控制
 

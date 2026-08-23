@@ -1,68 +1,76 @@
-# Mkdirs
+# Findry AI
 
-Launch AI-powered directory websites in minutes
+Find better AI.
 
-[![License](https://img.shields.io/github/license/MkThingsHQ/mkdirs)](LICENSE)
+[![License](https://img.shields.io/github/license/VastNext/FindryAI)](LICENSE)
 
-Mkdirs helps you launch a directory website with listings, AI-assisted
-submissions, payments, authentication, CMS, blog, newsletter, SEO, themes,
-and more.
+Findry AI is a curated AI tools directory for discovering useful products,
+exploring categories, and comparing options in one place.
 
-[Live Demo](https://demo.mkdirs.com) · [Documentation](https://docs.mkdirs.com) · [Installation Guide](https://docs.mkdirs.com/installation) · [Video Tutorials](https://www.youtube.com/@MkdirsHQ) · [Showcase](https://mkdirs.com/showcase)
+[Website](https://findryai.com) · [VastNext](https://vastnext.com)
 
-![Mkdirs directory website template](public/og.png)
+![Findry AI](public/og.png)
 
 ## Features
 
-- Directory listings, categories, collections, tags, and search
-- AI-assisted website submission and content generation
+- AI tool listings, categories, collections, tags, and search
+- AI-assisted submissions and content generation
 - User authentication and dashboard
 - Free, paid, and sponsored submissions with Stripe
 - Sanity CMS and blog
-- Email and newsletter integration with Resend
+- Transactional email with Resend
 - SEO, analytics, themes, and responsive layouts
-- Vercel and Docker deployment
+- Tag-triggered production deployment to Vercel
 
 ## Tech Stack
 
-- [Next.js](https://nextjs.org) — Full-stack React framework.
-- [React](https://react.dev) — Library for building user interfaces.
-- [TypeScript](https://www.typescriptlang.org) — Typed JavaScript for safer development.
-- [Tailwind CSS](https://tailwindcss.com) — Utility-first CSS framework.
-- [Sanity](https://www.sanity.io) — Headless CMS for directory content and blog posts.
-- [Auth.js](https://authjs.dev) — Authentication for user accounts and sessions.
-- [Stripe](https://stripe.com) — Payments for paid and sponsored submissions.
-- [Resend](https://resend.com) — Transactional email and newsletter delivery.
+- [Next.js](https://nextjs.org) — Full-stack React framework
+- [React](https://react.dev) — User interface library
+- [TypeScript](https://www.typescriptlang.org) — Typed JavaScript
+- [Tailwind CSS](https://tailwindcss.com) — Utility-first CSS framework
+- [Sanity](https://www.sanity.io) — Content management system
+- [Auth.js](https://authjs.dev) — Authentication and sessions
+- [Stripe](https://stripe.com) — Payments
+- [Resend](https://resend.com) — Transactional email
+- [Vercel](https://vercel.com) — Hosting and deployment
 
-For installation, configuration, customization, deployment, and video
-tutorials, visit the [Mkdirs documentation](https://docs.mkdirs.com).
+## Development
 
-## Links
+Install dependencies and start the local server:
 
-- [Website](https://mkdirs.com) — Learn more about Mkdirs.
-- [Demo](https://demo.mkdirs.com) — Explore a live directory website built with Mkdirs.
-- [Documentation](https://docs.mkdirs.com) — Read installation, configuration, and deployment guides.
-- [YouTube](https://www.youtube.com/@MkdirsHQ) — Watch video tutorials and product updates.
-- [Discord](https://mksaas.link/discord) — Join the community and get help.
+```bash
+pnpm install
+pnpm dev
+```
 
-## Author
+Run the read-only checks and production build:
 
-[OpenFox](https://mksaas.link/fox-x) is an independent developer building products and developer tools. His products include:
+```bash
+pnpm lint
+pnpm build
+```
 
-- [TanStarter](https://tanstarter.dev) — Ship Faster with TanStack, Cost Less with Cloudflare.
-- [MkSaaS](https://mksaas.com) — Make Your AI SaaS Product in a Weekend.
-- [MkImage](https://mkimage.ai) — Make Any Images Possible.
-- [Mkdirs](https://mkdirs.com) — Launch AI-powered directory in 30 minutes.
-- [MkDollar](https://mkdollar.com) — The all-in-one platform to help you make first dollar online.
+Copy `.env.example` to `.env` and configure the required Sanity, Auth.js,
+Stripe, Resend, and AI provider credentials before using integrated features.
+
+## Deployment
+
+Production deployments run through GitHub Actions when a `v*` tag is pushed:
+
+```bash
+git tag -a v1.0.0 -m "Release v1.0.0"
+git push origin v1.0.0
+```
+
+## Upstream
+
+Findry AI was built from the open-source
+[Mkdirs](https://github.com/MkThingsHQ/mkdirs) directory template and has since
+been customized for the Findry AI product and VastNext brand. Upstream names,
+logos, and trademarks remain the property of their respective owners.
 
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE). You may use, modify, and
 distribute the code, including for commercial purposes, subject to the terms
 of the license.
-
-The license does not grant permission to use the Mkdirs name, logo, or other
-trademarks to identify or promote derived products. Reasonable use to describe
-the origin of the software, such as “Built with Mkdirs,” is permitted.
-
-Copyright © Mkdirs.
