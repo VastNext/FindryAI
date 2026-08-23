@@ -10,7 +10,7 @@ export default function SearchLayout({
       <div className="mt-8 flex w-full flex-col items-center justify-center gap-8">
         <Container className="w-full">
           <div className="flex flex-col items-center gap-8">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h1 className="text-gradient_indigo-purple font-semibold uppercase tracking-wider">
               Search
             </h1>
 
