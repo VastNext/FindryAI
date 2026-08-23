@@ -1,6 +1,5 @@
 import Container from "@/components/container";
 import HomeHero from "@/components/home2/home2-hero";
-import { NewsletterCard } from "@/components/newsletter/newsletter-card";
 import { siteConfig } from "@/config/site";
 import { constructMetadata } from "@/lib/metadata";
 
@@ -17,8 +16,6 @@ export default function HomeLayout({
       <HomeHero />
 
       {children}
-
-      <NewsletterCard />
     </Container>
   );
 }

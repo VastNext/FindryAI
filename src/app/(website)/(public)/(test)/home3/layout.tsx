@@ -1,7 +1,6 @@
 import Container from "@/components/container";
 import HomeHeroSponsor from "@/components/home3/home3-hero-sponsor";
 import { HomeSearchFilter } from "@/components/home3/home3-search-filter";
-import { NewsletterCard } from "@/components/newsletter/newsletter-card";
 
 export default function HomeLayout({
   children,
@@ -15,8 +14,6 @@ export default function HomeLayout({
 
         {children}
       </div>
-
-      <NewsletterCard />
     </Container>
   );
 }
