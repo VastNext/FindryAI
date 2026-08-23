@@ -117,7 +117,7 @@ export const PaymentSuccessEmail = ({
 
 PaymentSuccessEmail.PreviewProps = {
   userName: "Javayhu",
-  itemLink: "https://demo.mkdirs.com",
+  itemLink: "https://findryai.com",
 } as PaymentSuccessEmailProps;
 
 export default PaymentSuccessEmail;

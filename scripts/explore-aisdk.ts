@@ -30,7 +30,7 @@ const client = createClient({
 
 // https://sdk.vercel.ai/docs/foundations/overview
 // https://sdk.vercel.ai/docs/getting-started/nodejs
-// test successfully: pnpm run aisdk:fetch "https://mkdirs.com"
+// test successfully: pnpm run aisdk:fetch "https://findryai.com"
 export const aisdkFetch = async (url: string) => {
   try {
     const response = await fetch(url);
@@ -70,7 +70,7 @@ export const aisdkFetch = async (url: string) => {
 };
 
 // https://sdk.vercel.ai/providers/ai-sdk-providers/google-generative-ai#schema-limitations
-// test successfully: pnpm run aisdk:structure "https://mkdirs.com"
+// test successfully: pnpm run aisdk:structure "https://findryai.com"
 export const aisdkStructure = async (url: string) => {
   try {
     // 获取实际的分类和标签数据

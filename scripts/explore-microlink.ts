@@ -16,7 +16,7 @@ dotenv.config();
  */
 
 // https://microlink.io/docs/api/getting-started/overview
-// test successfully: pnpm run microlink:fetch https://mkdirs.com
+// test successfully: pnpm run microlink:fetch https://findryai.com
 export const microlinkFetch = async (url: string) => {
   try {
     const { data } = await mql(url, {
@@ -39,7 +39,7 @@ export const microlinkFetch = async (url: string) => {
 };
 
 // https://microlink.io/docs/api/parameters/insights/technologies
-// test successfully: pnpm run microlink:insights https://mkdirs.com
+// test successfully: pnpm run microlink:insights https://findryai.com
 export const microlinkInsights = async (url: string) => {
   try {
     const { data } = await mql(url, {
@@ -56,7 +56,7 @@ export const microlinkInsights = async (url: string) => {
 };
 
 // https://microlink.io/docs/api/parameters/screenshot
-// test successfully: pnpm run microlink:screenshot https://mkdirs.com
+// test successfully: pnpm run microlink:screenshot https://findryai.com
 export const microlinkScreenshot = async (url: string) => {
   try {
     const { data } = await mql(url, {
@@ -71,7 +71,7 @@ export const microlinkScreenshot = async (url: string) => {
 };
 
 // https://microlink.io/docs/api/parameters/screenshot
-// test failed: pnpm run microlink:fullpage https://mkdirs.com
+// test failed: pnpm run microlink:fullpage https://findryai.com
 export const microlinkFullpage = async (url: string) => {
   try {
     const { data } = await mql(url, {

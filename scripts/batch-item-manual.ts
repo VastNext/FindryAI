@@ -66,9 +66,9 @@ const client = createClient({
  */
 const data = [
   {
-    name: "Mkdirs",
+    name: "Findry AI",
     description: "The best directory boilerplate",
-    link: "https://mkdirs.com",
+    link: "https://findryai.com",
     categories: [
       "NextJS Boilerplates",
       "Typescript Boilerplates",
@@ -86,9 +86,9 @@ const data = [
       "Auth",
       "Blog",
     ],
-    image: "https://mkdirs.com/og.png",
-    // icon: "https://mkdirs.com/logo.png",
-    icon: "https://s2.googleusercontent.com/s2/favicons?domain=mkdirs.com&sz=128",
+    image: "https://findryai.com/og.png",
+    // icon: "https://findryai.com/logo.png",
+    icon: "https://s2.googleusercontent.com/s2/favicons?domain=findryai.com&sz=128",
   },
   {
     name: "Achromatic",

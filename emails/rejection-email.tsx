@@ -101,7 +101,7 @@ export const RejectionEmail = ({
 
 RejectionEmail.PreviewProps = {
   userName: "Javayhu",
-  itemLink: "https://demo.mkdirs.com",
+  itemLink: "https://findryai.com",
 } as RejectionEmailProps;
 
 export default RejectionEmail;

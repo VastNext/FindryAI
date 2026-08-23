@@ -24,8 +24,8 @@ export async function sendMessageToDiscord(
     // Format the message
     const message = {
       // You can customize these values later
-      username: "MkDirs Bot",
-      avatar_url: "https://mkdirs.com/logo.png",
+      username: "Findry AI Bot",
+      avatar_url: "https://findryai.com/logo.png",
       embeds: [
         {
           title: "🎉 New Purchase",
