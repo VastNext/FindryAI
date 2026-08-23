@@ -15,9 +15,9 @@ Mkdirs 者，以 Next.js 十四（App Router）所造目录网站之模板也。
 
 - **开发服务**：`pnpm dev`
 - **构建**：`pnpm build`（兼司类型之察——库中别无 typecheck 之令）
-- **Lint**：`pnpm lint` —— **慎之：此令改写文件**（`biome check --write .` 也）
-- **Lint 兼不安全之修**：`pnpm lint:fix`
-- **格式化**：`pnpm format`（Biome）
+- **Lint**：`pnpm lint`（只读检查，不得改写文件）
+- **Lint 兼不安全之修**：`pnpm lint:fix`（会改写文件，须先确认工作区状态）
+- **格式化**：`pnpm format`（会改写文件，须先确认工作区状态）
 - **生成 Sanity 类型**：`pnpm typegen` —— **凡改 `src/sanity/schemas/` 者，必随后行之**；所以再生 `sanity.types.ts`，此文件已入库受版本管理
 - **邮件预览**：`pnpm email`（React Email 开发服务，居三千三百三十三端口）
 - **条目批处理**：`pnpm item:import`、`pnpm item:fetch`、`pnpm item:update`、`pnpm item:remove`
@@ -25,7 +25,7 @@ Mkdirs 者，以 Next.js 十四（App Router）所造目录网站之模板也。
 
 ### 测试
 
-库中**无测试之框架，亦无测试之文件**。欲验所改，唯 `pnpm lint` 与 `pnpm build` 二途。
+库中**无测试之框架，亦无测试之文件**。欲验所改，唯只读之 `pnpm lint` 与 `pnpm build` 二途。
 
 ### 批量导入新站点
 
