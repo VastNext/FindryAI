@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/home3",
+        destination: "/",
+        permanent: true,
+      },
+    ];
+  },
+
   // Configure `pageExtensions` to include markdown and MDX files
   // https://nextjs.org/docs/pages/building-your-application/configuring/mdx
   // pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],

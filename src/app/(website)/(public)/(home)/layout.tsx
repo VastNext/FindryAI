@@ -1,30 +1,18 @@
 import Container from "@/components/container";
-import { HomeCategoryList } from "@/components/home/home-category-list";
-import HomeHero from "@/components/home/home-hero";
+import HomeHeroSponsor from "@/components/home/home-hero-sponsor";
 import { HomeSearchFilter } from "@/components/home/home-search-filter";
 
 export default function HomeLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <Container className="mt-12 mb-16 flex flex-col gap-12 max-w-[1400px]">
-      <HomeHero />
+    <Container className="mt-12 mb-16 flex flex-col gap-12">
+      <HomeHeroSponsor />
 
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* left sidebar: category list */}
-        <div className="hidden md:block w-[200px] flex-shrink-0">
-          <div className="sticky top-24">
-            <HomeCategoryList urlPrefix="/" />
-          </div>
-        </div>
+      <div className="flex flex-col gap-8">
+        <HomeSearchFilter urlPrefix="/" />
 
-        {/* right content: item grid */}
-        <div className="flex-1">
-          <div className="flex flex-col gap-8">
-            <HomeSearchFilter urlPrefix="/" />
-            {children}
-          </div>
-        </div>
+        {children}
       </div>
     </Container>
   );

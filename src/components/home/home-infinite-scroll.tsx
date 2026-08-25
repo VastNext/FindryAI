@@ -5,9 +5,8 @@ import ItemGridClient from "@/components/item/item-grid-client";
 import type { ItemListQueryResult } from "@/sanity.types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-interface Home3InfiniteScrollProps {
+interface HomeInfiniteScrollProps {
   initialItems: ItemListQueryResult;
-  /** 初始页码（支持直接带 ?page=N 进入时对齐后续追加） */
   initialPage: number;
   totalPages: number;
   category?: string;
@@ -22,7 +21,7 @@ interface Home3InfiniteScrollProps {
  * 监听滚动位置（IntersectionObserver 哨兵元素），
  * 接近底部时自动请求 /api/items 加载下一页并追加显示。
  */
-export default function Home3InfiniteScroll({
+export default function HomeInfiniteScroll({
   initialItems,
   initialPage,
   totalPages,
@@ -31,7 +30,7 @@ export default function Home3InfiniteScroll({
   sort,
   query,
   filter,
-}: Home3InfiniteScrollProps) {
+}: HomeInfiniteScrollProps) {
   const [items, setItems] = useState(initialItems);
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);

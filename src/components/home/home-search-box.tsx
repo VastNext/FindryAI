@@ -32,7 +32,6 @@ export default function HomeSearchBox({ urlPrefix }: SearchBoxProps) {
     }
   }, [searchParams]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (debouncedQuery !== lastExecutedQuery.current) {
       const newParams = new URLSearchParams(searchParams?.toString());
@@ -52,7 +51,7 @@ export default function HomeSearchBox({ urlPrefix }: SearchBoxProps) {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     isUserTypingRef.current = true;
     setSearchQuery(e.target.value);
-    
+
     // Reset the flag to allow updates after URL changes (but give enough time to complete the current input)
     setTimeout(() => {
       isUserTypingRef.current = false;
@@ -68,7 +67,7 @@ export default function HomeSearchBox({ urlPrefix }: SearchBoxProps) {
         value={searchQuery}
         onChange={handleSearch}
         className={cn(
-          "w-[320px] sm:w-[480px] md:w-[640px] h-12 rounded-r-none",
+          "w-[360px] md:w-[480px] h-12 rounded-r-none",
           "focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary focus:border-2 focus:border-r-0",
         )}
       />

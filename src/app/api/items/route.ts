@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 /**
  * 分页获取条目列表，供无限滚动组件请求下一页
- * 参数与 /home3 页面查询参数一致：category/tag/sort/q/f/page
+ * 参数与首页查询参数一致：category/tag/sort/q/f/page
  */
 export async function GET(request: Request) {
   try {

@@ -20,12 +20,12 @@ interface SearchFilterProps {
   selectedSort?: string;
 }
 
-export interface TagFilterItem {
+interface TagFilterItem {
   slug: string;
   name: string;
 }
 
-export interface CategoryFilterItem {
+interface CategoryFilterItem {
   slug: string;
   name: string;
 }
@@ -108,16 +108,14 @@ export function HomeSearchFilterClient({
   }));
 
   return (
-    <div className="grid md:grid-cols-[1fr_1fr_1fr_0.5fr] gap-4 z-10 items-center">
-      <div className="flex md:hidden">
-        <ResponsiveComboBox
-          filterItemList={categoryFilterItemList}
-          placeholder="All Categories"
-          labelPrefix="Category: "
-          selectedValue={selectedCategory || DEFAULT_FILTER_VALUE}
-          onValueChange={(value) => handleFilterChange("category", value)}
-        />
-      </div>
+    <div className="grid md:grid-cols-[1fr_1fr_1fr_1fr_0.5fr] gap-4 z-10 items-center">
+      <ResponsiveComboBox
+        filterItemList={categoryFilterItemList}
+        placeholder="All Categories"
+        labelPrefix="Category: "
+        selectedValue={selectedCategory || DEFAULT_FILTER_VALUE}
+        onValueChange={(value) => handleFilterChange("category", value)}
+      />
 
       {/* Single Select for tag */}
       {/* <ResponsiveComboBox
