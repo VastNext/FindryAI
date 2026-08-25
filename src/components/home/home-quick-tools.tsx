@@ -62,12 +62,9 @@ export default function HomeQuickTools() {
             href={tool.href}
             aria-label={`${tool.name}: ${tool.description}`}
             title={tool.name}
-            className="group flex size-11 shrink-0 items-center justify-center rounded-lg border bg-card text-muted-foreground shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:bg-primary/5 hover:text-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-0 active:scale-95 motion-reduce:transform-none motion-reduce:transition-none min-[360px]:size-12 sm:size-14"
+            className="group flex size-11 shrink-0 items-center justify-center rounded-lg border bg-card text-muted-foreground shadow-sm transition-colors duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none min-[360px]:size-12 sm:size-14"
           >
-            <Icon
-              className="size-5 transition-transform duration-200 group-hover:scale-110 motion-reduce:transform-none motion-reduce:transition-none sm:size-6"
-              aria-hidden="true"
-            />
+            <Icon className="size-5 sm:size-6" aria-hidden="true" />
           </Link>
         );
       })}
