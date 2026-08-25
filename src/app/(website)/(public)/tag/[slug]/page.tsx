@@ -8,7 +8,7 @@ import {
   ITEMS_PER_PAGE,
   SORT_FILTER_LIST,
 } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
+import { constructMetadata, getPaginatedCanonicalUrl } from "@/lib/metadata";
 import type {
   SponsorItemListQueryResult,
   TagQueryResult,
@@ -19,8 +19,10 @@ import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }): Promise<Metadata | undefined> {
   const tag = await sanityFetch<TagQueryResult>({
     query: tagQuery,
@@ -39,7 +41,10 @@ export async function generateMetadata({
   return constructMetadata({
     title: `${tag.name}`,
     description: tag.description,
-    canonicalUrl: `${siteConfig.url}/tag/${params.slug}`,
+    canonicalUrl: getPaginatedCanonicalUrl(
+      `${siteConfig.url}/tag/${params.slug}`,
+      searchParams?.page,
+    ),
     // image: ogImageUrl.toString(),
   });
 }

@@ -89,9 +89,10 @@ export default async function ItemPage({ params }: ItemPageProps) {
     : null;
   const itemUrl = `${siteConfig.url}/item/${params.slug}`;
   const primaryCategory = item.categories?.[0];
-  const hasPrimaryCategory = Boolean(
-    primaryCategory?.name && primaryCategory.slug?.current,
-  );
+  const validatedPrimaryCategory =
+    primaryCategory?.name && primaryCategory.slug?.current
+      ? { name: primaryCategory.name, slug: primaryCategory.slug.current }
+      : null;
   const breadcrumbItems = [
     {
       "@type": "ListItem",
@@ -99,19 +100,19 @@ export default async function ItemPage({ params }: ItemPageProps) {
       name: "Home",
       item: siteConfig.url,
     },
-    ...(hasPrimaryCategory
+    ...(validatedPrimaryCategory
       ? [
           {
             "@type": "ListItem",
             position: 2,
-            name: primaryCategory.name,
-            item: `${siteConfig.url}/category/${primaryCategory.slug.current}`,
+            name: validatedPrimaryCategory.name,
+            item: `${siteConfig.url}/category/${validatedPrimaryCategory.slug}`,
           },
         ]
       : []),
     {
       "@type": "ListItem",
-      position: hasPrimaryCategory ? 3 : 2,
+      position: validatedPrimaryCategory ? 3 : 2,
       name: item.name,
       item: itemUrl,
     },

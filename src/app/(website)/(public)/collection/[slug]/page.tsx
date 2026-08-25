@@ -10,7 +10,7 @@ import {
   ITEMS_PER_PAGE,
   SORT_FILTER_LIST,
 } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
+import { constructMetadata, getPaginatedCanonicalUrl } from "@/lib/metadata";
 import type {
   CollectionQueryResult,
   SponsorItemListQueryResult,
@@ -22,8 +22,10 @@ import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }): Promise<Metadata | undefined> {
   const collection = await sanityFetch<CollectionQueryResult>({
     query: collectionQuery,
@@ -44,7 +46,10 @@ export async function generateMetadata({
   return constructMetadata({
     title: `${collection.name}`,
     description: collection.description,
-    canonicalUrl: `${siteConfig.url}/collection/${params.slug}`,
+    canonicalUrl: getPaginatedCanonicalUrl(
+      `${siteConfig.url}/collection/${params.slug}`,
+      searchParams?.page,
+    ),
     // image: ogImageUrl.toString(),
   });
 }

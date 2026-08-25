@@ -7,23 +7,25 @@ import {
   ITEMS_PER_PAGE,
   SORT_FILTER_LIST,
 } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
+import {
+  constructMetadata,
+  getPaginatedCanonicalUrl,
+  parsePageParam,
+} from "@/lib/metadata";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export function generateMetadata({
   searchParams,
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }): Metadata {
-  const currentPage = parsePage(searchParams?.page);
-  const canonicalUrl =
-    currentPage > 1
-      ? `${siteConfig.url}/?page=${currentPage}`
-      : `${siteConfig.url}/`;
-
   return constructMetadata({
     title: { absolute: siteConfig.name },
-    canonicalUrl,
+    canonicalUrl: getPaginatedCanonicalUrl(
+      `${siteConfig.url}/`,
+      searchParams?.page,
+    ),
   });
 }
 
@@ -45,7 +47,7 @@ export default async function HomePage({
   } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
     SORT_FILTER_LIST.find((item) => item.slug === sort) || DEFAULT_SORT;
-  const currentPage = parsePage(searchParams?.page);
+  const currentPage = parsePageParam(searchParams?.page);
   const { items, totalCount } = await getItems({
     category,
     tag,
@@ -57,6 +59,10 @@ export default async function HomePage({
     hasSponsorItem,
   });
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+  const lastValidPage = Math.max(1, totalPages);
+  if (currentPage > lastValidPage) {
+    redirect(lastValidPage > 1 ? `/?page=${lastValidPage}` : "/");
+  }
   console.log("HomePage, totalCount", totalCount, ", totalPages", totalPages);
 
   return (
@@ -83,9 +89,4 @@ export default async function HomePage({
       )}
     </div>
   );
-}
-
-function parsePage(page: string | string[] | undefined): number {
-  const parsedPage = Number(Array.isArray(page) ? page[0] : page);
-  return Number.isInteger(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
 }

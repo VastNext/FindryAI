@@ -78,3 +78,16 @@ function getSocialTitle(title: Metadata["title"]): string {
   }
   return siteConfig.name;
 }
+
+export function parsePageParam(page: string | string[] | undefined): number {
+  const parsedPage = Number(Array.isArray(page) ? page[0] : page);
+  return Number.isInteger(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
+}
+
+export function getPaginatedCanonicalUrl(
+  baseUrl: string,
+  page: string | string[] | undefined,
+): string {
+  const currentPage = parsePageParam(page);
+  return currentPage > 1 ? `${baseUrl}?page=${currentPage}` : baseUrl;
+}

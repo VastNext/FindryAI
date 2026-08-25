@@ -6,13 +6,23 @@ import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getCollections } from "@/data/collection";
 import { COLLECTIONS_PER_PAGE } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
+import { constructMetadata, getPaginatedCanonicalUrl } from "@/lib/metadata";
+import type { Metadata } from "next";
 
-export const metadata = constructMetadata({
-  title: "Collection",
-  description: "Explore by collection",
-  canonicalUrl: `${siteConfig.url}/collection`,
-});
+export function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}): Metadata {
+  return constructMetadata({
+    title: "Collection",
+    description: "Explore by collection",
+    canonicalUrl: getPaginatedCanonicalUrl(
+      `${siteConfig.url}/collection`,
+      searchParams?.page,
+    ),
+  });
+}
 
 /**
  * https://www.uneed.best/alternatives

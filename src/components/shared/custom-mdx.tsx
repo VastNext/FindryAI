@@ -300,15 +300,20 @@ const customComponents = {
     className,
     alt,
     ...props
-  }: Omit<React.ComponentProps<"img">, "alt"> & { alt: string }) => (
-    // biome-ignore lint/a11y/useAltText: alt 是此自定义组件的必填属性
-    <img
-      className={cn("rounded-md border my-2", className)}
-      alt={alt || ""}
-      loading="lazy"
-      {...props}
-    />
-  ),
+  }: Omit<React.ComponentProps<"img">, "alt"> & { alt: string }) => {
+    if (!alt?.trim()) {
+      throw new Error("自定义 MDX Image 必须提供非空的 alt 文本");
+    }
+    return (
+      // biome-ignore lint/a11y/useAltText: alt 已在运行时验证为非空文本
+      <img
+        className={cn("rounded-md border my-2", className)}
+        alt={alt}
+        loading="lazy"
+        {...props}
+      />
+    );
+  },
   Step: ({ className, ...props }: React.ComponentProps<"h3">) => (
     <h3
       className={cn("mt-8 scroll-m-20 text-xl font-semibold", className)}

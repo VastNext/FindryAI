@@ -4,7 +4,7 @@ import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getBlogs } from "@/data/blog";
 import { POSTS_PER_PAGE } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
+import { constructMetadata, getPaginatedCanonicalUrl } from "@/lib/metadata";
 import type { BlogCategoryMetadateQueryResult } from "@/sanity.types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { blogCategoryMetadateQuery } from "@/sanity/lib/queries";
@@ -12,8 +12,10 @@ import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }): Promise<Metadata | undefined> {
   const category = await sanityFetch<BlogCategoryMetadateQueryResult>({
     query: blogCategoryMetadateQuery,
@@ -34,7 +36,10 @@ export async function generateMetadata({
   return constructMetadata({
     title: `${category.name}`,
     description: category.description,
-    canonicalUrl: `${siteConfig.url}/blog/category/${params.slug}`,
+    canonicalUrl: getPaginatedCanonicalUrl(
+      `${siteConfig.url}/blog/category/${params.slug}`,
+      searchParams?.page,
+    ),
     // image: ogImageUrl.toString(),
   });
 }
@@ -73,7 +78,7 @@ export default async function BlogCategoryPage({
 
           <div className="mt-8 flex items-center justify-center">
             <CustomPagination
-              routePrefix={`/blog/${params.slug}`}
+              routePrefix={`/blog/category/${params.slug}`}
               totalPages={totalPages}
             />
           </div>

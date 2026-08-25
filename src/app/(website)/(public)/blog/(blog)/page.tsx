@@ -4,13 +4,23 @@ import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getBlogs } from "@/data/blog";
 import { POSTS_PER_PAGE } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
+import { constructMetadata, getPaginatedCanonicalUrl } from "@/lib/metadata";
+import type { Metadata } from "next";
 
-export const metadata = constructMetadata({
-  title: "Blog",
-  description: "Read our latest blog posts",
-  canonicalUrl: `${siteConfig.url}/blog`,
-});
+export function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}): Metadata {
+  return constructMetadata({
+    title: "Blog",
+    description: "Read our latest blog posts",
+    canonicalUrl: getPaginatedCanonicalUrl(
+      `${siteConfig.url}/blog`,
+      searchParams?.page,
+    ),
+  });
+}
 
 export default async function BlogIndexPage({
   searchParams,

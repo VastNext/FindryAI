@@ -8,16 +8,26 @@ import {
   ITEMS_PER_PAGE,
   SORT_FILTER_LIST,
 } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
+import { constructMetadata, getPaginatedCanonicalUrl } from "@/lib/metadata";
 import type { SponsorItemListQueryResult } from "@/sanity.types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { sponsorItemListQuery } from "@/sanity/lib/queries";
+import type { Metadata } from "next";
 
-export const metadata = constructMetadata({
-  title: "Tag",
-  description: "Explore by tags",
-  canonicalUrl: `${siteConfig.url}/tag`,
-});
+export function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}): Metadata {
+  return constructMetadata({
+    title: "Tag",
+    description: "Explore by tags",
+    canonicalUrl: getPaginatedCanonicalUrl(
+      `${siteConfig.url}/tag`,
+      searchParams?.page,
+    ),
+  });
+}
 
 export default async function TagIndexPage({
   searchParams,

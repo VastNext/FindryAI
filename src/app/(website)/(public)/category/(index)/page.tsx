@@ -8,17 +8,27 @@ import {
   ITEMS_PER_PAGE,
   SORT_FILTER_LIST,
 } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
+import { constructMetadata, getPaginatedCanonicalUrl } from "@/lib/metadata";
 import type { SponsorItemListQueryResult } from "@/sanity.types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { sponsorItemListQuery } from "@/sanity/lib/queries";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-export const metadata = constructMetadata({
-  title: "Category",
-  description: "Explore AI tools by category",
-  canonicalUrl: `${siteConfig.url}/category`,
-});
+export function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}): Metadata {
+  return constructMetadata({
+    title: "Category",
+    description: "Explore AI tools by category",
+    canonicalUrl: getPaginatedCanonicalUrl(
+      `${siteConfig.url}/category`,
+      searchParams?.page,
+    ),
+  });
+}
 
 export default async function CategoryIndexPage({
   searchParams,
