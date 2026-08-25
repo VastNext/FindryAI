@@ -40,14 +40,12 @@ import {
   DicesIcon,
   InfoIcon,
   KeyRoundIcon,
-  LanguagesIcon,
   RefreshCwIcon,
   ShieldCheckIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type PasswordMode = "random" | "memorable" | "pin";
-type Locale = "en" | "zh-CN" | "ja" | "es" | "fr" | "de";
 
 interface Copy {
   title: string;
@@ -91,333 +89,58 @@ interface Copy {
   about: string;
 }
 
-const COPY: Record<Locale, Copy> = {
-  en: {
-    title: "Password Generator",
-    subtitle:
-      "Create a strong password locally. Nothing you generate leaves this browser.",
-    random: "Random",
-    memorable: "Memorable",
-    pin: "PIN",
-    randomDescription: "Maximum entropy for password managers and accounts.",
-    memorableDescription: "A longer passphrase made from easy-to-type words.",
-    pinDescription: "A numeric code for device locks and similar uses.",
-    length: "Length",
-    uppercase: "Uppercase (A–Z)",
-    lowercase: "Lowercase (a–z)",
-    numbers: "Numbers (0–9)",
-    symbols: "Symbols (!@#$)",
-    avoidAmbiguous: "Avoid ambiguous characters",
-    wordCount: "Word count",
-    separator: "Separator",
-    capitalize: "Capitalize words",
-    includeNumber: "Add a number at the end",
-    copy: "Copy",
-    copied: "Copied",
-    copyFailed: "Copy failed",
-    regenerate: "Regenerate",
-    strength: "Strength",
-    entropy: "Entropy",
-    veryWeak: "Very weak",
-    weak: "Weak",
-    fair: "Fair",
-    strong: "Strong",
-    veryStrong: "Very strong",
-    characters: "characters",
-    words: "words",
-    digits: "digits",
-    privacy: "Private by design",
-    privacySummary: "Generated on your device with the Web Crypto API.",
-    privacyBody:
-      "Passwords are generated locally and are never sent to FindryAI or any other server. Generated values are not stored in cookies, analytics, or local storage.",
-    noServer: "No server requests",
-    cryptoSecure: "Cryptographically secure",
-    noCharacterSet: "Keep at least one character type enabled.",
-    about: "How privacy works",
-  },
-  "zh-CN": {
-    title: "密码生成器",
-    subtitle: "在本地创建强密码。生成的任何内容都不会离开此浏览器。",
-    random: "随机密码",
-    memorable: "易记口令",
-    pin: "PIN 码",
-    randomDescription: "高熵随机密码，适合密码管理器与网站账户。",
-    memorableDescription: "由易输入的单词组成更长、更好记的口令。",
-    pinDescription: "适合设备锁屏等场景的纯数字代码。",
-    length: "长度",
-    uppercase: "大写字母 (A–Z)",
-    lowercase: "小写字母 (a–z)",
-    numbers: "数字 (0–9)",
-    symbols: "符号 (!@#$)",
-    avoidAmbiguous: "避免易混淆字符",
-    wordCount: "单词数量",
-    separator: "分隔符",
-    capitalize: "单词首字母大写",
-    includeNumber: "末尾添加数字",
-    copy: "复制",
-    copied: "已复制",
-    copyFailed: "复制失败",
-    regenerate: "重新生成",
-    strength: "强度",
-    entropy: "熵值",
-    veryWeak: "非常弱",
-    weak: "较弱",
-    fair: "一般",
-    strong: "强",
-    veryStrong: "非常强",
-    characters: "个字符",
-    words: "个单词",
-    digits: "位数字",
-    privacy: "隐私优先",
-    privacySummary: "使用 Web Crypto API 在你的设备上生成。",
-    privacyBody:
-      "密码完全在本地生成，不会发送给 FindryAI 或任何其他服务器。生成结果不会写入 Cookie、分析服务或本地存储。",
-    noServer: "无服务端请求",
-    cryptoSecure: "密码学安全随机数",
-    noCharacterSet: "请至少保留一种字符类型。",
-    about: "隐私如何得到保护",
-  },
-  ja: {
-    title: "パスワード生成ツール",
-    subtitle:
-      "強力なパスワードを端末内で作成します。ブラウザの外には送信されません。",
-    random: "ランダム",
-    memorable: "覚えやすい",
-    pin: "PIN",
-    randomDescription: "アカウントやパスワード管理に適した高エントロピー。",
-    memorableDescription: "入力しやすい単語で作る長いパスフレーズ。",
-    pinDescription: "端末ロックなどに使う数字コード。",
-    length: "長さ",
-    uppercase: "大文字 (A–Z)",
-    lowercase: "小文字 (a–z)",
-    numbers: "数字 (0–9)",
-    symbols: "記号 (!@#$)",
-    avoidAmbiguous: "紛らわしい文字を除外",
-    wordCount: "単語数",
-    separator: "区切り",
-    capitalize: "先頭を大文字にする",
-    includeNumber: "末尾に数字を追加",
-    copy: "コピー",
-    copied: "コピー済み",
-    copyFailed: "コピー失敗",
-    regenerate: "再生成",
-    strength: "強度",
-    entropy: "エントロピー",
-    veryWeak: "非常に弱い",
-    weak: "弱い",
-    fair: "普通",
-    strong: "強い",
-    veryStrong: "非常に強い",
-    characters: "文字",
-    words: "単語",
-    digits: "桁",
-    privacy: "プライバシー設計",
-    privacySummary: "Web Crypto API で端末内生成。",
-    privacyBody:
-      "生成したパスワードはサーバーへ送信されず、Cookie、分析、ローカルストレージにも保存されません。",
-    noServer: "サーバー通信なし",
-    cryptoSecure: "暗号学的に安全",
-    noCharacterSet: "1種類以上の文字を有効にしてください。",
-    about: "プライバシーについて",
-  },
-  es: {
-    title: "Generador de contraseñas",
-    subtitle:
-      "Crea una contraseña segura en tu dispositivo. Nada sale del navegador.",
-    random: "Aleatoria",
-    memorable: "Memorable",
-    pin: "PIN",
-    randomDescription:
-      "Máxima entropía para cuentas y gestores de contraseñas.",
-    memorableDescription:
-      "Una frase larga formada por palabras fáciles de escribir.",
-    pinDescription: "Un código numérico para bloquear dispositivos.",
-    length: "Longitud",
-    uppercase: "Mayúsculas (A–Z)",
-    lowercase: "Minúsculas (a–z)",
-    numbers: "Números (0–9)",
-    symbols: "Símbolos (!@#$)",
-    avoidAmbiguous: "Evitar caracteres ambiguos",
-    wordCount: "Número de palabras",
-    separator: "Separador",
-    capitalize: "Capitalizar palabras",
-    includeNumber: "Añadir un número al final",
-    copy: "Copiar",
-    copied: "Copiada",
-    copyFailed: "Error al copiar",
-    regenerate: "Regenerar",
-    strength: "Fortaleza",
-    entropy: "Entropía",
-    veryWeak: "Muy débil",
-    weak: "Débil",
-    fair: "Aceptable",
-    strong: "Fuerte",
-    veryStrong: "Muy fuerte",
-    characters: "caracteres",
-    words: "palabras",
-    digits: "dígitos",
-    privacy: "Privada por diseño",
-    privacySummary: "Generada en tu dispositivo con Web Crypto API.",
-    privacyBody:
-      "Las contraseñas nunca se envían a un servidor ni se guardan en cookies, analítica o almacenamiento local.",
-    noServer: "Sin peticiones al servidor",
-    cryptoSecure: "Seguridad criptográfica",
-    noCharacterSet: "Mantén activo al menos un tipo de carácter.",
-    about: "Cómo protegemos tu privacidad",
-  },
-  fr: {
-    title: "Générateur de mots de passe",
-    subtitle:
-      "Créez un mot de passe fort sur votre appareil. Rien ne quitte le navigateur.",
-    random: "Aléatoire",
-    memorable: "Mémorable",
-    pin: "PIN",
-    randomDescription: "Entropie maximale pour vos comptes et gestionnaires.",
-    memorableDescription:
-      "Une phrase longue composée de mots faciles à saisir.",
-    pinDescription: "Un code numérique pour verrouiller vos appareils.",
-    length: "Longueur",
-    uppercase: "Majuscules (A–Z)",
-    lowercase: "Minuscules (a–z)",
-    numbers: "Chiffres (0–9)",
-    symbols: "Symboles (!@#$)",
-    avoidAmbiguous: "Éviter les caractères ambigus",
-    wordCount: "Nombre de mots",
-    separator: "Séparateur",
-    capitalize: "Mettre une majuscule",
-    includeNumber: "Ajouter un nombre à la fin",
-    copy: "Copier",
-    copied: "Copié",
-    copyFailed: "Échec de la copie",
-    regenerate: "Régénérer",
-    strength: "Force",
-    entropy: "Entropie",
-    veryWeak: "Très faible",
-    weak: "Faible",
-    fair: "Correct",
-    strong: "Fort",
-    veryStrong: "Très fort",
-    characters: "caractères",
-    words: "mots",
-    digits: "chiffres",
-    privacy: "Confidentiel par conception",
-    privacySummary: "Généré sur votre appareil avec Web Crypto API.",
-    privacyBody:
-      "Les mots de passe ne sont jamais envoyés à un serveur ni stockés dans les cookies, l’analytique ou le stockage local.",
-    noServer: "Aucune requête serveur",
-    cryptoSecure: "Sécurité cryptographique",
-    noCharacterSet: "Gardez au moins un type de caractère actif.",
-    about: "Protection de votre vie privée",
-  },
-  de: {
-    title: "Passwort-Generator",
-    subtitle:
-      "Erstellen Sie ein starkes Passwort auf Ihrem Gerät. Nichts verlässt den Browser.",
-    random: "Zufällig",
-    memorable: "Merkbar",
-    pin: "PIN",
-    randomDescription: "Maximale Entropie für Konten und Passwortmanager.",
-    memorableDescription: "Eine lange Passphrase aus leicht tippbaren Wörtern.",
-    pinDescription: "Ein Zahlencode für Gerätesperren.",
-    length: "Länge",
-    uppercase: "Großbuchstaben (A–Z)",
-    lowercase: "Kleinbuchstaben (a–z)",
-    numbers: "Zahlen (0–9)",
-    symbols: "Symbole (!@#$)",
-    avoidAmbiguous: "Mehrdeutige Zeichen vermeiden",
-    wordCount: "Wortanzahl",
-    separator: "Trennzeichen",
-    capitalize: "Wörter großschreiben",
-    includeNumber: "Zahl am Ende hinzufügen",
-    copy: "Kopieren",
-    copied: "Kopiert",
-    copyFailed: "Kopieren fehlgeschlagen",
-    regenerate: "Neu generieren",
-    strength: "Stärke",
-    entropy: "Entropie",
-    veryWeak: "Sehr schwach",
-    weak: "Schwach",
-    fair: "Mittel",
-    strong: "Stark",
-    veryStrong: "Sehr stark",
-    characters: "Zeichen",
-    words: "Wörter",
-    digits: "Ziffern",
-    privacy: "Privat entwickelt",
-    privacySummary: "Auf Ihrem Gerät mit der Web Crypto API erzeugt.",
-    privacyBody:
-      "Passwörter werden nie an einen Server gesendet oder in Cookies, Analysen oder lokalem Speicher abgelegt.",
-    noServer: "Keine Serveranfragen",
-    cryptoSecure: "Kryptografisch sicher",
-    noCharacterSet: "Mindestens einen Zeichentyp aktiviert lassen.",
-    about: "So schützen wir Ihre Privatsphäre",
-  },
+const COPY: Copy = {
+  title: "Password Generator",
+  subtitle:
+    "Create a strong password locally. Nothing you generate leaves this browser.",
+  random: "Random",
+  memorable: "Memorable",
+  pin: "PIN",
+  randomDescription: "Maximum entropy for password managers and accounts.",
+  memorableDescription: "A longer passphrase made from easy-to-type words.",
+  pinDescription: "A numeric code for device locks and similar uses.",
+  length: "Length",
+  uppercase: "Uppercase (A–Z)",
+  lowercase: "Lowercase (a–z)",
+  numbers: "Numbers (0–9)",
+  symbols: "Symbols (!@#$)",
+  avoidAmbiguous: "Avoid ambiguous characters",
+  wordCount: "Word count",
+  separator: "Separator",
+  capitalize: "Capitalize words",
+  includeNumber: "Add a number at the end",
+  copy: "Copy",
+  copied: "Copied",
+  copyFailed: "Copy failed",
+  regenerate: "Regenerate",
+  strength: "Strength",
+  entropy: "Entropy",
+  veryWeak: "Very weak",
+  weak: "Weak",
+  fair: "Fair",
+  strong: "Strong",
+  veryStrong: "Very strong",
+  characters: "characters",
+  words: "words",
+  digits: "digits",
+  privacy: "Private by design",
+  privacySummary: "Generated on your device with the Web Crypto API.",
+  privacyBody:
+    "Passwords are generated locally and are never sent to FindryAI or any other server. Generated values are not stored in cookies, analytics, or local storage.",
+  noServer: "No server requests",
+  cryptoSecure: "Cryptographically secure",
+  noCharacterSet: "Keep at least one character type enabled.",
+  about: "How privacy works",
 };
 
-const LOCALES: Array<{ value: Locale; label: string }> = [
-  { value: "en", label: "English" },
-  { value: "zh-CN", label: "简体中文" },
-  { value: "ja", label: "日本語" },
-  { value: "es", label: "Español" },
-  { value: "fr", label: "Français" },
-  { value: "de", label: "Deutsch" },
-];
-
-const SEPARATOR_LABELS: Record<Locale, Record<PasswordSeparator, string>> = {
-  en: {
-    hyphen: "Hyphen ( - )",
-    period: "Period ( . )",
-    underscore: "Underscore ( _ )",
-    comma: "Comma ( , )",
-    space: "Space",
-    number: "Random number",
-    none: "None",
-  },
-  "zh-CN": {
-    hyphen: "连字符 ( - )",
-    period: "句点 ( . )",
-    underscore: "下划线 ( _ )",
-    comma: "逗号 ( , )",
-    space: "空格",
-    number: "随机数字",
-    none: "无",
-  },
-  ja: {
-    hyphen: "ハイフン ( - )",
-    period: "ピリオド ( . )",
-    underscore: "アンダースコア ( _ )",
-    comma: "カンマ ( , )",
-    space: "スペース",
-    number: "ランダムな数字",
-    none: "なし",
-  },
-  es: {
-    hyphen: "Guion ( - )",
-    period: "Punto ( . )",
-    underscore: "Guion bajo ( _ )",
-    comma: "Coma ( , )",
-    space: "Espacio",
-    number: "Número aleatorio",
-    none: "Ninguno",
-  },
-  fr: {
-    hyphen: "Tiret ( - )",
-    period: "Point ( . )",
-    underscore: "Trait bas ( _ )",
-    comma: "Virgule ( , )",
-    space: "Espace",
-    number: "Nombre aléatoire",
-    none: "Aucun",
-  },
-  de: {
-    hyphen: "Bindestrich ( - )",
-    period: "Punkt ( . )",
-    underscore: "Unterstrich ( _ )",
-    comma: "Komma ( , )",
-    space: "Leerzeichen",
-    number: "Zufallszahl",
-    none: "Keine",
-  },
+const SEPARATOR_LABELS: Record<PasswordSeparator, string> = {
+  hyphen: "Hyphen ( - )",
+  period: "Period ( . )",
+  underscore: "Underscore ( _ )",
+  comma: "Comma ( , )",
+  space: "Space",
+  number: "Random number",
+  none: "None",
 };
 
 const DEFAULT_RANDOM: RandomPasswordOptions = {
@@ -435,22 +158,7 @@ const DEFAULT_MEMORABLE: MemorablePasswordOptions = {
   includeNumber: true,
 };
 const DEFAULT_PIN: PinOptions = { length: 6 };
-const LOCALE_STORAGE_KEY = "findry-password-generator-locale";
-
-function detectLocale(): Locale {
-  const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
-  if (stored && LOCALES.some(({ value }) => value === stored))
-    return stored as Locale;
-  const browserLocale = navigator.language;
-  if (browserLocale.toLowerCase().startsWith("zh")) return "zh-CN";
-  const shortLocale = browserLocale.split("-")[0] as Locale;
-  return LOCALES.some(({ value }) => value === shortLocale)
-    ? shortLocale
-    : "en";
-}
-
 export function PasswordGenerator() {
-  const [locale, setLocale] = useState<Locale>("en");
   const [mode, setMode] = useState<PasswordMode>("random");
   const [randomOptions, setRandomOptions] = useState(DEFAULT_RANDOM);
   const [memorableOptions, setMemorableOptions] = useState(DEFAULT_MEMORABLE);
@@ -462,9 +170,8 @@ export function PasswordGenerator() {
   const [characterWarning, setCharacterWarning] = useState(false);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copyOperation = useRef(0);
-  const text = COPY[locale];
+  const text = COPY;
 
-  useEffect(() => setLocale(detectLocale()), []);
   useEffect(
     () => () => {
       if (copyTimer.current) clearTimeout(copyTimer.current);
@@ -506,11 +213,6 @@ export function PasswordGenerator() {
     "very-strong": "bg-emerald-500",
   };
 
-  const changeLocale = (nextLocale: Locale) => {
-    setLocale(nextLocale);
-    localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale);
-  };
-
   const copyPassword = async () => {
     const operation = copyOperation.current + 1;
     copyOperation.current = operation;
@@ -547,25 +249,6 @@ export function PasswordGenerator() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <Select
-          value={locale}
-          onValueChange={(value) => changeLocale(value as Locale)}
-        >
-          <SelectTrigger className="w-[160px]" aria-label="Language">
-            <LanguagesIcon className="mr-2 size-4 text-muted-foreground" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {LOCALES.map(({ value, label }) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
       <Tabs
         value={mode}
         onValueChange={(value) => setMode(value as PasswordMode)}
@@ -748,13 +431,11 @@ export function PasswordGenerator() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(SEPARATOR_LABELS[locale]).map(
-                    ([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ),
-                  )}
+                  {Object.entries(SEPARATOR_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
