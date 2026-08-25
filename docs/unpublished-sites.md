@@ -78,3 +78,10 @@
 | 名称 | 官网 | 原因 |
 |---|---|---|
 | screenapp | https://creati.ai/ai-tools/screenapp | manual-unpublish |
+
+
+## 2026-08-25 批次（1 条）
+
+| 名称 | 官网 | 原因 |
+|---|---|---|
+| transvribe | https://www.transcribe.gov.sg | manual-unpublish |
