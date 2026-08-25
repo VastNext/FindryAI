@@ -3,6 +3,7 @@ import {
   CreditCardIcon,
   FileTextIcon,
   HomeIcon,
+  KeyRoundIcon,
   LayoutDashboardIcon,
   LayoutGridIcon,
   LayoutListIcon,
@@ -12,7 +13,7 @@ import {
   SearchIcon,
   SettingsIcon,
   TagsIcon,
-  UploadIcon
+  UploadIcon,
 } from "lucide-react";
 import { FaBrandsGitHub } from "../icons/github";
 import { FaBrandsGoogle } from "../icons/google";
@@ -40,6 +41,7 @@ export const Icons = {
   tag: TagsIcon,
   blog: FileTextIcon,
   pricing: CreditCardIcon,
+  passwordGenerator: KeyRoundIcon,
   home: HomeIcon,
   dashboard: LayoutDashboardIcon,
   submit: UploadIcon,

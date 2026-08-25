@@ -14,6 +14,7 @@ export const publicRoutes = [
   "/item(/.*)?",
   "/blog(/.*)?",
   "/pricing(/.*)?",
+  "/password-generator(/.*)?",
 
   "/about(/.*)?",
   "/terms(/.*)?",
