@@ -12,9 +12,11 @@ import { constructMetadata } from "@/lib/metadata";
 import type { SponsorItemListQueryResult } from "@/sanity.types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { sponsorItemListQuery } from "@/sanity/lib/queries";
+import { redirect } from "next/navigation";
+
 export const metadata = constructMetadata({
   title: "Category",
-  description: "Explore by category",
+  description: "Explore AI tools by category",
   canonicalUrl: `${siteConfig.url}/category`,
 });
 
@@ -27,36 +29,63 @@ export default async function CategoryIndexPage({
     (await sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
     })) || [];
-  // console.log("CategoryIndexPage, sponsorItems", sponsorItems);
   const showSponsor = true;
   const hasSponsorItem = showSponsor && sponsorItems.length > 0;
 
-  const { sort, page } = searchParams as { [key: string]: string };
+  const {
+    category,
+    tag,
+    sort,
+    page,
+    q: query,
+    f: filter,
+  } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
     SORT_FILTER_LIST.find((item) => item.slug === sort) || DEFAULT_SORT;
-  const currentPage = page ? Number(page) : 1;
+  const parsedPage = page ? Number(page) : 1;
+  const pageIsValid = Number.isInteger(parsedPage) && parsedPage > 0;
+  const currentPage = pageIsValid ? parsedPage : 1;
+
+  const getCategoryUrl = (targetPage?: number) => {
+    const params = new URLSearchParams();
+    if (category) params.set("category", category);
+    if (tag) params.set("tag", tag);
+    if (sort) params.set("sort", sort);
+    if (query) params.set("q", query);
+    if (filter) params.set("f", filter);
+    if (targetPage && targetPage > 1) params.set("page", String(targetPage));
+    const queryString = params.toString();
+    return queryString ? `/category?${queryString}` : "/category";
+  };
+
+  if (!pageIsValid) {
+    redirect(getCategoryUrl());
+  }
+
   const { items, totalCount } = await getItems({
+    category,
+    tag,
     sortKey,
     reverse,
+    query,
+    filter,
     currentPage,
     hasSponsorItem,
   });
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-  console.log(
-    "CategoryIndexPage, totalCount",
-    totalCount,
-    ", totalPages",
-    totalPages,
-  );
+  const itemsPerPage = hasSponsorItem ? ITEMS_PER_PAGE - 1 : ITEMS_PER_PAGE;
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
+  const lastValidPage = Math.max(totalPages, 1);
+
+  if (currentPage > lastValidPage) {
+    redirect(getCategoryUrl(lastValidPage));
+  }
 
   return (
     <div>
-      {/* when no items are found */}
       {items?.length === 0 && <EmptyGrid />}
 
-      {/* when items are found */}
       {items && items.length > 0 && (
-        <section className="">
+        <section>
           <ItemGrid
             items={items}
             sponsorItems={sponsorItems}
