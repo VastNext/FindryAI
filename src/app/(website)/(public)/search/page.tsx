@@ -17,6 +17,7 @@ export const metadata = constructMetadata({
   title: "Search",
   description: "Search for your needs",
   canonicalUrl: `${siteConfig.url}/search`,
+  noIndex: true,
 });
 
 export default async function SearchPage({

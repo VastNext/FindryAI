@@ -9,10 +9,14 @@ import {
 } from "@/lib/constants";
 import { constructMetadata } from "@/lib/metadata";
 
-export const metadata = constructMetadata({
-  title: "",
-  canonicalUrl: `${siteConfig.url}/`,
-});
+export const metadata = {
+  ...constructMetadata({
+    canonicalUrl: `${siteConfig.url}/`,
+  }),
+  title: {
+    absolute: siteConfig.name,
+  },
+};
 
 export default async function HomePage({
   searchParams,

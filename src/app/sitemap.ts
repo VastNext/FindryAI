@@ -33,10 +33,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
     },
     {
-      url: "search",
-      lastModified: new Date(),
-    },
-    {
       url: "category",
       lastModified: new Date(),
     },
@@ -46,14 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: "pricing",
-      lastModified: new Date(),
-    },
-    {
-      url: "auth/login",
-      lastModified: new Date(),
-    },
-    {
-      url: "auth/register",
       lastModified: new Date(),
     },
     {

@@ -5,7 +5,7 @@ import type { Metadata } from "next";
  * Construct the metadata object for the current page (in docs/guides)
  */
 export function constructMetadata({
-  title = siteConfig.name,
+  title,
   description = siteConfig.description,
   canonicalUrl,
   image = siteConfig.image,
@@ -17,9 +17,9 @@ export function constructMetadata({
   image?: string;
   noIndex?: boolean;
 } = {}): Metadata {
-  const fullTitle = title ? `${title} - ${siteConfig.name}` : siteConfig.name;
+  const socialTitle = title || siteConfig.name;
   return {
-    title: fullTitle,
+    title,
     description,
     keywords: siteConfig.keywords,
     creator: siteConfig.author,
@@ -37,14 +37,14 @@ export function constructMetadata({
       type: "website",
       locale: "en_US",
       url: siteConfig.url,
-      title: fullTitle,
+      title: socialTitle,
       description,
       siteName: siteConfig.name,
       images: [image],
     },
     twitter: {
       card: "summary_large_image",
-      title: fullTitle,
+      title: socialTitle,
       description,
       images: [image],
       site: siteConfig.url,
@@ -60,7 +60,7 @@ export function constructMetadata({
     ...(noIndex && {
       robots: {
         index: false,
-        follow: false,
+        follow: true,
       },
     }),
   };

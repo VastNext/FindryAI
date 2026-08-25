@@ -10,12 +10,20 @@ import { auth } from "@/auth";
 import { Analytics } from "@/components/analytics/analytics";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { Toaster } from "@/components/ui/sonner";
+import { siteConfig } from "@/config/site";
 import { constructMetadata } from "@/lib/metadata";
 import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 
-export const metadata = constructMetadata();
+export const metadata: Metadata = {
+  ...constructMetadata(),
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+};
 
 interface RootLayoutProps {
   children: React.ReactNode;
