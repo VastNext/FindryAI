@@ -11,13 +11,13 @@ export function constructMetadata({
   image = siteConfig.image,
   noIndex = false,
 }: {
-  title?: string;
+  title?: Metadata["title"];
   description?: string;
   canonicalUrl?: string;
   image?: string;
   noIndex?: boolean;
 } = {}): Metadata {
-  const socialTitle = title || siteConfig.name;
+  const socialTitle = getSocialTitle(title);
   return {
     title,
     description,
@@ -64,4 +64,17 @@ export function constructMetadata({
       },
     }),
   };
+}
+
+function getSocialTitle(title: Metadata["title"]): string {
+  if (typeof title === "string") {
+    return title;
+  }
+  if (title && "absolute" in title) {
+    return title.absolute;
+  }
+  if (title && "default" in title) {
+    return title.default;
+  }
+  return siteConfig.name;
 }

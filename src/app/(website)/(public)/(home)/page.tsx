@@ -8,15 +8,24 @@ import {
   SORT_FILTER_LIST,
 } from "@/lib/constants";
 import { constructMetadata } from "@/lib/metadata";
+import type { Metadata } from "next";
 
-export const metadata = {
-  ...constructMetadata({
-    canonicalUrl: `${siteConfig.url}/`,
-  }),
-  title: {
-    absolute: siteConfig.name,
-  },
-};
+export function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}): Metadata {
+  const currentPage = parsePage(searchParams?.page);
+  const canonicalUrl =
+    currentPage > 1
+      ? `${siteConfig.url}/?page=${currentPage}`
+      : `${siteConfig.url}/`;
+
+  return constructMetadata({
+    title: { absolute: siteConfig.name },
+    canonicalUrl,
+  });
+}
 
 export default async function HomePage({
   searchParams,
@@ -36,12 +45,7 @@ export default async function HomePage({
   } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
     SORT_FILTER_LIST.find((item) => item.slug === sort) || DEFAULT_SORT;
-  const pageParam = Array.isArray(searchParams?.page)
-    ? searchParams.page[0]
-    : searchParams?.page;
-  const parsedPage = Number(pageParam);
-  const currentPage =
-    Number.isInteger(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
+  const currentPage = parsePage(searchParams?.page);
   const { items, totalCount } = await getItems({
     category,
     tag,
@@ -79,4 +83,9 @@ export default async function HomePage({
       )}
     </div>
   );
+}
+
+function parsePage(page: string | string[] | undefined): number {
+  const parsedPage = Number(Array.isArray(page) ? page[0] : page);
+  return Number.isInteger(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
 }

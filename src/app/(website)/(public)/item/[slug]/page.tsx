@@ -36,7 +36,7 @@ export async function generateMetadata({
     query: itemInfoBySlugQuery,
     params: { slug: params.slug },
   });
-  if (!item) {
+  if (!item?.name) {
     console.warn(`generateMetadata, item not found for slug: ${params.slug}`);
     return;
   }
@@ -121,22 +121,14 @@ export default async function ItemPage({ params }: ItemPageProps) {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       name: item.name,
-      description: item.description,
+      ...(item.description && { description: item.description }),
       url: itemUrl,
       applicationSuite: siteConfig.name,
       applicationCategory: primaryCategory?.name || "AIApplication",
       operatingSystem: "Web",
       datePublished: publishDate,
-      ...(item.link && { downloadUrl: item.link }),
+      ...(item.link && { sameAs: item.link }),
       ...(imageProps?.src && { image: imageProps.src }),
-      ...(item.pricePlan && {
-        offers: {
-          "@type": "Offer",
-          category: item.pricePlan,
-          description: `${item.pricePlan} listing plan`,
-          url: itemUrl,
-        },
-      }),
     },
     {
       "@context": "https://schema.org",

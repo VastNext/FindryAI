@@ -22,6 +22,7 @@ export default function CustomPagination({
 }: CustomPaginationProps) {
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
+  const lastPage = Math.max(1, totalPages);
 
   const getPageHref = (page: number | string) => {
     const params = new URLSearchParams(searchParams);
@@ -29,7 +30,7 @@ export default function CustomPagination({
     return `${routePrefix}?${params.toString()}`;
   };
 
-  const allPages = generatePagination(currentPage, totalPages);
+  const allPages = generatePagination(currentPage, lastPage);
 
   return (
     <Pagination>
@@ -64,10 +65,10 @@ export default function CustomPagination({
 
         <PaginationItem>
           <PaginationNext
-            href={getPageHref(Math.min(totalPages, currentPage + 1))}
-            aria-disabled={currentPage >= totalPages}
+            href={getPageHref(Math.min(lastPage, currentPage + 1))}
+            aria-disabled={currentPage >= lastPage}
             className={
-              currentPage >= totalPages
+              currentPage >= lastPage
                 ? "pointer-events-none text-gray-300 dark:text-gray-600"
                 : "cursor-pointer"
             }

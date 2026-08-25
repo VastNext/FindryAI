@@ -31,7 +31,7 @@ export async function generateMetadata({
     query: blogPostMetadataQuery,
     params: { slug: params.slug },
   });
-  if (!post) {
+  if (!post?.title) {
     console.warn(`generateMetadata, post not found for slug: ${params.slug}`);
     return;
   }
@@ -77,11 +77,11 @@ export default async function PostPage({ params }: PostPageProps) {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       headline: post.title,
-      description: post.excerpt,
+      ...(post.excerpt && { description: post.excerpt }),
       url: postUrl,
       mainEntityOfPage: postUrl,
       datePublished: publishDate,
-      dateModified: publishDate,
+      dateModified: post._updatedAt,
       ...(imageProps?.src && { image: imageProps.src }),
       author: {
         "@type": "Person",

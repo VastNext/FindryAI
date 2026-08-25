@@ -224,6 +224,7 @@ export const pageQuery = defineQuery(`
 export const blogPostSimpleFields = /* groq */ `
   _id,
   _createdAt,
+  _updatedAt,
   title,
   slug,
   excerpt,
