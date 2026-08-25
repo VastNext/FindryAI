@@ -217,11 +217,12 @@ const markdownComponents = {
     alt,
     ...props
   }: React.ImgHTMLAttributes<HTMLImageElement>) => (
-    // biome-ignore lint/a11y/useAltText: <explanation>
+    // biome-ignore lint/a11y/useAltText: alt 由 Markdown 内容动态提供，缺失时作为装饰图处理
     <img
       className={cn("rounded-md border my-2", className)}
-      alt={alt || "Image"}
-      title={alt || "Image"}
+      alt={alt || ""}
+      title={alt}
+      loading="lazy"
       {...props}
     />
   ),
@@ -295,12 +296,16 @@ const markdownComponents = {
  */
 const customComponents = {
   Callout,
-  Image: ({ className, ...props }: React.ComponentProps<"img">) => (
-    // biome-ignore lint/a11y/useAltText: use alt="image" as default
+  Image: ({
+    className,
+    alt,
+    ...props
+  }: Omit<React.ComponentProps<"img">, "alt"> & { alt: string }) => (
+    // biome-ignore lint/a11y/useAltText: alt 是此自定义组件的必填属性
     <img
       className={cn("rounded-md border my-2", className)}
-      // biome-ignore lint/a11y/noRedundantAlt: use image as default alt
-      alt="image"
+      alt={alt || ""}
+      loading="lazy"
       {...props}
     />
   ),
