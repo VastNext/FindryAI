@@ -9,7 +9,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type CustomPaginationProps = {
   totalPages: number;
@@ -20,14 +20,13 @@ export default function CustomPagination({
   totalPages,
   routePrefix,
 }: CustomPaginationProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
 
-  const handlePageChange = (page: number | string) => {
+  const getPageHref = (page: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", page.toString());
-    router.push(`${routePrefix}?${params.toString()}`);
+    return `${routePrefix}?${params.toString()}`;
   };
 
   const allPages = generatePagination(currentPage, totalPages);
@@ -37,11 +36,7 @@ export default function CustomPagination({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            onClick={
-              currentPage > 1
-                ? () => handlePageChange(currentPage - 1)
-                : undefined
-            }
+            href={getPageHref(Math.max(1, currentPage - 1))}
             aria-disabled={currentPage <= 1}
             className={
               currentPage <= 1
@@ -57,7 +52,7 @@ export default function CustomPagination({
               <PaginationEllipsis />
             ) : (
               <PaginationLink
-                onClick={() => handlePageChange(page)}
+                href={getPageHref(page)}
                 isActive={currentPage === page}
                 className={currentPage === page ? "" : "cursor-pointer"}
               >
@@ -69,11 +64,7 @@ export default function CustomPagination({
 
         <PaginationItem>
           <PaginationNext
-            onClick={
-              currentPage < totalPages
-                ? () => handlePageChange(currentPage + 1)
-                : undefined
-            }
+            href={getPageHref(Math.min(totalPages, currentPage + 1))}
             aria-disabled={currentPage >= totalPages}
             className={
               currentPage >= totalPages

@@ -32,7 +32,12 @@ export default async function HomePage({
   } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
     SORT_FILTER_LIST.find((item) => item.slug === sort) || DEFAULT_SORT;
-  const currentPage = 1;
+  const pageParam = Array.isArray(searchParams?.page)
+    ? searchParams.page[0]
+    : searchParams?.page;
+  const parsedPage = Number(pageParam);
+  const currentPage =
+    Number.isInteger(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
   const { items, totalCount } = await getItems({
     category,
     tag,
@@ -56,7 +61,7 @@ export default async function HomePage({
         <section className="">
           {/* key 保证搜索/筛选条件变化时重置无限滚动状态 */}
           <HomeInfiniteScroll
-            key={`${category ?? ""}-${tag ?? ""}-${sort ?? ""}-${query ?? ""}-${filter ?? ""}`}
+            key={`${category ?? ""}-${tag ?? ""}-${sort ?? ""}-${query ?? ""}-${filter ?? ""}-${currentPage}`}
             initialItems={items}
             initialPage={currentPage}
             totalPages={totalPages}
