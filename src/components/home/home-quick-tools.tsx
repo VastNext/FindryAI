@@ -1,4 +1,4 @@
-import { FolderIcon, LayoutGridIcon, SearchIcon } from "lucide-react";
+import { KeyRoundIcon, LayoutGridIcon, SearchIcon } from "lucide-react";
 import Link from "next/link";
 
 const quickTools = [
@@ -15,10 +15,10 @@ const quickTools = [
     icon: LayoutGridIcon,
   },
   {
-    name: "Collections",
-    description: "Explore curated lists",
-    href: "/collection",
-    icon: FolderIcon,
+    name: "Password Generator",
+    description: "Create secure passwords",
+    href: "/password-generator",
+    icon: KeyRoundIcon,
   },
 ] as const;
 
