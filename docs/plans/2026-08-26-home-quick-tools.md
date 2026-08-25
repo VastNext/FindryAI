@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** 在首页 Hero 右侧加入符合 Findry AI 视觉系统的六个快捷入口，并保留现有赞助条目。
+**Goal:** 在首页 Hero 右侧加入符合 Findry AI 视觉系统的三个快捷入口，并保留现有赞助条目。
 
 **Architecture:** 新建静态 `HomeQuickTools` 组件集中定义入口数据并负责单行图标按钮展示；`HomeHeroSponsor` 只负责 Hero 布局和 CMS 赞助数据，将快捷按钮与可选赞助卡片组合为右栏。项目没有测试框架，因此使用 Biome 与 Next.js 构建作为验证门禁。
 
@@ -17,11 +17,11 @@
 
 **Step 1: 定义入口数据**
 
-在组件内建立六项只读数组，分别链接 `/search`、`/category`、`/collection`、`/blog`、`/submit` 和 `/pricing`，为每项选择语义匹配的 Lucide 图标。
+在组件内建立三项只读数组，分别链接 `/search`、`/category` 和 `/collection`，为每项选择语义匹配的 Lucide 图标。
 
 **Step 2: 实现语义化组件**
 
-输出带无障碍名称的 `nav`，用单行弹性布局渲染六个方形 `Link`。每个链接包含图标，并提供明确的 `aria-label`、`title` 与键盘焦点样式。
+输出带无障碍名称的 `nav`，用单行弹性布局渲染三个方形 `Link`。每个链接包含图标，并提供明确的 `aria-label`、`title` 与键盘焦点样式。
 
 **Step 3: 检查组件文件**
 

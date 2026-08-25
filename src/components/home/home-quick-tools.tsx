@@ -1,11 +1,4 @@
-import {
-  BookOpenIcon,
-  FolderIcon,
-  LayoutGridIcon,
-  SearchIcon,
-  SendIcon,
-  SparklesIcon,
-} from "lucide-react";
+import { FolderIcon, LayoutGridIcon, SearchIcon } from "lucide-react";
 import Link from "next/link";
 
 const quickTools = [
@@ -26,24 +19,6 @@ const quickTools = [
     description: "Explore curated lists",
     href: "/collection",
     icon: FolderIcon,
-  },
-  {
-    name: "Blog",
-    description: "Read practical guides",
-    href: "/blog",
-    icon: BookOpenIcon,
-  },
-  {
-    name: "Submit",
-    description: "Share an AI tool",
-    href: "/submit",
-    icon: SendIcon,
-  },
-  {
-    name: "Pricing",
-    description: "Compare plans",
-    href: "/pricing",
-    icon: SparklesIcon,
   },
 ] as const;
 
