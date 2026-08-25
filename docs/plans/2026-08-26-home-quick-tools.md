@@ -4,7 +4,7 @@
 
 **Goal:** 在首页 Hero 右侧加入符合 Findry AI 视觉系统的六个快捷入口，并保留现有赞助条目。
 
-**Architecture:** 新建静态 `HomeQuickTools` 组件集中定义入口数据并负责两列展示；`HomeHeroSponsor` 只负责 Hero 布局和 CMS 赞助数据，将快捷入口与可选赞助卡片组合为右栏。项目没有测试框架，因此使用 Biome、Next.js 构建和浏览器截图作为验证门禁。
+**Architecture:** 新建静态 `HomeQuickTools` 组件集中定义入口数据并负责单行图标按钮展示；`HomeHeroSponsor` 只负责 Hero 布局和 CMS 赞助数据，将快捷按钮与可选赞助卡片组合为右栏。项目没有测试框架，因此使用 Biome 与 Next.js 构建作为验证门禁。
 
 **Tech Stack:** Next.js 14 App Router、React 18、TypeScript、Tailwind CSS、Lucide React。
 
@@ -21,7 +21,7 @@
 
 **Step 2: 实现语义化组件**
 
-输出带标题的 `nav`，用两列网格渲染 `Link`。每个链接包含图标、名称和简短说明，并提供明确的 `aria-label` 与键盘焦点样式。
+输出带无障碍名称的 `nav`，用单行弹性布局渲染六个方形 `Link`。每个链接包含图标，并提供明确的 `aria-label`、`title` 与键盘焦点样式。
 
 **Step 3: 检查组件文件**
 
@@ -48,7 +48,7 @@ Run: `pnpm biome check src/components/home/home-quick-tools.tsx src/components/h
 
 Expected: 命令退出码为 0。
 
-### Task 3: 全量验证与视觉检查
+### Task 3: 全量验证
 
 **Files:**
 - Verify: `src/components/home/home-quick-tools.tsx`
@@ -66,12 +66,6 @@ Run: `pnpm build`
 
 Expected: Next.js 构建成功且 TypeScript 无错误。
 
-**Step 3: 启动开发服务并截图**
-
-Run: `pnpm dev`
-
-Expected: 首页可访问。在 1440×1000 与 390×844 视口下确认桌面双栏、移动堆叠、按钮可读性、无横向溢出，并保存截图作为视觉证据。
-
-**Step 4: 提交改动**
+**Step 3: 提交改动**
 
 只暂存本计划涉及的文档和组件，使用符合仓库惯例的提交信息并推送当前分支。
