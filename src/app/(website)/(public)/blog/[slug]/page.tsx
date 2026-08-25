@@ -2,6 +2,7 @@ import AllPostsButton from "@/components/blog/all-posts-button";
 import BlogCustomMdx from "@/components/blog/blog-custom-mdx";
 import BlogGrid from "@/components/blog/blog-grid";
 import { BlogToc } from "@/components/blog/blog-toc";
+import { JsonLd } from "@/components/shared/json-ld";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { siteConfig } from "@/config/site";
 import { urlForImage } from "@/lib/image";
@@ -70,9 +71,59 @@ export default async function PostPage({ params }: PostPageProps) {
   // console.log("markdownContent", markdownContent);
 
   const toc = await getTableOfContents(markdownContent);
+  const postUrl = `${siteConfig.url}/blog/${slug}`;
+  const postJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.excerpt,
+      url: postUrl,
+      mainEntityOfPage: postUrl,
+      datePublished: publishDate,
+      dateModified: publishDate,
+      ...(imageProps?.src && { image: imageProps.src }),
+      author: {
+        "@type": "Person",
+        name: post.author?.name || siteConfig.author,
+        ...(post.author?.link && { url: post.author.link }),
+      },
+      publisher: {
+        "@type": "Organization",
+        name: siteConfig.name,
+        url: siteConfig.url,
+        logo: `${siteConfig.url}${siteConfig.logo}`,
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteConfig.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Blog",
+          item: `${siteConfig.url}/blog`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: post.title,
+          item: postUrl,
+        },
+      ],
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-8">
+      <JsonLd data={postJsonLd} />
       {/* Content section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column */}

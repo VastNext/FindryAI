@@ -8,6 +8,7 @@ import {
 } from "@/assets/fonts";
 import { auth } from "@/auth";
 import { Analytics } from "@/components/analytics/analytics";
+import { JsonLd } from "@/components/shared/json-ld";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
@@ -29,6 +30,22 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteConfig.name,
+  url: siteConfig.url,
+  description: siteConfig.description,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${siteConfig.url}/search?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+
 export default async function RootLayout({ children }: RootLayoutProps) {
   // https://youtu.be/1MTyCvS05V4?t=21464
   const session = await auth();
@@ -49,6 +66,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           fontBricolage.variable,
         )}
       >
+        <JsonLd data={websiteJsonLd} />
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"

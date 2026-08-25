@@ -3,6 +3,7 @@ import SponsorItemCard from "@/components/item/item-card-sponsor";
 import ItemCustomMdx from "@/components/item/item-custom-mdx";
 import ItemGrid from "@/components/item/item-grid";
 import BackButton from "@/components/shared/back-button";
+import { JsonLd } from "@/components/shared/json-ld";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
@@ -86,9 +87,67 @@ export default async function ItemPage({ params }: ItemPageProps) {
   const sponsorItem = sponsorItems?.length
     ? sponsorItems[Math.floor(Math.random() * sponsorItems.length)]
     : null;
+  const itemUrl = `${siteConfig.url}/item/${params.slug}`;
+  const primaryCategory = item.categories?.[0];
+  const hasPrimaryCategory = Boolean(
+    primaryCategory?.name && primaryCategory.slug?.current,
+  );
+  const breadcrumbItems = [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: siteConfig.url,
+    },
+    ...(hasPrimaryCategory
+      ? [
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: primaryCategory.name,
+            item: `${siteConfig.url}/category/${primaryCategory.slug.current}`,
+          },
+        ]
+      : []),
+    {
+      "@type": "ListItem",
+      position: hasPrimaryCategory ? 3 : 2,
+      name: item.name,
+      item: itemUrl,
+    },
+  ];
+  const itemJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: item.name,
+      description: item.description,
+      url: itemUrl,
+      applicationSuite: siteConfig.name,
+      applicationCategory: primaryCategory?.name || "AIApplication",
+      operatingSystem: "Web",
+      datePublished: publishDate,
+      ...(item.link && { downloadUrl: item.link }),
+      ...(imageProps?.src && { image: imageProps.src }),
+      ...(item.pricePlan && {
+        offers: {
+          "@type": "Offer",
+          category: item.pricePlan,
+          description: `${item.pricePlan} listing plan`,
+          url: itemUrl,
+        },
+      }),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: breadcrumbItems,
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-8">
+      <JsonLd data={itemJsonLd} />
       {/* Header section */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         {/* Left column */}
@@ -209,7 +268,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
               <div className="bg-muted/50 rounded-lg p-6">
                 <h2 className="text-lg font-semibold mb-4">Information</h2>
                 <ul className="space-y-4 text-sm">
-                {item.submitter && (
+                  {item.submitter && (
                     <li className="flex justify-between">
                       <span className="text-muted-foreground">Publisher</span>
                       <div className="flex items-center gap-2">
@@ -309,7 +368,11 @@ export default async function ItemPage({ params }: ItemPageProps) {
           </div>
 
           <div className="mt-4">
-            <ItemGrid items={item.related} sponsorItems={sponsorItems} showSponsor={false} />
+            <ItemGrid
+              items={item.related}
+              sponsorItems={sponsorItems}
+              showSponsor={false}
+            />
           </div>
         </div>
       )}
