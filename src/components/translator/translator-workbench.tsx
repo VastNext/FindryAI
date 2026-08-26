@@ -622,7 +622,7 @@ export function TranslatorWorkbench() {
 
       <div
         className={cn(
-          "grid gap-6 max-[900px]:grid-cols-1",
+          "grid items-start gap-6 max-[900px]:grid-cols-1",
           effectiveLayout === "side-by-side"
             ? "min-[901px]:grid-cols-2"
             : "grid-cols-1",
@@ -794,7 +794,12 @@ export function TranslatorWorkbench() {
           className="min-w-0"
           aria-labelledby="translation-results-title"
         >
-          <div className="mb-3 flex min-h-7 items-center justify-between gap-4">
+          <div
+            className={cn(
+              "mb-3 flex min-h-7 items-center justify-between gap-4",
+              effectiveLayout === "side-by-side" && "hidden",
+            )}
+          >
             <h3 id="translation-results-title" className="font-semibold">
               Results
             </h3>
