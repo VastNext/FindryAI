@@ -23,11 +23,6 @@ export const marketingConfig: MarketingConfig = {
       icon: "pricing",
     },
     {
-      title: "Password Generator",
-      href: "/password-generator",
-      icon: "passwordGenerator",
-    },
-    {
       title: "Submit",
       href: "/submit",
       icon: "submit",
