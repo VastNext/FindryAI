@@ -30,7 +30,7 @@ interface ChatCompletion {
 
 export class AgnesProvider implements TranslationProvider {
   readonly available: boolean;
-  readonly timeoutMs = 30_000;
+  readonly timeoutMs = null;
 
   constructor(
     readonly id: AgnesProviderId,

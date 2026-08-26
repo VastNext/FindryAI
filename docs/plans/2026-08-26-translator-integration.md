@@ -26,7 +26,7 @@
 
 **Step 1: Copy and narrow domain types**
 
-Copy the source domain files, remove Azure from `providerIds` and the Registry, and translate language labels and all user-facing validation/provider errors to English. Keep provider implementation behavior unchanged except for formatting required by Biome and a finite 30-second Agnes timeout to bound server concurrency.
+Copy the source domain files, remove Azure from `providerIds` and the Registry, and translate language labels and all user-facing validation/provider errors to English. Keep provider implementation behavior unchanged except for formatting required by Biome, including Agnes without an application-level timeout.
 
 **Step 2: Add the Route Handler**
 
