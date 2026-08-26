@@ -7,6 +7,7 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { sponsorItemListQuery } from "@/sanity/lib/queries";
 import Link from "next/link";
 import SponsorItemCard from "../item/item-card-sponsor";
+import HomeQuickTools from "./home-quick-tools";
 import HomeSearchBox from "./home-search-box";
 
 export default async function HomeHeroSponsor() {
@@ -55,12 +56,11 @@ export default async function HomeHeroSponsor() {
           </div>
         </div>
 
-        {/* Sponsor card with fixed width */}
-        {sponsorItem && (
-          <div className="w-full lg:w-[400px]">
-            <SponsorItemCard item={sponsorItem} />
-          </div>
-        )}
+        <div className="flex w-full flex-col gap-6 lg:w-[400px] lg:shrink-0">
+          <HomeQuickTools />
+
+          {sponsorItem && <SponsorItemCard item={sponsorItem} />}
+        </div>
       </div>
     </div>
   );
