@@ -26,7 +26,7 @@ export default function HomeQuickTools() {
   return (
     <nav
       aria-label="Quick access"
-      className="flex w-full justify-center gap-1 min-[360px]:gap-2 sm:gap-3"
+      className="flex w-full justify-end gap-1 min-[360px]:gap-2 sm:gap-3"
     >
       {quickTools.map((tool) => {
         const Icon = tool.icon;

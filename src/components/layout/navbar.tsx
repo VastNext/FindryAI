@@ -107,6 +107,8 @@ export function Navbar({ scroll = false, config }: NavBarProps) {
 
           {/* navbar right show sign in or account */}
           <div className="flex items-center gap-x-4">
+            <ModeToggle />
+
             {user ? (
               <div className="flex items-center">
                 <UserButton />
@@ -123,8 +125,6 @@ export function Navbar({ scroll = false, config }: NavBarProps) {
                 </Button>
               </LoginWrapper>
             )}
-
-            <ModeToggle />
           </div>
         </Container>
       </header>
@@ -202,6 +202,8 @@ export function Navbar({ scroll = false, config }: NavBarProps) {
 
           {/* mobile navbar right show sign in or account */}
           <div className="flex items-center gap-x-4">
+            <ModeToggle />
+
             {user ? (
               <div className="flex items-center">
                 <UserButton />
@@ -218,8 +220,6 @@ export function Navbar({ scroll = false, config }: NavBarProps) {
                 </Button>
               </LoginWrapper>
             )}
-
-            <ModeToggle />
           </div>
         </div>
       </header>
