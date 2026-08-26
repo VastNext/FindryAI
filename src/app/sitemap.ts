@@ -45,6 +45,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
     },
     {
+      url: "translator",
+      lastModified: new Date(),
+    },
+    {
       url: "about",
       lastModified: new Date(),
     },

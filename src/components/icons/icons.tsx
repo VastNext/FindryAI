@@ -3,6 +3,7 @@ import {
   CreditCardIcon,
   FileTextIcon,
   HomeIcon,
+  LanguagesIcon,
   LayoutDashboardIcon,
   LayoutGridIcon,
   LayoutListIcon,
@@ -12,7 +13,7 @@ import {
   SearchIcon,
   SettingsIcon,
   TagsIcon,
-  UploadIcon
+  UploadIcon,
 } from "lucide-react";
 import { FaBrandsGitHub } from "../icons/github";
 import { FaBrandsGoogle } from "../icons/google";
@@ -35,6 +36,7 @@ export const Icons = {
   // used by name
   arrowRight: ArrowRightIcon,
   search: SearchIcon,
+  translator: LanguagesIcon,
   collection: LayoutListIcon,
   category: LayoutGridIcon,
   tag: TagsIcon,

@@ -14,6 +14,7 @@ export const publicRoutes = [
   "/item(/.*)?",
   "/blog(/.*)?",
   "/pricing(/.*)?",
+  "/translator(/.*)?",
 
   "/about(/.*)?",
   "/terms(/.*)?",
@@ -37,6 +38,9 @@ export const publicRoutes = [
 
   // items list for infinite scroll, same public data as item pages
   "/api/items",
+
+  // public text translation endpoint
+  "/api/translate",
 
   // draft mode
   "/api/draft",
