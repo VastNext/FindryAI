@@ -1,5 +1,4 @@
 import { Icons } from "@/components/icons/icons";
-import { ModeToggle } from "@/components/layout/mode-toggle";
 import { footerConfig } from "@/config/footer";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -109,10 +108,6 @@ export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
           <span className="text-muted-foreground text-sm">
             Copyright &copy; {new Date().getFullYear()} All Rights Reserved.
           </span>
-
-          <div className="flex items-center gap-3">
-            <ModeToggle />
-          </div>
         </Container>
       </div>
     </footer>
