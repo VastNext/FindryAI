@@ -26,6 +26,23 @@ Findry AI 者，以 Next.js 十四（App Router）所造之 AI 工具目录网�
 
 纯文档、内部脚本、无可访问页面的后端改动，或仓库未配置 Vercel 项目时，可不部署 Preview；交付时须说明不适用原因。若 Preview 构建失败，先修复并重新走验证、提交、push、部署流程，不得以失败地址作为验收地址。
 
+## 生产部署（tag 触发）
+
+生产环境**只允许**经由 GitHub Actions 部署，**禁止**手动运行 `vercel deploy --prod`（手动部署不经过 CI，会绕过本库发布门禁）。
+
+- **工作流**：`.github/workflows/deploy.yml`（名「Deploy to Vercel」）
+- **触发条件**：推送 `v*` tag（通常基于 `main`）；另支持 `workflow_dispatch` 手动触发
+- **所需 GitHub Secrets（仓库级，勿写入代码或文档）**：`VERCEL_TOKEN`、`VERCEL_ORG_ID`、`VERCEL_PROJECT_ID`、`VERCEL_PROJECT_NAME`
+- **发布流程**：
+  1. 确认 `main` 为最新且本地无未提交改动（`git fetch origin && git rev-parse origin/main && git status --short`）
+  2. 打 annotated tag：`git tag -a vX.Y.Z -m "Release vX.Y.Z: <摘要>" <main-commit>`
+  3. 推送 tag：`git push origin vX.Y.Z`（此举触发 Actions 部署）
+  4. 以 `gh -R VastNext/FindryAI run list` 等候 Actions run 成功（留意对应 tag 与 `completed success`）
+  5. 以 `vercel inspect findryai.com` 核对生产指向：`target=production` 且部署 URL 与 Actions run 产出一致
+  6. 生产冒烟验证：如翻译器可 `curl -X POST https://findryai.com/api/translate -H "Content-Type: application/json" -d '{"text":"Hello","sourceLanguage":"auto","targetLanguage":"zh-CN","providers":["agnes-2-0"]}'`
+- **生产环境变量**（如 `AGNES_API_KEY`）以 `vercel env add <NAME> production` 配置于 Vercel 项目（类型 Sensitive）；GitHub Actions 部署到同一项目会自动采用该项目已配置的生产环境变量，无需另行传入。密钥绝不写入仓库或 GitHub Secrets 之外的明文位置。
+- **本地 `.env.local`** 仅供本地开发（已被 `.gitignore` 忽略），与生产环境变量相互独立；本地改动配置不影响线上。
+
 ## 指令
 
 - **开发服务**：`pnpm dev`
