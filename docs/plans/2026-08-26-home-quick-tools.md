@@ -17,7 +17,7 @@
 
 **Step 1: 定义入口数据**
 
-在组件内建立三项只读数组，分别链接 `/search`、`/category` 和 `/password-generator`，为每项选择语义匹配的 Lucide 图标。
+在组件内建立三项只读数组，分别链接 `/search`、`/translator` 和 `/password-generator`，为每项选择语义匹配的 Lucide 图标。
 
 **Step 2: 实现语义化组件**
 

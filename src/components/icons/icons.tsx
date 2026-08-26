@@ -3,7 +3,6 @@ import {
   CreditCardIcon,
   FileTextIcon,
   HomeIcon,
-  LanguagesIcon,
   LayoutDashboardIcon,
   LayoutGridIcon,
   LayoutListIcon,
@@ -36,7 +35,6 @@ export const Icons = {
   // used by name
   arrowRight: ArrowRightIcon,
   search: SearchIcon,
-  translator: LanguagesIcon,
   collection: LayoutListIcon,
   category: LayoutGridIcon,
   tag: TagsIcon,
