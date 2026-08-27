@@ -1,5 +1,6 @@
 import ItemGrid from "@/components/item/item-grid";
 import EmptyGrid from "@/components/shared/empty-grid";
+import { JsonLd } from "@/components/shared/json-ld";
 import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getItems } from "@/data/item";
@@ -47,7 +48,7 @@ export async function generateMetadata({
       `${siteConfig.url}/category/${params.slug}`,
       searchParams?.page,
     ),
-    // image: ogImageUrl.toString(),
+    image: ogImageUrl.toString(),
   });
 }
 
@@ -58,13 +59,17 @@ export default async function CategoryPage({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const sponsorItems =
-    (await sanityFetch<SponsorItemListQueryResult>({
+  const [category, sponsorItems] = await Promise.all([
+    sanityFetch<CategoryQueryResult>({
+      query: categoryQuery,
+      params: { slug: params.slug },
+    }),
+    sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
-    })) || [];
-  // console.log("CategoryPage, sponsorItems", sponsorItems);
+    }),
+  ]);
   const showSponsor = true;
-  const hasSponsorItem = showSponsor && sponsorItems.length > 0;
+  const hasSponsorItem = showSponsor && (sponsorItems?.length ?? 0) > 0;
 
   const { sort, page } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
@@ -85,8 +90,43 @@ export default async function CategoryPage({
     totalPages,
   );
 
+  const categoryJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: category?.name,
+      ...(category?.description && { description: category.description }),
+      url: `${siteConfig.url}/category/${params.slug}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteConfig.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Category",
+          item: `${siteConfig.url}/category`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: category?.name || params.slug,
+          item: `${siteConfig.url}/category/${params.slug}`,
+        },
+      ],
+    },
+  ];
+
   return (
     <div>
+      <JsonLd data={categoryJsonLd} />
       {/* when no items are found */}
       {items?.length === 0 && <EmptyGrid />}
 

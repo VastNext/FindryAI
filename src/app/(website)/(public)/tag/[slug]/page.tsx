@@ -1,5 +1,6 @@
 import ItemGrid from "@/components/item/item-grid";
 import EmptyGrid from "@/components/shared/empty-grid";
+import { JsonLd } from "@/components/shared/json-ld";
 import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getItems } from "@/data/item";
@@ -45,7 +46,7 @@ export async function generateMetadata({
       `${siteConfig.url}/tag/${params.slug}`,
       searchParams?.page,
     ),
-    // image: ogImageUrl.toString(),
+    image: ogImageUrl.toString(),
   });
 }
 
@@ -56,13 +57,17 @@ export default async function TagPage({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const sponsorItems =
-    (await sanityFetch<SponsorItemListQueryResult>({
+  const [tag, sponsorItems] = await Promise.all([
+    sanityFetch<TagQueryResult>({
+      query: tagQuery,
+      params: { slug: params.slug },
+    }),
+    sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
-    })) || [];
-  // console.log("TagPage, sponsorItems", sponsorItems);
+    }),
+  ]);
   const showSponsor = true;
-  const hasSponsorItem = showSponsor && sponsorItems.length > 0;
+  const hasSponsorItem = showSponsor && (sponsorItems?.length ?? 0) > 0;
 
   const { sort, page } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
@@ -77,8 +82,43 @@ export default async function TagPage({
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
   console.log("TagPage, totalCount", totalCount, ", totalPages", totalPages);
 
+  const tagJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: tag?.name,
+      ...(tag?.description && { description: tag.description }),
+      url: `${siteConfig.url}/tag/${params.slug}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteConfig.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Tag",
+          item: `${siteConfig.url}/tag`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: tag?.name || params.slug,
+          item: `${siteConfig.url}/tag/${params.slug}`,
+        },
+      ],
+    },
+  ];
+
   return (
     <div>
+      <JsonLd data={tagJsonLd} />
       {/* when no items are found */}
       {items?.length === 0 && <EmptyGrid />}
 

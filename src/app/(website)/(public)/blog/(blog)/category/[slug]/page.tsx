@@ -1,5 +1,6 @@
 import BlogGrid from "@/components/blog/blog-grid";
 import EmptyGrid from "@/components/shared/empty-grid";
+import { JsonLd } from "@/components/shared/json-ld";
 import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getBlogs } from "@/data/blog";
@@ -40,7 +41,7 @@ export async function generateMetadata({
       `${siteConfig.url}/blog/category/${params.slug}`,
       searchParams?.page,
     ),
-    // image: ogImageUrl.toString(),
+    image: ogImageUrl.toString(),
   });
 }
 
@@ -51,13 +52,21 @@ export default async function BlogCategoryPage({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  // console.log('BlogCategoryPage, searchParams', searchParams);
-  const { page } = searchParams as { [key: string]: string };
-  const currentPage = page ? Number(page) : 1;
-  const { posts, totalCount } = await getBlogs({
-    category: params.slug,
-    currentPage,
-  });
+  const [category, { posts, totalCount }] = await Promise.all([
+    sanityFetch<BlogCategoryMetadateQueryResult>({
+      query: blogCategoryMetadateQuery,
+      params: { slug: params.slug },
+    }),
+    (() => {
+      const { page } = searchParams as { [key: string]: string };
+      const currentPage = page ? Number(page) : 1;
+      return getBlogs({
+        category: params.slug,
+        currentPage,
+      });
+    })(),
+  ]);
+
   const totalPages = Math.ceil(totalCount / POSTS_PER_PAGE);
   console.log(
     "BlogCategoryPage, totalCount",
@@ -66,8 +75,43 @@ export default async function BlogCategoryPage({
     totalPages,
   );
 
+  const categoryJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: category?.name,
+      ...(category?.description && { description: category.description }),
+      url: `${siteConfig.url}/blog/category/${params.slug}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteConfig.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Blog",
+          item: `${siteConfig.url}/blog`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: category?.name || params.slug,
+          item: `${siteConfig.url}/blog/category/${params.slug}`,
+        },
+      ],
+    },
+  ];
+
   return (
     <div>
+      <JsonLd data={categoryJsonLd} />
       {/* when no posts are found */}
       {posts?.length === 0 && <EmptyGrid />}
 

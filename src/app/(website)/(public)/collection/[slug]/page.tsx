@@ -2,6 +2,7 @@ import Container from "@/components/container";
 import ItemGrid from "@/components/item/item-grid";
 import EmptyGrid from "@/components/shared/empty-grid";
 import { HeaderSection } from "@/components/shared/header-section";
+import { JsonLd } from "@/components/shared/json-ld";
 import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getItems } from "@/data/item";
@@ -50,7 +51,7 @@ export async function generateMetadata({
       `${siteConfig.url}/collection/${params.slug}`,
       searchParams?.page,
     ),
-    // image: ogImageUrl.toString(),
+    image: ogImageUrl.toString(),
   });
 }
 
@@ -76,7 +77,6 @@ export default async function CollectionPage({
     (await sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
     })) || [];
-  // console.log("CollectionPage, sponsorItems", sponsorItems);
   const showSponsor = true;
   const hasSponsorItem = showSponsor && sponsorItems.length > 0;
 
@@ -99,8 +99,43 @@ export default async function CollectionPage({
     totalPages,
   );
 
+  const collectionJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: collection?.name,
+      ...(collection?.description && { description: collection.description }),
+      url: `${siteConfig.url}/collection/${params.slug}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteConfig.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Collection",
+          item: `${siteConfig.url}/collection`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: collection?.name || params.slug,
+          item: `${siteConfig.url}/collection/${params.slug}`,
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="mb-16">
+      <JsonLd data={collectionJsonLd} />
       <div className="mt-8">
         <div className="w-full flex flex-col items-center justify-center gap-8">
           <HeaderSection

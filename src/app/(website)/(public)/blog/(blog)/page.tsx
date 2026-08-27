@@ -1,5 +1,6 @@
 import BlogGrid from "@/components/blog/blog-grid";
 import EmptyGrid from "@/components/shared/empty-grid";
+import { JsonLd } from "@/components/shared/json-ld";
 import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getBlogs } from "@/data/blog";
@@ -39,8 +40,37 @@ export default async function BlogIndexPage({
     totalPages,
   );
 
+  const blogJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      name: `${siteConfig.name} Blog`,
+      description: "Read our latest blog posts",
+      url: `${siteConfig.url}/blog`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteConfig.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Blog",
+          item: `${siteConfig.url}/blog`,
+        },
+      ],
+    },
+  ];
+
   return (
     <div>
+      <JsonLd data={blogJsonLd} />
       {/* when no posts are found */}
       {posts?.length === 0 && <EmptyGrid />}
 

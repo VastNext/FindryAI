@@ -6,10 +6,25 @@ import type { MetadataRoute } from "next";
  */
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
+    rules: [
+      {
+        userAgent: "*",
+        allow: ["/", "/api/og"],
+        disallow: [
+          "/studio/",
+          "/dashboard/",
+          "/settings/",
+          "/edit/",
+          "/submit/",
+          "/publish/",
+          "/payment/",
+          "/auth/",
+          "/api/",
+          "/search",
+          "/unsubscribe/",
+        ],
+      },
+    ],
     sitemap: `${siteConfig.url}/sitemap.xml`,
     host: siteConfig.url,
   };

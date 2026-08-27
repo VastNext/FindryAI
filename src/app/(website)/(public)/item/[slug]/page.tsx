@@ -130,6 +130,14 @@ export default async function ItemPage({ params }: ItemPageProps) {
       datePublished: publishDate,
       ...(item.link && { sameAs: item.link }),
       ...(imageProps?.src && { image: imageProps.src }),
+      ...(item.pricePlan && {
+        offers: {
+          "@type": "Offer",
+          price: item.pricePlan === "free" ? "0" : undefined,
+          priceCurrency: "USD",
+          category: item.pricePlan,
+        },
+      }),
     },
     {
       "@context": "https://schema.org",
