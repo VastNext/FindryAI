@@ -1,6 +1,5 @@
-import ItemGrid from "@/components/item/item-grid";
+import HomeInfiniteScroll from "@/components/home/home-infinite-scroll";
 import EmptyGrid from "@/components/shared/empty-grid";
-import CustomPagination from "@/components/shared/pagination";
 import { siteConfig } from "@/config/site";
 import { getItems } from "@/data/item";
 import {
@@ -8,10 +7,9 @@ import {
   ITEMS_PER_PAGE,
   SORT_FILTER_LIST,
 } from "@/lib/constants";
-import { constructMetadata } from "@/lib/metadata";
-import type { SponsorItemListQueryResult } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
-import { sponsorItemListQuery } from "@/sanity/lib/queries";
+import { constructMetadata, parsePageParam } from "@/lib/metadata";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export const metadata = constructMetadata({
   title: "Search",
@@ -27,25 +25,16 @@ export default async function SearchPage({
 }) {
   console.log("SearchPage, searchParams", searchParams);
 
-  const sponsorItems =
-    (await sanityFetch<SponsorItemListQueryResult>({
-      query: sponsorItemListQuery,
-    })) || [];
-  // console.log("SearchPage, sponsorItems", sponsorItems);
-  const showSponsor = true;
-  const hasSponsorItem = showSponsor && sponsorItems.length > 0;
-
   const {
     category,
     tag,
     sort,
-    page,
     q: query,
     f: filter,
   } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
     SORT_FILTER_LIST.find((item) => item.slug === sort) || DEFAULT_SORT;
-  const currentPage = page ? Number(page) : 1;
+  const currentPage = parsePageParam(searchParams?.page);
   const { items, totalCount } = await getItems({
     category,
     tag,
@@ -54,11 +43,14 @@ export default async function SearchPage({
     query,
     filter,
     currentPage,
-    hasSponsorItem,
+    hasSponsorItem: false,
   });
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+  const lastValidPage = Math.max(1, totalPages);
+  if (currentPage > lastValidPage) {
+    redirect(lastValidPage > 1 ? `/search?page=${lastValidPage}` : "/search");
+  }
   console.log("SearchPage, totalCount", totalCount, ", totalPages", totalPages);
-  // console.log('SearchPage, items', items);
 
   return (
     <div>
@@ -68,15 +60,18 @@ export default async function SearchPage({
       {/* when items are found */}
       {items && items.length > 0 && (
         <section className="">
-          <ItemGrid
-            items={items}
-            sponsorItems={sponsorItems}
-            showSponsor={showSponsor}
+          {/* key 保证搜索/筛选条件变化时重置无限滚动状态 */}
+          <HomeInfiniteScroll
+            key={`${category ?? ""}-${tag ?? ""}-${sort ?? ""}-${query ?? ""}-${filter ?? ""}-${currentPage}`}
+            initialItems={items}
+            initialPage={currentPage}
+            totalPages={totalPages}
+            category={category}
+            tag={tag}
+            sort={sort}
+            query={query}
+            filter={filter}
           />
-
-          <div className="mt-8 flex items-center justify-center">
-            <CustomPagination routePrefix="/search" totalPages={totalPages} />
-          </div>
         </section>
       )}
     </div>
