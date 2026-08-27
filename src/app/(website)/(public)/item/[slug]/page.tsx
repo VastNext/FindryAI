@@ -21,7 +21,12 @@ import {
   sponsorItemListQuery,
 } from "@/sanity/lib/queries";
 import type { ItemFullInfo } from "@/types";
-import { GlobeIcon, HashIcon, LayoutGridIcon } from "lucide-react";
+import {
+  GlobeIcon,
+  HashIcon,
+  LayoutGridIcon,
+  SparklesIcon,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -200,7 +205,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
           </div>
 
           {/* action buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <Button size="lg" variant="default" asChild className="group">
               <Link
                 href={itemLink}
@@ -211,6 +216,16 @@ export default async function ItemPage({ params }: ItemPageProps) {
               >
                 <GlobeIcon className="w-4 h-4 icon-scale" />
                 <span>Visit Website</span>
+              </Link>
+            </Button>
+
+            <Button size="lg" variant="outline" asChild>
+              <Link
+                href={`/item/${params.slug}/alternatives`}
+                className="flex items-center justify-center space-x-2"
+              >
+                <SparklesIcon className="w-4 h-4 text-indigo-500" />
+                <span>Alternatives</span>
               </Link>
             </Button>
           </div>

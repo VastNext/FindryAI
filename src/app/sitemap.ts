@@ -114,6 +114,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${site_url}/item/${item.slug}`,
         lastModified: new Date(item._updatedAt).toISOString(),
       });
+      sitemapList.push({
+        url: `${site_url}/item/${item.slug}/alternatives`,
+        lastModified: new Date(item._updatedAt).toISOString(),
+      });
     }
   }
 

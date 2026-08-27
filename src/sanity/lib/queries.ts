@@ -109,6 +109,24 @@ export const itemFullInfoBySlugQuery = defineQuery(`*[_type == "item" && slug.cu
   ${itemFieldsWithRelated}
 }`);
 
+export const itemWithAlternativesBySlugQuery = defineQuery(`*[_type == "item" && slug.current == $slug 
+&& forceHidden != true] [0] {
+  ${itemSimpleFields}
+  "categories": categories[]-> { _id, name, slug },
+  "alternatives": *[_type == "item" && defined(slug.current) 
+    && defined(publishDate) 
+    && forceHidden != true
+    && sponsor != true
+    && _id != ^._id
+    && (
+      count(categories[@._ref in ^.^.categories[]._ref]) > 0 ||
+      count(tags[@._ref in ^.^.tags[]._ref]) > 0
+    )] 
+    | order(coalesce(featured, false) desc, publishDate desc) [0...18] {
+      ${itemSimpleFields}
+  }
+}`);
+
 /**
  * NOTICE: this query is not used in the app,
  * but it is used to generate the type of ItemListQueryResult,
