@@ -93,6 +93,15 @@ export default async function ItemPage({ params }: ItemPageProps) {
     primaryCategory?.name && primaryCategory.slug?.current
       ? { name: primaryCategory.name, slug: primaryCategory.slug.current }
       : null;
+  const isSponsor = item.sponsor || item.pricePlan === "sponsor";
+  const isFreePlan =
+    item.pricePlan === "free" && item.freePlanStatus !== "approved";
+  const externalRel = isSponsor
+    ? "sponsored noopener noreferrer"
+    : isFreePlan
+      ? "nofollow noopener noreferrer"
+      : "noopener noreferrer";
+
   const breadcrumbItems = [
     {
       "@type": "ListItem",
@@ -196,6 +205,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
               <Link
                 href={itemLink}
                 target="_blank"
+                rel={externalRel}
                 prefetch={false}
                 className="flex items-center justify-center space-x-2"
               >
@@ -213,6 +223,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
             <Link
               href={`${itemLink}`}
               target="_blank"
+              rel={externalRel}
               prefetch={false}
               className="relative block w-full h-full"
             >

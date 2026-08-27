@@ -25,10 +25,11 @@ export default function SponsorItemCard({ item }: SponsorItemCardProps) {
     <Link
       href={itemLink}
       target="_blank"
+      rel="sponsored noopener noreferrer"
       className={cn(
         "border rounded-lg flex flex-col justify-between p-6",
         "duration-300 shadow-sm hover:shadow-md transition-shadow",
-        "border-sky-300 border-spacing-1.5 bg-sky-50/50 dark:bg-sky-950/10 hover:bg-sky-50 dark:hover:bg-accent/60"
+        "border-sky-300 border-spacing-1.5 bg-sky-50/50 dark:bg-sky-950/10 hover:bg-sky-50 dark:hover:bg-accent/60",
       )}
     >
       {/* top */}

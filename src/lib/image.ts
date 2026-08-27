@@ -9,48 +9,81 @@ const imageBuilder = createImageUrlBuilder({
   dataset: dataset || "",
 });
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export const urlForImage = (source: any) => {
+export const urlForImage = (
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  source: any,
+  options: { width?: number; height?: number; quality?: number } = {},
+) => {
   if (!source || !source.asset) return;
-  const dimensions = source?.asset?._ref.split("-")[2];
+  const dimensions = source?.asset?._ref?.split("-")?.[2];
 
-  const [width, height] = dimensions
-    .split("x")
-    .map((num: string) => Number.parseInt(num, 10));
+  let width: number | undefined;
+  let height: number | undefined;
 
-  // NOTICE: width is limited to 500px to avoid performance issues caused by large images
-  // you can increase this number if you want to have higher quality images
-  const url = imageBuilder
+  if (dimensions) {
+    const [w, h] = dimensions
+      .split("x")
+      .map((num: string) => Number.parseInt(num, 10));
+    width = w;
+    height = h;
+  }
+
+  const targetWidth = options.width ?? (width ? Math.min(width, 1200) : 1200);
+  const targetQuality = options.quality ?? 80;
+
+  let builder = imageBuilder
     .image(source)
     .auto("format")
-    .width(Math.min(width, 1000))
-    .url();
+    .quality(targetQuality)
+    .width(targetWidth);
+
+  if (options.height) {
+    builder = builder.height(options.height);
+  }
+
+  const url = builder.url();
 
   return {
     src: url,
-    width: width,
-    height: height,
+    width: options.width ?? width,
+    height: options.height ?? height,
   };
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export const urlForIcon = (source: any) => {
+export const urlForIcon = (
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  source: any,
+  options: { size?: number; quality?: number } = {},
+) => {
   if (!source || !source.asset) return;
-  const dimensions = source?.asset?._ref.split("-")[2];
+  const dimensions = source?.asset?._ref?.split("-")?.[2];
 
-  const [width, height] = dimensions
-    .split("x")
-    .map((num: string) => Number.parseInt(num, 10));
+  let width: number | undefined;
+  let height: number | undefined;
+
+  if (dimensions) {
+    const [w, h] = dimensions
+      .split("x")
+      .map((num: string) => Number.parseInt(num, 10));
+    width = w;
+    height = h;
+  }
+
+  const targetSize = options.size ?? 64;
+  const targetQuality = options.quality ?? 85;
 
   const url = imageBuilder
     .image(source)
     .auto("format")
-    .width(Math.min(width, 64))
+    .quality(targetQuality)
+    .width(targetSize)
+    .height(targetSize)
+    .fit("crop")
     .url();
 
   return {
     src: url,
-    width: width,
-    height: height,
+    width: targetSize,
+    height: targetSize,
   };
 };
