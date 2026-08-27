@@ -2,6 +2,8 @@ import Container from "@/components/container";
 import { PricingPlans } from "@/components/dashboard/pricing-plans";
 import { PricingFaq } from "@/components/pricing/pricing-faq";
 import { HeaderSection } from "@/components/shared/header-section";
+import { JsonLd } from "@/components/shared/json-ld";
+import { faqConfig } from "@/config/faq";
 import { siteConfig } from "@/config/site";
 import { constructMetadata } from "@/lib/metadata";
 
@@ -12,8 +14,42 @@ export const metadata = constructMetadata({
 });
 
 export default async function PricingPage() {
+  const pricingJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqConfig.items.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer.replace(/<[^>]*>/g, ""),
+        },
+      })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteConfig.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Pricing",
+          item: `${siteConfig.url}/pricing`,
+        },
+      ],
+    },
+  ];
+
   return (
     <Container className="mt-8 pb-16">
+      <JsonLd data={pricingJsonLd} />
       <div className="w-full flex flex-col gap-16">
         <section className="w-full flex flex-col gap-8 justify-center">
           <HeaderSection

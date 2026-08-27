@@ -114,7 +114,7 @@ export default function HomeInfiniteScroll({
             onClick={loadMore}
             className="cursor-pointer rounded-md border px-4 py-2 text-sm text-muted-foreground hover:bg-accent"
           >
-            加载失败，点击重试
+            Failed to load. Click to retry.
           </button>
         </div>
       )}
@@ -122,7 +122,7 @@ export default function HomeInfiniteScroll({
       {/* 全部加载完成 */}
       {!hasMore && (
         <div className="mt-8 flex items-center justify-center text-sm text-muted-foreground">
-          已经到底啦，共 {items.length} 个条目
+          You've reached the end — {items.length} items in total
         </div>
       )}
     </div>

@@ -1,11 +1,10 @@
 import Container from "@/components/container";
 import HomeHero from "@/components/home2/home2-hero";
-import { siteConfig } from "@/config/site";
 import { constructMetadata } from "@/lib/metadata";
 
 export const metadata = constructMetadata({
   title: "",
-  canonicalUrl: `${siteConfig.url}/`,
+  noIndex: true,
 });
 
 export default function HomeLayout({
