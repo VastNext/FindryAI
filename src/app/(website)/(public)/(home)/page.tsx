@@ -73,7 +73,7 @@ export default async function HomePage({
       {/* when items are found */}
       {items && items.length > 0 && (
         <section className="">
-          {/* key 保证搜索/筛选条件变化时重置无限滚动状态 */}
+          {/* key 保证搜索/筛选条件变化时重置分页加载状态 */}
           <HomeInfiniteScroll
             key={`${category ?? ""}-${tag ?? ""}-${sort ?? ""}-${query ?? ""}-${filter ?? ""}-${currentPage}`}
             initialItems={items}
@@ -84,6 +84,7 @@ export default async function HomePage({
             sort={sort}
             query={query}
             filter={filter}
+            trigger="button"
           />
         </section>
       )}
