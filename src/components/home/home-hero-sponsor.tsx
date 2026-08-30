@@ -26,19 +26,6 @@ export default async function HomeHeroSponsor() {
     <div className="flex flex-col items-center justify-center">
       <div className="w-full flex flex-col lg:flex-row items-center lg:items-start gap-6">
         <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left gap-6">
-          <Link
-            href={heroConfig.label.href}
-            target="_blank"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "sm" }),
-              "px-4 rounded-full",
-            )}
-          >
-            <span className="mr-2">🎉</span>
-            <span>{heroConfig.label.text}</span>
-            <LabelIcon className="size-4" />
-          </Link>
-
           {/* maybe font-sourceSans is better */}
           <h1 className="font-bold text-balance text-2xl sm:text-3xl md:text-4xl">
             {heroConfig.title.first}{" "}
@@ -58,6 +45,19 @@ export default async function HomeHeroSponsor() {
 
         <div className="flex w-full flex-col gap-6 lg:w-[400px] lg:shrink-0">
           <HomeQuickTools />
+
+          <Link
+            href={heroConfig.label.href}
+            target="_blank"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "sm" }),
+              "self-end px-4 rounded-full",
+            )}
+          >
+            <span className="mr-2">🎉</span>
+            <span>{heroConfig.label.text}</span>
+            <LabelIcon className="size-4" />
+          </Link>
 
           {sponsorItem && <SponsorItemCard item={sponsorItem} />}
         </div>
