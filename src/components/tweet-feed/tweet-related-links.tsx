@@ -28,10 +28,10 @@ export function TweetRelatedLinks() {
     {
       title: "Search AI Directory",
       description:
-        "Find the exact AI tools, models, and platforms using smart keyword search.",
-      href: "/search",
+        "Find the exact AI tools, models, and platforms on our curated homepage.",
+      href: "/",
       icon: Search,
-      action: "Start Searching",
+      action: "Explore Tools",
     },
   ];
 
