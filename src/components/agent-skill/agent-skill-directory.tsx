@@ -43,7 +43,7 @@ function getCategoryIcon(slug: string) {
       return Wand2;
     case "skill-workshop":
       return Wrench;
-    case "ppt-presentation":
+    case "ppt-presentations":
       return Presentation;
     case "design-ui":
       return Palette;
@@ -53,7 +53,7 @@ function getCategoryIcon(slug: string) {
       return PenTool;
     case "documents-sheets":
       return FileSpreadsheet;
-    case "diagrams-illustration":
+    case "diagrams-charts":
       return LineChart;
     case "marketing-growth":
       return Megaphone;

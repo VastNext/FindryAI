@@ -2,7 +2,7 @@
 
 ## 目标
 
-在 FindryAI 新增公开 `/agent-skills` 页面，使用 MOGE 当前公开的 Agent Skills 名称、简介、分类和外链做一版可验收的静态目录，不写入生产 Sanity。
+在 FindryAI 新增公开 `/agent-skills` 页面，使用 MOGE 英文页面当前公开的 Agent Skills 名称、英文简介、分类和外链做一版可验收的静态目录，不写入生产 Sanity。
 
 ## 产品范围
 
@@ -35,7 +35,7 @@
 
 ## 数据来源与边界
 
-数据来自 MOGE 页面公开 HTML 中嵌入的目录字段，仅保存名称、短描述、公开外链和分类。去除 MOGE 的 UTM 参数，不复制其站点品牌素材或页面源代码。GitHub 项目使用统一 GitHub 图标，其他项目使用通用链接图标，避免依赖 MOGE 图片 CDN。
+数据来自 MOGE 英文页面公开 HTML 中嵌入的目录字段，仅保存名称、英文短描述、公开外链和分类。去除 MOGE 的 UTM 参数，不复制其站点品牌素材或页面源代码。GitHub 项目使用统一 GitHub 图标，其他项目使用通用链接图标，避免依赖 MOGE 图片 CDN。数据可通过 `pnpm agent-skills:sync` 从英文源重新同步。
 
 ## 验收
 
