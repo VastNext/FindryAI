@@ -39,10 +39,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
     },
     {
-      url: "search",
-      lastModified: new Date(),
-    },
-    {
       url: "tag",
       lastModified: new Date(),
     },

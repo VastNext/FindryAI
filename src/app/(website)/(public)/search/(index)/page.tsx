@@ -27,6 +27,7 @@ export function generateMetadata({
       `${siteConfig.url}/search`,
       searchParams?.page,
     ),
+    noIndex: true,
   });
 }
 
