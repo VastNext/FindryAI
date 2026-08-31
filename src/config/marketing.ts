@@ -3,9 +3,9 @@ import type { MarketingConfig } from "@/types";
 export const marketingConfig: MarketingConfig = {
   menus: [
     {
-      title: "Search",
-      href: "/search",
-      icon: "search",
+      title: "Home",
+      href: "/",
+      icon: "home",
     },
     {
       title: "Category",

@@ -12,9 +12,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata = constructMetadata({
-  title: "Search",
+  title: "Search Old",
   description: "Search for your needs",
-  canonicalUrl: `${siteConfig.url}/search`,
+  canonicalUrl: `${siteConfig.url}/search-old`,
   noIndex: true,
 });
 
@@ -48,7 +48,9 @@ export default async function SearchPage({
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
   const lastValidPage = Math.max(1, totalPages);
   if (currentPage > lastValidPage) {
-    redirect(lastValidPage > 1 ? `/search?page=${lastValidPage}` : "/search");
+    redirect(
+      lastValidPage > 1 ? `/search-old?page=${lastValidPage}` : "/search-old",
+    );
   }
   console.log("SearchPage, totalCount", totalCount, ", totalPages", totalPages);
 

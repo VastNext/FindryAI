@@ -55,7 +55,7 @@ export default function CategoryHomeSearchBox({
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-start">
       <Input
         type="text"
         placeholder="Search any products you need"
