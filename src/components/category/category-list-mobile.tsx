@@ -54,7 +54,7 @@ export function CategoryListMobile({ categoryList }: CategoryListMobileProps) {
             <ul className="mb-14 w-full p-3 text-muted-foreground">
               <FilterItemMobile
                 title="All"
-                href="/category"
+                href="/search"
                 active={!slug}
                 clickAction={closeDrawer}
               />
@@ -63,7 +63,7 @@ export function CategoryListMobile({ categoryList }: CategoryListMobileProps) {
                 <FilterItemMobile
                   key={item.slug.current}
                   title={item.name}
-                  href={`/category/${item.slug.current}`}
+                  href={`/search/${item.slug.current}`}
                   active={item.slug.current === slug}
                   clickAction={closeDrawer}
                 />

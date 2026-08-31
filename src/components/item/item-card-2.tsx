@@ -66,7 +66,7 @@ export default function ItemCard2({ item }: ItemCard2Props) {
               {item.categories.map((category, index) => (
                 <a
                   key={category._id}
-                  href={`/category/${category.slug.current}`}
+                  href={`/search/${category.slug.current}`}
                   className={cn(
                     buttonVariants({ variant: "outline", size: "sm" }),
                     "px-2 py-1 h-6 rounded-md",

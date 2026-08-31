@@ -14,12 +14,12 @@ export default function SearchLayout({
               Search
             </h1>
 
-            <SearchBox urlPrefix="/search" />
+            <SearchBox urlPrefix="/search-old" />
           </div>
         </Container>
 
         <div className="w-full">
-          <SearchFilter urlPrefix="/search" />
+          <SearchFilter urlPrefix="/search-old" />
         </div>
       </div>
 

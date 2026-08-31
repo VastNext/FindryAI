@@ -45,7 +45,7 @@ export async function generateMetadata({
     title: `${category.name}`,
     description: category.description,
     canonicalUrl: getPaginatedCanonicalUrl(
-      `${siteConfig.url}/category/${params.slug}`,
+      `${siteConfig.url}/search/${params.slug}`,
       searchParams?.page,
     ),
     image: ogImageUrl.toString(),
@@ -96,7 +96,7 @@ export default async function CategoryPage({
       "@type": "CollectionPage",
       name: category?.name,
       ...(category?.description && { description: category.description }),
-      url: `${siteConfig.url}/category/${params.slug}`,
+      url: `${siteConfig.url}/search/${params.slug}`,
     },
     {
       "@context": "https://schema.org",
@@ -111,14 +111,14 @@ export default async function CategoryPage({
         {
           "@type": "ListItem",
           position: 2,
-          name: "Category",
-          item: `${siteConfig.url}/category`,
+          name: "Search",
+          item: `${siteConfig.url}/search`,
         },
         {
           "@type": "ListItem",
           position: 3,
           name: category?.name || params.slug,
-          item: `${siteConfig.url}/category/${params.slug}`,
+          item: `${siteConfig.url}/search/${params.slug}`,
         },
       ],
     },
@@ -141,7 +141,7 @@ export default async function CategoryPage({
 
           <div className="mt-8 flex items-center justify-center">
             <CustomPagination
-              routePrefix={`/category/${params.slug}`}
+              routePrefix={`/search/${params.slug}`}
               totalPages={totalPages}
             />
           </div>

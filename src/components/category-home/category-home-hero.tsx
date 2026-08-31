@@ -36,7 +36,7 @@ export default function CategoryHomeHero() {
         </p>
 
         <div className="w-full">
-          <CategoryHomeSearchBox urlPrefix="/category" />
+          <CategoryHomeSearchBox urlPrefix="/search" />
         </div>
       </div>
     </div>

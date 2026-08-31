@@ -21,10 +21,10 @@ export function generateMetadata({
   searchParams?: { [key: string]: string | string[] | undefined };
 }): Metadata {
   return constructMetadata({
-    title: "Category",
+    title: "Search",
     description: "Explore AI tools by category",
     canonicalUrl: getPaginatedCanonicalUrl(
-      `${siteConfig.url}/category`,
+      `${siteConfig.url}/search`,
       searchParams?.page,
     ),
   });
@@ -65,7 +65,7 @@ export default async function CategoryIndexPage({
     if (filter) params.set("f", filter);
     if (targetPage && targetPage > 1) params.set("page", String(targetPage));
     const queryString = params.toString();
-    return queryString ? `/category?${queryString}` : "/category";
+    return queryString ? `/search?${queryString}` : "/search";
   };
 
   if (!pageIsValid) {
@@ -103,7 +103,7 @@ export default async function CategoryIndexPage({
           />
 
           <div className="mt-8 flex items-center justify-center">
-            <CustomPagination routePrefix="/category" totalPages={totalPages} />
+            <CustomPagination routePrefix="/search" totalPages={totalPages} />
           </div>
         </section>
       )}
