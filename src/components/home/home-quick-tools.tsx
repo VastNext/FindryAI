@@ -1,13 +1,7 @@
-import { KeyRoundIcon, LanguagesIcon, SearchIcon } from "lucide-react";
+import { KeyRoundIcon, LanguagesIcon } from "lucide-react";
 import Link from "next/link";
 
 const quickTools = [
-  {
-    name: "Search",
-    description: "Find AI tools",
-    href: "/search",
-    icon: SearchIcon,
-  },
   {
     name: "Translator",
     description: "Compare translations",
