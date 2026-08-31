@@ -1,6 +1,6 @@
 # Findry AI
 
-Find better AI.
+Discover curated AI tools for every task.
 
 [![License](https://img.shields.io/github/license/VastNext/FindryAI)](LICENSE)
 
