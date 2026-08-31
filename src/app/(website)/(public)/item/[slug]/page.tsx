@@ -120,7 +120,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
             "@type": "ListItem",
             position: 2,
             name: validatedPrimaryCategory.name,
-            item: `${siteConfig.url}/search/${validatedPrimaryCategory.slug}`,
+            item: `${siteConfig.url}/category/${validatedPrimaryCategory.slug}`,
           },
         ]
       : []),
@@ -348,7 +348,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
                   {item.categories?.map((category) => (
                     <li key={category._id}>
                       <Link
-                        href={`/search/${category.slug.current}`}
+                        href={`/category/${category.slug.current}`}
                         className="text-sm link-underline"
                       >
                         {category.name}

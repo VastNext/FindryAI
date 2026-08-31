@@ -36,7 +36,7 @@ export default function ItemBreadCrumb({ item }: ItemBreadCrumbProps) {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href={"/search"}>
+          <BreadcrumbLink href={"/category"}>
             <span>Category</span>
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -46,7 +46,7 @@ export default function ItemBreadCrumb({ item }: ItemBreadCrumbProps) {
           {item?.categories?.length === 1 && (
             <BreadcrumbLink
               className="cursor-pointer"
-              href={`/search/${item?.categories?.[0]?.slug?.current}`}
+              href={`/category/${item?.categories?.[0]?.slug?.current}`}
             >
               {item?.categories?.[0]?.name}
             </BreadcrumbLink>
@@ -58,7 +58,7 @@ export default function ItemBreadCrumb({ item }: ItemBreadCrumbProps) {
               <DropdownMenuTrigger className="flex items-center gap-1">
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  href={`/search/${item?.categories?.[0]?.slug?.current}`}
+                  href={`/category/${item?.categories?.[0]?.slug?.current}`}
                 >
                   {item?.categories?.[0]?.name}
                 </BreadcrumbLink>
@@ -69,7 +69,7 @@ export default function ItemBreadCrumb({ item }: ItemBreadCrumbProps) {
                   <DropdownMenuItem key={category.slug.current}>
                     <BreadcrumbLink
                       className="cursor-pointer w-full"
-                      href={`/search/${category.slug.current}`}
+                      href={`/category/${category.slug.current}`}
                     >
                       {category.name}
                     </BreadcrumbLink>

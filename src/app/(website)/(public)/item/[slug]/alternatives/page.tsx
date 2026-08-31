@@ -116,7 +116,7 @@ export default async function AlternativesPage({
                 "@type": "ListItem",
                 position: 2,
                 name: primaryCategory.name,
-                item: `${siteConfig.url}/search/${primaryCategory.slug.current}`,
+                item: `${siteConfig.url}/category/${primaryCategory.slug.current}`,
               },
             ]
           : []),

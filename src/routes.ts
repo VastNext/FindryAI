@@ -10,6 +10,7 @@ export const publicRoutes = [
   "/search(/.*)?",
   "/search-old(/.*)?",
   "/collection(/.*)?",
+  "/category(/.*)?",
   "/tag(/.*)?",
   "/item(/.*)?",
   "/blog(/.*)?",

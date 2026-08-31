@@ -17,13 +17,13 @@ export function CategoryListDesktop({
   return (
     <ScrollArea className="hidden md:flex w-full pb-4">
       <ul className="flex gap-x-2">
-        <FilterItemDesktop title="All" href="/search" active={!slug} />
+        <FilterItemDesktop title="All" href="/category" active={!slug} />
 
         {categoryList.map((item) => (
           <FilterItemDesktop
             key={item.slug.current}
             title={item.name}
-            href={`/search/${item.slug.current}`}
+            href={`/category/${item.slug.current}`}
             active={item.slug.current === slug}
           />
         ))}

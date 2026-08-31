@@ -101,7 +101,7 @@ export default function ItemCard({ item }: ItemCardProps) {
           <Link
             key={category._id}
             title={category.name}
-            href={`/search/${category.slug.current}`}
+            href={`/category/${category.slug.current}`}
             className="flex min-w-0 items-center truncate rounded bg-muted px-1.5 text-muted-foreground text-xs leading-6 hover:bg-accent hover:text-primary dark:border"
           >
             <span className="truncate">{category.name}</span>

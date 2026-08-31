@@ -39,6 +39,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
     },
     {
+      url: "category",
+      lastModified: new Date(),
+    },
+    {
       url: "tag",
       lastModified: new Date(),
     },
@@ -120,7 +124,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const category of categoryListQueryResult) {
     if (category.slug) {
       sitemapList.push({
-        url: `${site_url}/search/${category.slug}`,
+        url: `${site_url}/category/${category.slug}`,
         lastModified: new Date(category._updatedAt).toISOString(),
       });
     }
