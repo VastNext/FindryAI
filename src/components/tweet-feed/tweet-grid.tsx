@@ -1,9 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { TweetCardItem } from "./tweet-card-item";
 
 interface TweetGridProps {
@@ -25,6 +23,8 @@ export function TweetGrid({
 }: TweetGridProps) {
   // 移动优先，默认 1 列，避免移动端加载时出现 3 列闪动或宽度溢出
   const [columnCount, setColumnCount] = useState(1);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const appendPendingRef = useRef(false);
 
   useEffect(() => {
     const updateColumns = () => {
@@ -42,6 +42,26 @@ export function TweetGrid({
     window.addEventListener("resize", updateColumns);
     return () => window.removeEventListener("resize", updateColumns);
   }, []);
+
+  // 接近底部 600px 时自动触发追加加载
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || appendPendingRef.current) return;
+        appendPendingRef.current = true;
+        onRequestAppend();
+        window.setTimeout(() => {
+          appendPendingRef.current = false;
+        }, 500);
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, onRequestAppend]);
 
   // 将推文按时间顺序从左到右分发至各列，保持自然文档流且高度自动撑开
   const columns = useMemo(() => {
@@ -87,17 +107,17 @@ export function TweetGrid({
         ))}
       </div>
 
+      <div
+        ref={sentinelRef}
+        data-testid="tweet-feed-sentinel"
+        className="h-px w-full my-4"
+        aria-hidden="true"
+      />
+
       {hasMore && (
-        <div className="flex items-center justify-center pt-10 pb-4">
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={onRequestAppend}
-            className="rounded-full px-8 gap-2 font-medium shadow-sm hover:border-primary/50 hover:bg-accent transition-all text-sm h-11"
-          >
-            <span>Load More Feeds</span>
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-          </Button>
+        <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary/40 border-t-primary" />
+          <span>Loading more feeds...</span>
         </div>
       )}
     </div>
