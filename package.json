@@ -37,7 +37,8 @@
     "batch:remove": "tsx scripts/batch-all.ts remove",
     "batch:import": "tsx scripts/batch-all.ts import",
     "batch:update": "tsx scripts/batch-all.ts update",
-    "agent-skills:sync": "tsx scripts/sync-agent-skills-from-moge.ts"
+    "agent-skills:sync": "tsx scripts/sync-agent-skills-from-moge.ts",
+    "tweet-feed:sync": "tsx scripts/sync-tweet-feed.ts"
   },
   "dependencies": {
     "@ai-sdk/deepseek": "^0.1.0",
@@ -45,6 +46,7 @@
     "@ai-sdk/openai": "^1.0.18",
     "@ai-sdk/xai": "^1.2.16",
     "@auth/core": "^0.34.2",
+    "@egjs/react-infinitegrid": "^4.13.0",
     "@hookform/resolvers": "^3.9.0",
     "@microlink/mql": "^0.13.12",
     "@next/third-parties": "^15.0.3",
@@ -117,6 +119,7 @@
     "react-hook-form": "^7.53.0",
     "react-iframe": "^1.8.5",
     "react-simplemde-editor": "^5.2.0",
+    "react-tweet": "^3.3.1",
     "resend": "^3.5.0",
     "rimraf": "^6.0.1",
     "sanity": "^3.57.2",

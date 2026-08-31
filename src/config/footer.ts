@@ -14,6 +14,7 @@ export const footerConfig: FooterConfig = {
       title: "Resources",
       items: [
         { title: "Agent Skills", href: "/agent-skills" },
+        { title: "AI Feed", href: "/ai-daily-feeds" },
         { title: "Pricing", href: "/pricing" },
         { title: "Submit", href: "/submit" },
         { title: "Studio", href: "/studio", external: true },

@@ -23,6 +23,11 @@ export const marketingConfig: MarketingConfig = {
       icon: "sparkles",
     },
     {
+      title: "AI Feed",
+      href: "/ai-daily-feeds",
+      icon: "feed",
+    },
+    {
       title: "Pricing",
       href: "/pricing",
       icon: "pricing",
