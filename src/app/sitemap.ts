@@ -66,6 +66,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: "password-generator",
       lastModified: new Date(),
     },
+    {
+      url: "agent-skills",
+      lastModified: new Date(),
+    },
   ];
 
   for (const route of sitemapRoutes) {

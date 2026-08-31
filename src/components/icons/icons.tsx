@@ -11,6 +11,7 @@ import {
   MailIcon,
   SearchIcon,
   SettingsIcon,
+  SparklesIcon,
   TagsIcon,
   UploadIcon,
 } from "lucide-react";
@@ -38,6 +39,7 @@ export const Icons = {
   collection: LayoutListIcon,
   category: LayoutGridIcon,
   tag: TagsIcon,
+  sparkles: SparklesIcon,
   blog: FileTextIcon,
   pricing: CreditCardIcon,
   home: HomeIcon,
