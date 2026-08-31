@@ -18,6 +18,7 @@ export const publicRoutes = [
   "/translator(/.*)?",
   "/password-generator(/.*)?",
   "/agent-skills(/.*)?",
+  "/ai-daily-feeds(/.*)?",
 
   "/about(/.*)?",
   "/terms(/.*)?",

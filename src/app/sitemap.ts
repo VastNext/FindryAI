@@ -70,6 +70,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: "agent-skills",
       lastModified: new Date(),
     },
+    {
+      url: "ai-daily-feeds",
+      lastModified: new Date(),
+    },
   ];
 
   for (const route of sitemapRoutes) {
