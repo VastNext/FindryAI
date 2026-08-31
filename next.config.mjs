@@ -7,23 +7,6 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
-      {
-        // /category has been renamed to /search; 301 preserves SEO for
-        // previously indexed category URLs
-        source: "/category",
-        destination: "/search",
-        permanent: true,
-      },
-      {
-        source: "/category/:slug",
-        destination: "/search/:slug",
-        permanent: true,
-      },
-      {
-        source: "/category/:slug/:path*",
-        destination: "/search/:slug/:path*",
-        permanent: true,
-      },
     ];
   },
 
