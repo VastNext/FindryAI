@@ -1,7 +1,7 @@
 "use client";
 
-import { MasonryInfiniteGrid } from "@egjs/react-infinitegrid";
-import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { TweetCardItem } from "./tweet-card-item";
 
 interface TweetGridProps {
@@ -15,25 +15,31 @@ export function TweetGrid({
   hasMore,
   onRequestAppend,
 }: TweetGridProps) {
-  const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const itemCount = tweetIds.length;
-  const gridRef = useRef<MasonryInfiniteGrid>(null);
+  // 移动优先，默认 1 列，避免移动端加载时出现 3 列闪动或宽度溢出
+  const [columnCount, setColumnCount] = useState(1);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const appendPendingRef = useRef(false);
 
   useEffect(() => {
-    setMounted(true);
-    const media = window.matchMedia("(max-width: 767px)");
-    const updateViewport = () => setIsMobile(media.matches);
-    updateViewport();
-    media.addEventListener("change", updateViewport);
-    return () => media.removeEventListener("change", updateViewport);
+    const updateColumns = () => {
+      const width = window.innerWidth;
+      if (width < 768) {
+        setColumnCount(1);
+      } else if (width < 1024) {
+        setColumnCount(2);
+      } else {
+        setColumnCount(3);
+      }
+    };
+
+    updateColumns();
+    window.addEventListener("resize", updateColumns);
+    return () => window.removeEventListener("resize", updateColumns);
   }, []);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
-    if (!mounted || !sentinel || !hasMore) return;
+    if (!sentinel || !hasMore) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -48,16 +54,16 @@ export function TweetGrid({
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [hasMore, mounted, onRequestAppend]);
+  }, [hasMore, onRequestAppend]);
 
-  useEffect(() => {
-    if (!mounted || itemCount === 0) return;
-    const timer = window.setTimeout(
-      () => gridRef.current?.updateItems(),
-      1_000,
-    );
-    return () => window.clearTimeout(timer);
-  }, [itemCount, mounted]);
+  // 将推文按时间顺序从左到右分发至各列，保持自然文档流且高度自动撑开
+  const columns = useMemo(() => {
+    const cols: string[][] = Array.from({ length: columnCount }, () => []);
+    tweetIds.forEach((id, index) => {
+      cols[index % columnCount].push(id);
+    });
+    return cols;
+  }, [tweetIds, columnCount]);
 
   if (tweetIds.length === 0) {
     return (
@@ -72,73 +78,40 @@ export function TweetGrid({
     );
   }
 
-  if (!mounted || isMobile) {
-    return (
-      <div className="w-full">
-        <div className="grid w-full grid-cols-1 gap-5">
-          {tweetIds.map((id) => (
-            <div key={id} className="w-full">
-              <TweetCardItem tweetId={id} />
-            </div>
-          ))}
-        </div>
-        <div
-          ref={sentinelRef}
-          data-testid="tweet-feed-sentinel"
-          className="h-px w-full"
-          aria-hidden="true"
-        />
-        {hasMore && (
-          <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary/40 border-t-primary" />
-            <span>Loading more feeds...</span>
-          </div>
-        )}
-      </div>
-    );
-  }
-
   return (
     <div className="w-full">
-      <MasonryInfiniteGrid
-        ref={gridRef}
-        className="w-full"
-        gap={20}
-        align="center"
-        useResizeObserver={true}
-        observeChildren={true}
+      <div
+        className={cn(
+          "grid gap-5 w-full items-start",
+          columnCount === 1 && "grid-cols-1",
+          columnCount === 2 && "grid-cols-2",
+          columnCount === 3 && "grid-cols-3",
+        )}
       >
-        {tweetIds.map((id, index) => {
-          const groupKey = Math.floor(index / 20);
-          return (
-            <div
-              key={id}
-              data-grid-groupkey={groupKey}
-              className="w-full md:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] transition-transform duration-200"
-              style={{
-                willChange: "transform",
-                contain: "layout style paint",
-              }}
-            >
-              <TweetCardItem tweetId={id} />
-            </div>
-          );
-        })}
-      </MasonryInfiniteGrid>
+        {columns.map((colItems, colIndex) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: 列索引固定且稳定
+          <div
+            key={`column-slot-${colIndex}`}
+            className="flex flex-col gap-5 w-full"
+          >
+            {colItems.map((id) => (
+              <TweetCardItem key={id} tweetId={id} />
+            ))}
+          </div>
+        ))}
+      </div>
 
       <div
         ref={sentinelRef}
         data-testid="tweet-feed-sentinel"
-        className="h-px w-full"
+        className="h-px w-full my-4"
         aria-hidden="true"
       />
 
       {hasMore && (
-        <div className="flex justify-center items-center py-8">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <div className="h-4 w-4 rounded-full border-2 border-primary/40 border-t-primary animate-spin" />
-            <span>Loading more feeds...</span>
-          </div>
+        <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary/40 border-t-primary" />
+          <span>Loading more feeds...</span>
         </div>
       )}
     </div>
