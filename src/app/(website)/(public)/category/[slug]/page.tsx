@@ -1,7 +1,12 @@
+import {
+  CategorySeoFooter,
+  CategorySeoHeader,
+} from "@/components/category/category-seo-section";
 import ItemGrid from "@/components/item/item-grid";
 import EmptyGrid from "@/components/shared/empty-grid";
 import { JsonLd } from "@/components/shared/json-ld";
 import CustomPagination from "@/components/shared/pagination";
+import { getCategorySeo } from "@/config/category-seo";
 import { siteConfig } from "@/config/site";
 import { getItems } from "@/data/item";
 import {
@@ -36,14 +41,18 @@ export async function generateMetadata({
     return;
   }
 
+  const seo = getCategorySeo(params.slug, category.name);
+  const title = seo.seoTitle;
+  const description = seo.seoDescription || category.description || "";
+
   const ogImageUrl = new URL(`${siteConfig.url}/api/og`);
   ogImageUrl.searchParams.append("title", category.name);
-  ogImageUrl.searchParams.append("description", category.description || "");
+  ogImageUrl.searchParams.append("description", description);
   ogImageUrl.searchParams.append("type", "Category");
 
   return constructMetadata({
-    title: `${category.name}`,
-    description: category.description,
+    title,
+    description,
     canonicalUrl: getPaginatedCanonicalUrl(
       `${siteConfig.url}/category/${params.slug}`,
       searchParams?.page,
@@ -90,12 +99,15 @@ export default async function CategoryPage({
     totalPages,
   );
 
-  const categoryJsonLd = [
+  const seo = getCategorySeo(params.slug, category?.name);
+
+  // Build JSON-LD structured data: CollectionPage, ItemList, BreadcrumbList, and FAQPage
+  const categoryJsonLd: Array<Record<string, unknown>> = [
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      name: category?.name,
-      ...(category?.description && { description: category.description }),
+      name: seo.h1 || category?.name,
+      description: seo.seoDescription || category?.description,
       url: `${siteConfig.url}/category/${params.slug}`,
     },
     {
@@ -124,9 +136,44 @@ export default async function CategoryPage({
     },
   ];
 
+  if (items && items.length > 0) {
+    categoryJsonLd.push({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: `${category?.name || params.slug} Tools Directory`,
+      numberOfItems: items.length,
+      itemListElement: items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.name,
+        description: item.description,
+        url: `${siteConfig.url}/item/${item.slug.current}`,
+      })),
+    });
+  }
+
+  if (seo.faqs && seo.faqs.length > 0) {
+    categoryJsonLd.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: seo.faqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.answer,
+        },
+      })),
+    });
+  }
+
   return (
-    <div>
+    <div className="space-y-6">
       <JsonLd data={categoryJsonLd} />
+
+      {/* SEO Header Intro */}
+      <CategorySeoHeader seo={seo} />
+
       {/* when no items are found */}
       {items?.length === 0 && <EmptyGrid />}
 
@@ -147,6 +194,9 @@ export default async function CategoryPage({
           </div>
         </section>
       )}
+
+      {/* SEO Footer (Core Sub-categories and FAQ Accordion) */}
+      <CategorySeoFooter seo={seo} />
     </div>
   );
 }

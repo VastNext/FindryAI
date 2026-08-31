@@ -85,3 +85,19 @@
 | 名称 | 官网 | 原因 |
 |---|---|---|
 | transvribe | https://www.transcribe.gov.sg | manual-unpublish |
+
+
+## 2026-09-01 批次（数据分析分类清理与下架 - 9 条）
+
+| 名称 | 官网 | 原因 |
+|---|---|---|
+| three sigma | https://www.investopedia.com/terms/t/three-sigma-limits.asp | 错分条目：Investopedia 统计学术语词条，非产品工具 |
+| aire | https://www.esteri.it/en/servizi-opportunita/italiani-all-estero/aire_0 | 错分条目：意大利政府外务注册门户，非数据分析工具 |
+| mailr | https://mail.ru | 错分条目：指向俄罗斯邮箱门户，与数据分析工具无关 |
+| poe | https://poe.com | 错分条目：内容为《流放之路》游戏资源站，非 Quora Poe / 数据分析 |
+| fastcut | https://www.fastcam.com/new/fastcut-optimizer-for-metal-glass-wood.html | 错分条目：工业金属玻璃板材切割优化器，非 AI 数据分析 |
+| chorus | https://portail.chorus-pro.gouv.fr | 错分条目：法国政府电子发票公共采购门户 |
+| flowpoint | https://flowpointsystems.com | 错分条目：模块化污水处理系统制造厂商 |
+| elephas | https://elephas.com | 错分条目：肿瘤活检预测医疗平台，非通用数据分析 |
+| delibr ai | https://www.delibr.com | 产品已停运：官方宣布于 2026-08-31 永久关停 |
+

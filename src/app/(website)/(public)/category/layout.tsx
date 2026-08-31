@@ -10,9 +10,9 @@ export default function CategoryLayout({
       <div className="mt-8">
         <div className="w-full flex flex-col items-center justify-center gap-8">
           <HeaderSection
-            labelAs="h1"
+            labelAs="p"
             label="Category"
-            titleAs="h2"
+            titleAs="p"
             title="Explore by categories"
           />
 
