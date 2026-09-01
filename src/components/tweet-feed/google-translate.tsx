@@ -91,6 +91,9 @@ export function GoogleTranslateControl() {
     const savedLanguage = localStorage.getItem(STORAGE_KEY) || "original";
     setCurrentLang(savedLanguage);
     applyTranslateCookie(savedLanguage);
+    if (savedLanguage !== "original") {
+      document.documentElement.lang = "zh";
+    }
 
     const style = document.createElement("style");
     style.id = "google-translate-hide-ui-css";
@@ -133,7 +136,7 @@ export function GoogleTranslateControl() {
       if (!TranslateElement) return;
       new TranslateElement(
         {
-          pageLanguage: "auto",
+          pageLanguage: "zh",
           includedLanguages: "en",
           layout: TranslateElement.InlineLayout.SIMPLE,
           autoDisplay: false,
