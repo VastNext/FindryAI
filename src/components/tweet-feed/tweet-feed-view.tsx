@@ -25,7 +25,6 @@ export function TweetFeedView({ initialData }: TweetFeedViewProps) {
 
   const [activeTab, setActiveTab] = useState<FeedTab>(validTab);
   const [page, setPage] = useState<number>(1);
-
   // 根据当前标签选择列表
   const currentList = useMemo(() => {
     const list = initialData?.[activeTab];
