@@ -21,7 +21,9 @@ export function generateMetadata({
   searchParams?: { [key: string]: string | string[] | undefined };
 }): Metadata {
   return constructMetadata({
-    title: { absolute: siteConfig.name },
+    title: {
+      absolute: "Findry AI - Curated AI Tools & Agent Skills Directory",
+    },
     canonicalUrl: getPaginatedCanonicalUrl(
       `${siteConfig.url}/`,
       searchParams?.page,
