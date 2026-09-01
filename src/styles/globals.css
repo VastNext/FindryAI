@@ -2,20 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google Translate 仅作为推文翻译引擎使用，不显示其页面级工具栏。 */
-.goog-te-banner-frame.skiptranslate,
-.goog-te-banner-frame,
-body > .skiptranslate,
-.goog-te-gadget-simple,
-.goog-te-gadget-icon,
-#google_translate_hidden_element {
-  display: none !important;
-}
-
-body {
-  top: 0 !important;
-}
-
 /**
  * 1. shadcn/ui themes
  * https://ui.shadcn.com/themes

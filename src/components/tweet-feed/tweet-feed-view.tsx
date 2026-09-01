@@ -2,8 +2,13 @@
 
 import Container from "@/components/container";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BackToTop } from "./back-to-top";
+import { FEED_TRANSLATION_STORAGE_KEY } from "./google-translate";
+import {
+  FeedTranslationContext,
+  type FeedTranslationLanguage,
+} from "./translation-context";
 import { TweetGrid } from "./tweet-grid";
 import { TweetHero } from "./tweet-hero";
 import { TweetRelatedLinks } from "./tweet-related-links";
@@ -25,6 +30,18 @@ export function TweetFeedView({ initialData }: TweetFeedViewProps) {
 
   const [activeTab, setActiveTab] = useState<FeedTab>(validTab);
   const [page, setPage] = useState<number>(1);
+  const [translationLanguage, setTranslationLanguage] =
+    useState<FeedTranslationLanguage>("original");
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(FEED_TRANSLATION_STORAGE_KEY) === "en") {
+        setTranslationLanguage("en");
+      }
+    } catch {
+      // 忽略本地存储读取失败
+    }
+  }, []);
 
   // 根据当前标签选择列表
   const currentList = useMemo(() => {
@@ -72,7 +89,10 @@ export function TweetFeedView({ initialData }: TweetFeedViewProps) {
     <Container className="mt-4 md:mt-8 pb-16">
       <div className="flex flex-col w-full">
         {/* Hero 区域 */}
-        <TweetHero />
+        <TweetHero
+          translationLanguage={translationLanguage}
+          onTranslationLanguageChange={setTranslationLanguage}
+        />
 
         {/* 频道标签 */}
         <TweetTabs
@@ -89,11 +109,13 @@ export function TweetFeedView({ initialData }: TweetFeedViewProps) {
           aria-labelledby={`tab-${activeTab}`}
           className="w-full min-h-[400px]"
         >
-          <TweetGrid
-            tweetIds={visibleIds}
-            hasMore={hasMore}
-            onRequestAppend={handleAppend}
-          />
+          <FeedTranslationContext.Provider value={translationLanguage}>
+            <TweetGrid
+              tweetIds={visibleIds}
+              hasMore={hasMore}
+              onRequestAppend={handleAppend}
+            />
+          </FeedTranslationContext.Provider>
         </div>
 
         {/* 相关站内资源 */}

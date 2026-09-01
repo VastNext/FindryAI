@@ -2,7 +2,15 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
 import { GoogleTranslateControl } from "./google-translate";
 
-export function TweetHero() {
+interface TweetHeroProps {
+  translationLanguage: "original" | "en";
+  onTranslationLanguageChange: (language: "original" | "en") => void;
+}
+
+export function TweetHero({
+  translationLanguage,
+  onTranslationLanguageChange,
+}: TweetHeroProps) {
   return (
     <section
       className="notranslate relative w-full pt-6 pb-4 md:pt-10 md:pb-6"
@@ -34,7 +42,10 @@ export function TweetHero() {
         </p>
 
         <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-          <GoogleTranslateControl />
+          <GoogleTranslateControl
+            currentLang={translationLanguage}
+            onLanguageChange={onTranslationLanguageChange}
+          />
         </div>
       </div>
     </section>
