@@ -6,6 +6,7 @@ export interface CategoryFaq {
 export interface CategoryHighlight {
   title: string;
   description: string;
+  href?: string;
   icon?: string;
 }
 
@@ -36,21 +37,25 @@ export const categorySeoConfig: Record<string, CategorySeoDetail> = {
     highlights: [
       {
         title: "AI Data Analysts & Modeling",
+        href: "/tag/ai-data-analyst",
         description:
           "Conversational assistants like Julius AI and Akkio that clean data, execute statistical tests, and generate predictive models on demand.",
       },
       {
         title: "Smart Spreadsheet & Excel AI",
+        href: "/tag/spreadsheet-ai",
         description:
           "Supercharge Google Sheets and Microsoft Excel with AI formula builders, automated cell extraction, and conversational tabular analysis (Sourcetable, Formula Bot).",
       },
       {
         title: "Text-to-SQL & Database Querying",
+        href: "/tag/text-to-sql",
         description:
           "Convert plain English into optimized SQL and NoSQL queries to query warehouses directly without dedicated database engineering (AI2SQL, Text2SQL).",
       },
       {
         title: "AI BI & Dynamic Dashboards",
+        href: "/tag/bi-dashboard",
         description:
           "Transform messy spreadsheets into beautiful, shareable charts, interactive web apps, and executive dashboards instantly (Onvo AI, ChartPixel, Graphy).",
       },

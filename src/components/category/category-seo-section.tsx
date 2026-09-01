@@ -6,13 +6,16 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import type { CategorySeoDetail } from "@/config/category-seo";
+import { cn } from "@/lib/utils";
 import {
+  ArrowRightIcon,
   BarChart3Icon,
   CheckCircle2Icon,
   HelpCircleIcon,
   LayersIcon,
   SparklesIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 interface CategorySeoHeaderProps {
   seo: CategorySeoDetail;
@@ -85,22 +88,29 @@ export function CategorySeoFooter({ seo }: CategorySeoFooterProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {seo.highlights?.map((highlight) => (
-              <div
+              <Link
                 key={highlight.title}
-                className="p-5 rounded-xl border bg-card/60 backdrop-blur-sm space-y-2 transition-all hover:border-primary/40 hover:shadow-sm"
+                href={highlight.href || "#"}
+                className={cn(
+                  "group p-5 rounded-xl border bg-card/60 backdrop-blur-sm space-y-2 transition-all hover:border-primary/40 hover:shadow-sm",
+                  highlight.href && "cursor-pointer",
+                )}
               >
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg bg-primary/10 text-primary">
                     <BarChart3Icon className="h-4 w-4" />
                   </div>
-                  <h3 className="font-semibold text-base text-foreground">
+                  <h3 className="font-semibold text-base text-foreground flex-1">
                     {highlight.title}
                   </h3>
+                  {highlight.href && (
+                    <ArrowRightIcon className="h-4 w-4 text-muted-foreground/50 transition-all group-hover:text-primary group-hover:translate-x-0.5" />
+                  )}
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed pl-10">
                   {highlight.description}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
