@@ -21,8 +21,9 @@ export function generateMetadata({
   searchParams?: { [key: string]: string | string[] | undefined };
 }): Metadata {
   return constructMetadata({
-    title: "Category",
-    description: "Explore by category",
+    title: "AI Tool Categories - Browse by Use Case",
+    description:
+      "Explore curated AI tools organized by category — from productivity and coding assistants to image generators, marketing platforms, and agent skills.",
     canonicalUrl: getPaginatedCanonicalUrl(
       `${siteConfig.url}/category`,
       searchParams?.page,
@@ -68,6 +69,8 @@ export default async function CategoryIndexPage({
 
   return (
     <div>
+      <h1 className="sr-only">Explore AI Tools by Category</h1>
+
       {/* when no items are found */}
       {items?.length === 0 && <EmptyGrid />}
 
