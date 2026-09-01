@@ -10,6 +10,11 @@ export interface CategoryHighlight {
   icon?: string;
 }
 
+export interface RelatedCategory {
+  name: string;
+  slug: string;
+}
+
 export interface CategorySeoDetail {
   seoTitle: string;
   seoDescription: string;
@@ -19,6 +24,7 @@ export interface CategorySeoDetail {
   intro: string[];
   highlights?: CategoryHighlight[];
   faqs?: CategoryFaq[];
+  relatedCategories?: RelatedCategory[];
 }
 
 export const categorySeoConfig: Record<string, CategorySeoDetail> = {
@@ -88,6 +94,12 @@ export const categorySeoConfig: Record<string, CategorySeoDetail> = {
         answer:
           "Consider three main factors: 1) Your data format (spreadsheets, SQL databases, or unstructured PDFs); 2) Technical proficiency (no-code visual builders vs. code-capable Python/R environments); and 3) Compliance requirements (cloud-hosted vs. self-hosted enterprise solutions with strict privacy guarantees).",
       },
+    ],
+    relatedCategories: [
+      { name: "Developer Tools", slug: "developer-tools" },
+      { name: "Office Tools", slug: "office-tools" },
+      { name: "Search & Research", slug: "search-and-research" },
+      { name: "AI Chat", slug: "ai-chat" },
     ],
   },
   "ai-chat": {

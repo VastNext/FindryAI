@@ -21,6 +21,10 @@ interface CategorySeoHeaderProps {
   seo: CategorySeoDetail;
 }
 
+/**
+ * Zone 1（首屏顶部）：badge + 唯一 H1 + 一句话导语（40-80 词以内），
+ * 不放长文，避免把工具网格推离首屏。
+ */
 export function CategorySeoHeader({ seo }: CategorySeoHeaderProps) {
   return (
     <div className="mx-auto max-w-4xl text-center space-y-4 mb-6">
@@ -43,14 +47,56 @@ export function CategorySeoHeader({ seo }: CategorySeoHeaderProps) {
       <p className="text-base text-muted-foreground max-w-2xl mx-auto">
         {seo.subtitle}
       </p>
+    </div>
+  );
+}
 
-      {seo.intro && seo.intro.length > 0 && (
-        <div className="pt-2 text-sm leading-relaxed text-muted-foreground/90 space-y-2 text-left bg-muted/30 border rounded-xl p-4 sm:p-5">
-          {seo.intro.map((paragraph) => (
-            <p key={paragraph.slice(0, 32)}>{paragraph}</p>
-          ))}
-        </div>
-      )}
+interface CategorySeoSubnavProps {
+  seo: CategorySeoDetail;
+}
+
+/**
+ * Zone 2（网格前）：细分子分类导航。紧凑的 2x2 链接卡片，
+ * 让用户和爬虫在浏览列表前即可进入细分落地页。
+ */
+export function CategorySeoSubnav({ seo }: CategorySeoSubnavProps) {
+  const hasHighlights = seo.highlights && seo.highlights.length > 0;
+  if (!hasHighlights) return null;
+
+  return (
+    <div className="space-y-4 mb-8">
+      <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+        <LayersIcon className="h-4 w-4" />
+        <span>Browse by use case</span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {seo.highlights?.map((highlight) => (
+          <Link
+            key={highlight.title}
+            href={highlight.href || "#"}
+            className={cn(
+              "group flex items-start gap-3 p-4 rounded-xl border bg-card/60 backdrop-blur-sm transition-all hover:border-primary/40 hover:shadow-sm",
+              highlight.href && "cursor-pointer",
+            )}
+          >
+            <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+              <BarChart3Icon className="h-4 w-4" />
+            </div>
+            <div className="min-w-0 flex-1 space-y-1">
+              <h3 className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+                {highlight.title}
+                {highlight.href && (
+                  <ArrowRightIcon className="h-3.5 w-3.5 text-muted-foreground/50 transition-all group-hover:text-primary group-hover:translate-x-0.5" />
+                )}
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {highlight.description}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
@@ -59,64 +105,36 @@ interface CategorySeoFooterProps {
   seo: CategorySeoDetail;
 }
 
+/**
+ * Zone 3（网格下方）：深度内容区。
+ * 顺序遵循目录页标准：About 长文 → FAQ → 相关分类出口。
+ */
 export function CategorySeoFooter({ seo }: CategorySeoFooterProps) {
-  const hasHighlights = seo.highlights && seo.highlights.length > 0;
+  const hasIntro = seo.intro && seo.intro.length > 0;
   const hasFaqs = seo.faqs && seo.faqs.length > 0;
+  const hasRelated = seo.relatedCategories && seo.relatedCategories.length > 0;
 
-  if (!hasHighlights && !hasFaqs) {
+  if (!hasIntro && !hasFaqs && !hasRelated) {
     return null;
   }
 
   return (
     <div className="mt-16 space-y-12 border-t pt-12">
-      {/* Category Sub-domains / Highlights */}
-      {hasHighlights && (
-        <div className="space-y-6">
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-2 text-primary font-semibold text-sm">
-              <LayersIcon className="h-4 w-4" />
-              <span>Core Sub-Categories</span>
-            </div>
-            <h2 className="text-2xl font-bold tracking-tight">
-              Explore by Specialized Use Case
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Find the exact tool tailored to your data workflow and technical
-              stack.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {seo.highlights?.map((highlight) => (
-              <Link
-                key={highlight.title}
-                href={highlight.href || "#"}
-                className={cn(
-                  "group p-5 rounded-xl border bg-card/60 backdrop-blur-sm space-y-2 transition-all hover:border-primary/40 hover:shadow-sm",
-                  highlight.href && "cursor-pointer",
-                )}
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                    <BarChart3Icon className="h-4 w-4" />
-                  </div>
-                  <h3 className="font-semibold text-base text-foreground flex-1">
-                    {highlight.title}
-                  </h3>
-                  {highlight.href && (
-                    <ArrowRightIcon className="h-4 w-4 text-muted-foreground/50 transition-all group-hover:text-primary group-hover:translate-x-0.5" />
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed pl-10">
-                  {highlight.description}
-                </p>
-              </Link>
+      {/* About：深度介绍长文 */}
+      {hasIntro && (
+        <div className="max-w-3xl mx-auto space-y-4">
+          <h2 className="text-2xl font-bold tracking-tight text-center">
+            About {seo.h1}
+          </h2>
+          <div className="text-sm leading-relaxed text-muted-foreground space-y-3">
+            {seo.intro.map((paragraph) => (
+              <p key={paragraph.slice(0, 32)}>{paragraph}</p>
             ))}
           </div>
         </div>
       )}
 
-      {/* Category FAQs (Rich Schema-backed accordion) */}
+      {/* FAQ：结构化数据对应的手风琴 */}
       {hasFaqs && (
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="text-center space-y-2">
@@ -152,6 +170,27 @@ export function CategorySeoFooter({ seo }: CategorySeoFooterProps) {
               </AccordionItem>
             ))}
           </Accordion>
+        </div>
+      )}
+
+      {/* Related Categories：兄弟分类出口，防止走错类别的死胡同 */}
+      {hasRelated && (
+        <div className="max-w-3xl mx-auto space-y-4">
+          <h2 className="text-xl font-bold tracking-tight text-center">
+            Explore Related Categories
+          </h2>
+          <div className="flex flex-wrap justify-center gap-2.5">
+            {seo.relatedCategories?.map((rel) => (
+              <Link
+                key={rel.slug}
+                href={`/category/${rel.slug}`}
+                className="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full border bg-card/60 text-sm text-muted-foreground transition-all hover:border-primary/40 hover:text-primary hover:shadow-sm"
+              >
+                {rel.name}
+                <ArrowRightIcon className="h-3.5 w-3.5 opacity-50 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>

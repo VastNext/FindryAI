@@ -1,6 +1,7 @@
 import {
   CategorySeoFooter,
   CategorySeoHeader,
+  CategorySeoSubnav,
 } from "@/components/category/category-seo-section";
 import ItemGrid from "@/components/item/item-grid";
 import EmptyGrid from "@/components/shared/empty-grid";
@@ -171,8 +172,11 @@ export default async function CategoryPage({
     <div className="space-y-6">
       <JsonLd data={categoryJsonLd} />
 
-      {/* SEO Header Intro */}
+      {/* Zone 1: SEO header (badge + single H1 + short subtitle) */}
       <CategorySeoHeader seo={seo} />
+
+      {/* Zone 2: sub-category navigation above the grid */}
+      <CategorySeoSubnav seo={seo} />
 
       {/* when no items are found */}
       {items?.length === 0 && <EmptyGrid />}
@@ -195,7 +199,7 @@ export default async function CategoryPage({
         </section>
       )}
 
-      {/* SEO Footer (Core Sub-categories and FAQ Accordion) */}
+      {/* Zone 3: deep content below the grid (About → FAQ → Related categories) */}
       <CategorySeoFooter seo={seo} />
     </div>
   );
