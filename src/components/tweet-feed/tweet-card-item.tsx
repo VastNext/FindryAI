@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { EmbeddedTweet, TweetSkeleton, useTweet } from "react-tweet";
 import { TweetErrorCard } from "./tweet-error-card";
 
@@ -9,6 +10,11 @@ interface TweetCardItemProps {
 
 export function TweetCardItem({ tweetId }: TweetCardItemProps) {
   const { data, error, isLoading } = useTweet(tweetId);
+
+  useEffect(() => {
+    if (!data) return;
+    window.dispatchEvent(new Event("tweet-feed-content-ready"));
+  }, [data]);
 
   if (isLoading) {
     return (

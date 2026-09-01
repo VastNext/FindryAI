@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertCircle, Check, Languages } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface GoogleTranslateInstance {
   new (
@@ -59,6 +59,48 @@ export function GoogleTranslateControl() {
   const [currentLang, setCurrentLang] = useState<string>("original");
   const [, setIsScriptLoaded] = useState<boolean>(false);
   const [isUnavailable, setIsUnavailable] = useState<boolean>(false);
+  const currentLangRef = useRef("original");
+  const retranslateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  const markTranslationScope = useCallback(() => {
+    const target = document.getElementById("translate-target");
+    if (!target) return;
+
+    for (const element of Array.from(target.querySelectorAll("article *"))) {
+      const belongsToTweetBody = Boolean(element.closest("article p[lang]"));
+      if (belongsToTweetBody) {
+        element.classList.remove("notranslate");
+        element.setAttribute("translate", "yes");
+      } else {
+        element.classList.add("notranslate");
+        element.setAttribute("translate", "no");
+      }
+    }
+  }, []);
+
+  const retranslateFeed = useCallback(() => {
+    if (currentLangRef.current === "original") return;
+
+    markTranslationScope();
+    if (retranslateTimerRef.current) {
+      clearTimeout(retranslateTimerRef.current);
+    }
+
+    retranslateTimerRef.current = setTimeout(() => {
+      const select =
+        document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      if (!select) return;
+
+      select.value = "";
+      select.dispatchEvent(new Event("change"));
+      setTimeout(() => {
+        select.value = currentLangRef.current;
+        select.dispatchEvent(new Event("change"));
+      }, 1200);
+    }, 400);
+  }, [markTranslationScope]);
 
   useEffect(() => {
     const markOutsideFeedAsNoTranslate = () => {
@@ -69,6 +111,7 @@ export function GoogleTranslateControl() {
         element.classList.add("notranslate");
         element.setAttribute("translate", "no");
       }
+      markTranslationScope();
     };
     markOutsideFeedAsNoTranslate();
 
@@ -77,6 +120,7 @@ export function GoogleTranslateControl() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved && LANGUAGES.some((l) => l.code === saved)) {
         setCurrentLang(saved);
+        currentLangRef.current = saved;
       }
     } catch {
       // 忽略本地存储访问失败
@@ -127,6 +171,8 @@ export function GoogleTranslateControl() {
     const observer = new MutationObserver(markOutsideFeedAsNoTranslate);
     observer.observe(document.body, { childList: true, subtree: true });
 
+    window.addEventListener("tweet-feed-content-ready", retranslateFeed);
+
     // 五秒后仍不可用则保留原文
     const timer = setTimeout(() => {
       if (!window.google?.translate) {
@@ -136,30 +182,41 @@ export function GoogleTranslateControl() {
 
     return () => {
       clearTimeout(timer);
+      if (retranslateTimerRef.current) {
+        clearTimeout(retranslateTimerRef.current);
+      }
       observer.disconnect();
+      window.removeEventListener("tweet-feed-content-ready", retranslateFeed);
     };
-  }, []);
+  }, [markTranslationScope, retranslateFeed]);
 
-  const handleLanguageChange = useCallback((langCode: string) => {
-    setCurrentLang(langCode);
-    try {
-      localStorage.setItem(STORAGE_KEY, langCode);
-    } catch {
-      // 忽略本地存储写入失败
-    }
+  const handleLanguageChange = useCallback(
+    (langCode: string) => {
+      setCurrentLang(langCode);
+      currentLangRef.current = langCode;
+      try {
+        localStorage.setItem(STORAGE_KEY, langCode);
+      } catch {
+        // 忽略本地存储写入失败
+      }
 
-    setTranslateCookie(langCode);
+      setTranslateCookie(langCode);
 
-    // 触发 Google Translate 内部选择框
-    const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
-    if (select) {
-      select.value = langCode === "original" ? "" : langCode;
-      select.dispatchEvent(new Event("change"));
-    } else {
-      // 内部控件尚未就绪时通过刷新应用 Cookie
-      window.location.reload();
-    }
-  }, []);
+      markTranslationScope();
+
+      // 触发 Google Translate 内部选择框
+      const select =
+        document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      if (select) {
+        select.value = langCode === "original" ? "" : langCode;
+        select.dispatchEvent(new Event("change"));
+      } else {
+        // 内部控件尚未就绪时通过刷新应用 Cookie
+        window.location.reload();
+      }
+    },
+    [markTranslationScope],
+  );
 
   const currentLabel =
     LANGUAGES.find((l) => l.code === currentLang)?.label || "Original";
