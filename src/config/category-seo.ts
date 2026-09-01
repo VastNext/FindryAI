@@ -22,7 +22,7 @@ export interface CategorySeoDetail {
 
 export const categorySeoConfig: Record<string, CategorySeoDetail> = {
   "data-tools": {
-    seoTitle: "Best AI Data Analysis Tools (2026 Directory) | Findry AI",
+    seoTitle: "Best AI Data Analysis Tools (2026 Directory)",
     seoDescription:
       "Discover the best AI data analysis tools in 2026. Compare 100+ natural language data analysts (Julius AI, Akkio), AI spreadsheet agents (Sourcetable, Formula Bot), Text-to-SQL generators, and automated BI dashboards.",
     badge: "100+ Curated Data Tools",
@@ -86,7 +86,7 @@ export const categorySeoConfig: Record<string, CategorySeoDetail> = {
     ],
   },
   "ai-chat": {
-    seoTitle: "Best AI Chat & Conversational Assistants (2026) | Findry AI",
+    seoTitle: "Best AI Chat & Conversational Assistants (2026)",
     seoDescription:
       "Explore the most powerful AI chat assistants, multimodal LLMs, and conversational bots to boost productivity and automate customer interactions.",
     badge: "Top AI Chatbots",
@@ -105,7 +105,7 @@ export const categorySeoConfig: Record<string, CategorySeoDetail> = {
     ],
   },
   "developer-tools": {
-    seoTitle: "Best AI Developer Tools & Coding Assistants (2026) | Findry AI",
+    seoTitle: "Best AI Developer Tools & Coding Assistants (2026)",
     seoDescription:
       "Accelerate software engineering with AI coding assistants, code generation tools, automated testing, and developer infrastructure.",
     badge: "For Engineers",
@@ -137,7 +137,7 @@ export function getCategorySeo(
     fallbackName ||
     slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   return {
-    seoTitle: `Best ${name} AI Tools (2026 Directory) | Findry AI`,
+    seoTitle: `Best ${name} AI Tools (2026 Directory)`,
     seoDescription: `Explore curated ${name} AI tools and software. Compare features, pricing, and alternatives to supercharge your workflow with Findry AI.`,
     h1: `${name} AI Tools`,
     subtitle: `Discover and compare top-rated ${name} AI tools vetted for quality and productivity.`,
