@@ -99,8 +99,17 @@ export function GoogleTranslateControl() {
       .goog-te-banner-frame,
       body > .skiptranslate,
       .goog-te-gadget-simple,
-      .goog-te-gadget-icon,
-      #google_translate_hidden_element { display: none !important; }
+      .goog-te-gadget-icon { display: none !important; }
+      #google_translate_hidden_element {
+        position: fixed !important;
+        left: -9999px !important;
+        top: 0 !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
       body { top: 0 !important; }
     `;
     if (!document.getElementById(style.id)) document.head.appendChild(style);
@@ -187,11 +196,7 @@ export function GoogleTranslateControl() {
 
   return (
     <div className="notranslate flex items-center gap-2" translate="no">
-      <div
-        id="google_translate_hidden_element"
-        className="hidden"
-        aria-hidden="true"
-      />
+      <div id="google_translate_hidden_element" aria-hidden="true" />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
