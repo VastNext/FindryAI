@@ -7,7 +7,7 @@ const SITE_HOST = SITE_URL ? new URL(SITE_URL).hostname : SITE_URL;
 
 export const siteConfig: SiteConfig = {
   name: "Findry AI",
-  tagline: "Find better AI.",
+  tagline: "Discover curated AI tools for every task",
   description:
     "Discover curated AI tools for work, creativity, development, research, and everyday tasks.",
   keywords: [
