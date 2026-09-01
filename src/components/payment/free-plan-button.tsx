@@ -88,8 +88,8 @@ export function FreePlanButton({ item, className }: FreePlanButtonProps) {
       onClick={handleClick}
     >
       {!item ? (
-        <div className="flex items-center justify-center gap-2">
-          <span>Go Submit</span>
+        <div className="flex items-center justify-center gap-2 font-semibold">
+          <span>Submit for Free</span>
           <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />
         </div>
       ) : item.publishDate ? (
