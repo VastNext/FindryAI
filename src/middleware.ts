@@ -6,6 +6,13 @@ import {
   publicRoutes,
 } from "@/routes";
 import NextAuth from "next-auth";
+import { NextResponse } from "next/server";
+
+// dedicated domains that serve the GPT-6 Astra landing page at every path
+const landingHosts = new Set([
+  "gpt-6.findryai.com",
+  "gpt-6-astra.findryai.com",
+]);
 
 /**
  * https://www.youtube.com/watch?v=1MTyCvS05V4
@@ -17,6 +24,17 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
+
+  // dedicated GPT-6 Astra domains serve the landing page at every path
+  const host = req.headers.get("host")?.toLowerCase();
+  const isLandingHost =
+    !!host &&
+    landingHosts.has(host) &&
+    !nextUrl.pathname.startsWith("/gpt-6-astra") &&
+    !nextUrl.pathname.startsWith("/api");
+  if (isLandingHost) {
+    return NextResponse.rewrite(new URL("/gpt-6-astra", nextUrl));
+  }
 
   if (nextUrl.pathname === "/" && nextUrl.searchParams.has("page")) {
     const firstPageUrl = nextUrl.clone();
