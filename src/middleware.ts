@@ -1,5 +1,6 @@
-import { siteConfig } from "@/config/site";
 import authConfig from "@/auth.config";
+import { siteConfig } from "@/config/site";
+import { landingHosts } from "@/lib/landing-hosts";
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
@@ -8,13 +9,6 @@ import {
 } from "@/routes";
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
-
-// dedicated domains that serve the GPT-6 Astra landing page at every path
-const landingHosts = new Set([
-  "gpt-6.findryai.com",
-  "gpt-6-astra.findryai.com",
-  "astra.findryai.com",
-]);
 
 /**
  * https://www.youtube.com/watch?v=1MTyCvS05V4

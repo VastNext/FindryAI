@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { siteConfig } from "@/config/site";
 import {
   agiTakes,
   benchmarks,
@@ -433,7 +434,7 @@ function FinalCta() {
                 <Icons.arrowRight className="size-4" />
               </a>
               <Link
-                href="/"
+                href={siteConfig.url}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
                   "rounded-full px-8 text-base",

@@ -8,7 +8,13 @@ import Container from "../container";
 import { Logo } from "../logo";
 import BuiltWithButton from "../shared/built-with-button";
 
-export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
+export function Footer({
+  className,
+  homeHref = "/",
+}: React.HTMLAttributes<HTMLElement> & {
+  /** where the "Home" link should point; on landing domains this is the main site URL */
+  homeHref?: string;
+}) {
   return (
     <footer className={cn("border-t", className)}>
       <Container className="grid grid-cols-2 gap-8 py-12 md:grid-cols-6">
@@ -89,7 +95,7 @@ export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
                   link.href && (
                     <li key={link.title}>
                       <Link
-                        href={link.href}
+                        href={link.href === "/" ? homeHref : link.href}
                         target={link.external ? "_blank" : undefined}
                         className="text-sm text-muted-foreground hover:text-primary"
                       >
