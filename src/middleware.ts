@@ -12,6 +12,7 @@ import { NextResponse } from "next/server";
 const landingHosts = new Set([
   "gpt-6.findryai.com",
   "gpt-6-astra.findryai.com",
+  "astra.findryai.com",
 ]);
 
 /**
