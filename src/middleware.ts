@@ -1,4 +1,6 @@
 import authConfig from "@/auth.config";
+import { siteConfig } from "@/config/site";
+import { landingHosts } from "@/lib/landing-hosts";
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
@@ -6,6 +8,7 @@ import {
   publicRoutes,
 } from "@/routes";
 import NextAuth from "next-auth";
+import { NextResponse } from "next/server";
 
 /**
  * https://www.youtube.com/watch?v=1MTyCvS05V4
@@ -17,6 +20,22 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
+
+  // dedicated GPT-6 Astra domains serve the landing page at the root, and send
+  // every other page navigation (navbar, footer, etc.) back to the main site
+  const host = req.headers.get("host")?.toLowerCase();
+  if (host && landingHosts.has(host)) {
+    const { pathname, search } = nextUrl;
+    if (pathname === "/" || pathname.startsWith("/gpt-6-astra")) {
+      return NextResponse.rewrite(new URL("/gpt-6-astra", nextUrl));
+    }
+    if (!pathname.startsWith("/api")) {
+      return NextResponse.redirect(
+        new URL(`${siteConfig.url}${pathname}${search}`),
+        307,
+      );
+    }
+  }
 
   if (nextUrl.pathname === "/" && nextUrl.searchParams.has("page")) {
     const firstPageUrl = nextUrl.clone();

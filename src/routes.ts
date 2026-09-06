@@ -19,6 +19,7 @@ export const publicRoutes = [
   "/password-generator(/.*)?",
   "/agent-skills(/.*)?",
   "/ai-daily-feeds(/.*)?",
+  "/gpt-6-astra(/.*)?",
 
   "/about(/.*)?",
   "/terms(/.*)?",
