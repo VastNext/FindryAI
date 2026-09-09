@@ -7,6 +7,8 @@ import { faqConfig } from "@/config/faq";
 import { siteConfig } from "@/config/site";
 import { constructMetadata } from "@/lib/metadata";
 
+export const revalidate = 172800; // 48 hours ISR cache
+
 export const metadata = constructMetadata({
   title: "Pricing",
   description: "Choose a pricing plan for submitting your product",

@@ -22,6 +22,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+export const revalidate = 172800; // 48 hours ISR cache
+
 export async function generateMetadata({
   params,
 }: {

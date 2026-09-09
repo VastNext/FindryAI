@@ -10,6 +10,8 @@ const baseMetadata = constructMetadata({
   canonicalUrl: `${siteConfig.url}/gpt-6-astra`,
 });
 
+export const revalidate = 172800; // 48 hours ISR cache
+
 export const metadata = {
   ...baseMetadata,
   openGraph: {

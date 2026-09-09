@@ -19,7 +19,7 @@ export const metadata = {
   },
 };
 
-export const revalidate = 86_400;
+export const revalidate = 172800; // 48 hours ISR cache
 
 export default async function AiDailyFeedsPage() {
   let feedData: TweetFeedData = {

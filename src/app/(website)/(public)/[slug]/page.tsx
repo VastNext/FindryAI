@@ -7,6 +7,9 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { pageQuery } from "@/sanity/lib/queries";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+export const revalidate = 172800; // 48 hours ISR cache
+
 export async function generateMetadata({
   params,
 }: {

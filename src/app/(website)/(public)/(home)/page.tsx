@@ -15,6 +15,8 @@ import {
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+export const revalidate = 172800; // 48 hours ISR cache
+
 export function generateMetadata({
   searchParams,
 }: {

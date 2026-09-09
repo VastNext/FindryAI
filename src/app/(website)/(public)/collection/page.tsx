@@ -9,6 +9,8 @@ import { COLLECTIONS_PER_PAGE } from "@/lib/constants";
 import { constructMetadata, getPaginatedCanonicalUrl } from "@/lib/metadata";
 import type { Metadata } from "next";
 
+export const revalidate = 172800; // 48 hours ISR cache
+
 export function generateMetadata({
   searchParams,
 }: {

@@ -12,6 +12,8 @@ const baseMetadata = constructMetadata({
   canonicalUrl: `${siteConfig.url}/agent-skills`,
 });
 
+export const revalidate = 172800; // 48 hours ISR cache
+
 export const metadata = {
   ...baseMetadata,
   openGraph: {

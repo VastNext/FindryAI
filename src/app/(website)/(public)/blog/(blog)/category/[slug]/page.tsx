@@ -11,6 +11,8 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { blogCategoryMetadateQuery } from "@/sanity/lib/queries";
 import type { Metadata } from "next";
 
+export const revalidate = 172800; // 48 hours ISR cache
+
 export async function generateMetadata({
   params,
   searchParams,
