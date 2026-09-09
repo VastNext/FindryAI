@@ -19,14 +19,17 @@ import {
 } from "@/components/ui/table";
 import { siteConfig } from "@/config/site";
 import {
+  accessRoutes,
   agiTakes,
   benchmarks,
   capabilities,
+  effortLadder,
   faqs,
   gpt6Astra,
   heroStats,
   sources,
   specs,
+  tokenTips,
 } from "@/data/gpt-6-astra";
 import { cn } from "@/lib/utils";
 import { ExternalLink, Quote, Sparkles } from "lucide-react";
@@ -62,17 +65,17 @@ function Hero() {
         <div className="flex flex-col items-center text-center">
           <Badge
             variant="outline"
-            className="animate-fade-up gap-2 rounded-full px-4 py-1.5 text-sm"
+            className="animate-fade-up gap-2 rounded-full px-4 py-1.5 text-sm uppercase tracking-wider"
           >
             <Sparkles className="size-4 text-primary" />
-            Launched {gpt6Astra.releaseDate} · OpenAI's new flagship
+            The AGI Era · The Future Is Here
           </Badge>
 
           <h1
             className="animate-fade-up mt-8 max-w-4xl font-bricolage text-4xl font-bold text-balance sm:text-5xl md:text-6xl"
             style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}
           >
-            GPT-6 Astra:{" "}
+            Try {gpt6Astra.name} —{" "}
             <span className="text-gradient_indigo-purple">
               {gpt6Astra.tagline}
             </span>
@@ -130,6 +133,70 @@ function Hero() {
               </div>
             ))}
           </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function HowToTrySection() {
+  return (
+    <section className="border-t bg-muted/30 py-16 md:py-24">
+      <Container>
+        <div className="flex w-full flex-col gap-12">
+          <SectionHeader
+            label="Get Access"
+            title="How to try GPT-6 Astra in minutes"
+            subtitle="Three ways in — pick the one that matches how you already work."
+          />
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {accessRoutes.map((route) => (
+              <div
+                key={route.title}
+                className="flex flex-col gap-4 rounded-2xl border bg-card p-6"
+              >
+                <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <route.icon className="size-5" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-bricolage text-lg font-semibold">
+                    {route.title}
+                  </h3>
+                  <Badge
+                    variant="secondary"
+                    className="w-fit rounded-full text-xs"
+                  >
+                    {route.requirement}
+                  </Badge>
+                </div>
+                <ol className="flex flex-col gap-2 text-sm leading-6 text-muted-foreground">
+                  {route.steps.map((step, index) => (
+                    <li key={step} className="flex gap-2">
+                      <span className="font-mono text-primary">
+                        {index + 1}.
+                      </span>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))}
+          </div>
+
+          <p className="mx-auto max-w-3xl text-center text-sm leading-6 text-muted-foreground">
+            Rolling out to paid ChatGPT plans since {gpt6Astra.releaseDate}.
+            Full API details live on the{" "}
+            <a
+              href={gpt6Astra.officialUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
+              official GPT-6 Astra homepage
+            </a>
+            .
+          </p>
         </div>
       </Container>
     </section>
@@ -339,6 +406,79 @@ function SpecsSection() {
   );
 }
 
+function BestPracticesSection() {
+  return (
+    <section className="border-t bg-muted/30 py-16 md:py-24">
+      <Container>
+        <div className="flex w-full flex-col gap-12">
+          <SectionHeader
+            label="Tips & Best Practices"
+            title="GPT-6 Astra best practices: save tokens, get better answers"
+            subtitle="Astra's API pricing rewards the right defaults. These are the settings and habits that cut bills without cutting quality."
+          />
+
+          <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border bg-card">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[110px]">Effort</TableHead>
+                  <TableHead className="text-right">Quality score</TableHead>
+                  <TableHead className="text-right">Cost / task</TableHead>
+                  <TableHead className="w-[46%]">When to use</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {effortLadder.map((row) => (
+                  <TableRow key={row.effort}>
+                    <TableCell className="font-medium">
+                      {row.effort}
+                      {row.effort === "medium" ? (
+                        <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                          default
+                        </span>
+                      ) : null}
+                    </TableCell>
+                    <TableCell className="text-right">{row.score}</TableCell>
+                    <TableCell className="text-right">
+                      {row.costPerTask}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {row.guidance}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="mx-auto grid w-full max-w-4xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {tokenTips.map((tip) => (
+              <div
+                key={tip.title}
+                className="flex flex-col gap-2 rounded-2xl border bg-card p-5"
+              >
+                <h3 className="font-medium">{tip.title}</h3>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  {tip.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mx-auto max-w-4xl text-sm leading-6 text-muted-foreground">
+            Prompting essentials: give Astra a finish line ("implement and
+            verify" beats "look into it"), feed it error messages and what
+            you've already tried before raising effort, ask for prose when you
+            don't want tables, and request "the smallest clear change that
+            satisfies the requirement". Effort scores and per-task costs from
+            the Artificial Analysis Index v4.2, September 2026.
+          </p>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
 function FaqSection() {
   return (
     <section className="border-t bg-muted/30 py-16 md:py-24">
@@ -459,10 +599,12 @@ export function Gpt6AstraLanding() {
   return (
     <div className="flex w-full flex-col">
       <Hero />
+      <HowToTrySection />
       <AgiEraSection />
       <CapabilitiesSection />
       <BenchmarksSection />
       <SpecsSection />
+      <BestPracticesSection />
       <FaqSection />
       <SourcesSection />
       <FinalCta />

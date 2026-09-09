@@ -4,11 +4,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight, Bot, Grid3X3, Search } from "lucide-react";
+import { ArrowRight, Bot, Grid3X3, Search, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export function TweetRelatedLinks() {
   const links = [
+    {
+      title: "GPT-6 Astra Tips",
+      description:
+        "Try OpenAI's flagship model: access routes, pricing, and token-saving best practices.",
+      href: "/gpt-6-astra",
+      icon: Sparkles,
+      action: "Read the Guide",
+    },
     {
       title: "Agent Skills Directory",
       description:
@@ -50,7 +58,7 @@ export function TweetRelatedLinks() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {links.map((item) => {
           const Icon = item.icon;
           return (

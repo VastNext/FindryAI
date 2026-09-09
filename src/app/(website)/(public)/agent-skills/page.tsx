@@ -1,9 +1,13 @@
 import { AgentSkillDirectory } from "@/components/agent-skill/agent-skill-directory";
 import Container from "@/components/container";
 import { HeaderSection } from "@/components/shared/header-section";
+import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { agentSkillGroups } from "@/data/agent-skills";
 import { constructMetadata } from "@/lib/metadata";
+import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const baseMetadata = constructMetadata({
   title: "Agent Skills",
@@ -35,6 +39,28 @@ export default function AgentSkillsPage() {
         />
 
         <AgentSkillDirectory groups={agentSkillGroups} />
+
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center md:flex-row md:justify-between md:text-left">
+          <div>
+            <p className="font-bricolage text-lg font-semibold">
+              Running agents on GPT-6 Astra?
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Read our best practices for access, pricing, and saving tokens on
+              OpenAI's flagship model.
+            </p>
+          </div>
+          <Link
+            href="/gpt-6-astra"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "shrink-0 rounded-full",
+            )}
+          >
+            GPT-6 Astra best practices
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
       </div>
     </Container>
   );

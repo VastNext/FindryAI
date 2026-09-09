@@ -1,9 +1,11 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Bot,
+  Cloud,
   Code2,
   FlaskConical,
   Layers,
+  MessageSquare,
   MonitorSmartphone,
   ShieldCheck,
 } from "lucide-react";
@@ -20,9 +22,9 @@ export const gpt6Astra = {
   systemCardUrl: "https://deploymentsafety.openai.com/gpt-6-astra",
   safetyUrl: "https://openai.com/index/path-to-astra/",
   arcPrizeUrl: "https://arcprize.org/blog/astra",
-  // meta description — promises something the visitor can act on
+  // meta description — targets "try / pricing / save tokens" search intent
   description:
-    "GPT-6 Astra is live on ChatGPT and the OpenAI API. See how to get access in minutes, what it costs, and what its AGI-level benchmark results mean for your work.",
+    "GPT-6 Astra is live on ChatGPT and the OpenAI API. See how to try it in minutes, what it costs, and how to save tokens — plus what its AGI-level results mean.",
   heroSubtitle:
     "OpenAI's most intelligent and aligned model yet — welcomed by many as the opening of the AGI era. It matches human experts on frontier benchmarks, operates computers like people do, and writes production-grade software.",
 };
@@ -32,6 +34,119 @@ export const heroStats: { value: string; label: string }[] = [
   { value: "1.05M", label: "token context window" },
   { value: "72.6%", label: "OSWorld 2.0 computer use" },
   { value: "96.0%", label: "GPQA Diamond" },
+];
+
+export const accessRoutes: {
+  icon: LucideIcon;
+  title: string;
+  requirement: string;
+  steps: string[];
+}[] = [
+  {
+    icon: MessageSquare,
+    title: "ChatGPT",
+    requirement: "Plus, Pro, Business or Enterprise plan",
+    steps: [
+      "Open the model picker in ChatGPT",
+      "Select GPT-6 Astra (rolling out to all paid plans)",
+      "Pro, Business and Enterprise plans also unlock GPT-6 Astra Pro",
+    ],
+  },
+  {
+    icon: Code2,
+    title: "OpenAI API",
+    requirement: "Pay-as-you-go, model ID gpt-6-astra",
+    steps: [
+      'Call the Responses API with model "gpt-6-astra"',
+      "Set reasoning effort: low, medium, high, xhigh or max",
+      "$10/$50 per 1M tokens up to 272K context; cached input $1",
+    ],
+  },
+  {
+    icon: Cloud,
+    title: "Azure & AWS Bedrock",
+    requirement: "For teams already on cloud platforms",
+    steps: [
+      "Available on Microsoft Azure OpenAI and AWS Bedrock",
+      "Same model ID and pricing structure as the OpenAI API",
+      "Enterprise access is off by default — admins must enable it",
+    ],
+  },
+];
+
+export const effortLadder: {
+  effort: string;
+  score: number;
+  costPerTask: string;
+  guidance: string;
+}[] = [
+  {
+    effort: "low",
+    score: 49,
+    costPerTask: "$0.63",
+    guidance:
+      "Quick answers and easy edits — already outperforms GPT-5.6 Sol at high effort",
+  },
+  {
+    effort: "medium",
+    score: 52,
+    costPerTask: "$1.16",
+    guidance:
+      "The default for most work — beats GPT-5.6 Sol at max effort, for less money",
+  },
+  {
+    effort: "high",
+    score: 53,
+    costPerTask: "$1.41",
+    guidance:
+      "Long autonomous runs (~20 min): Codex sessions, browser agents, tool pipelines",
+  },
+  {
+    effort: "xhigh",
+    score: 54,
+    costPerTask: "$1.85",
+    guidance: "Only after measuring a real failure rate at high effort",
+  },
+  {
+    effort: "max",
+    score: 55,
+    costPerTask: "$2.57",
+    guidance:
+      "Hardest problems only — otherwise you're paying for a feeling, per benchmarks",
+  },
+];
+
+export const tokenTips: { title: string; description: string }[] = [
+  {
+    title: "Keep prompt prefixes stable",
+    description:
+      "Cached input costs $1 per million tokens — 90% off the $10 list price. Put fixed rules and system prompts first, dynamic content (paths, timestamps, per-task details) last.",
+  },
+  {
+    title: "Only cache what repeats",
+    description:
+      "Cache writes cost $12.50/M. A cached block needs to be read at least twice to break even — one-off requests are cheaper uncached.",
+  },
+  {
+    title: "Stay under the 272K line",
+    description:
+      "Once input passes 272K tokens, the entire request bills at long-context rates ($20/$75 per 1M) — not just the overflow. Trim context before you cross it.",
+  },
+  {
+    title: "Match effort to the task",
+    description:
+      "Medium is the default; low is fine for simple Q&A; reserve high+ for long autonomous runs where fewer wasted steps pays for the pricier thinking.",
+  },
+  {
+    title: "Use Batch & Flex for async work",
+    description:
+      "Both modes cost 50% of standard rates. If a job doesn't need a real-time answer — backfills, evaluations, bulk processing — don't pay full price.",
+  },
+  {
+    title: "Watch output length",
+    description:
+      "Output tokens cost $50/M — 5× input. Ask for concise formats, cap max output tokens, and have Astra summarize instead of reproduce long context.",
+  },
 ];
 
 export const agiTakes: {
@@ -198,24 +313,29 @@ export const specs: { label: string; value: string; note?: string }[] = [
 
 export const faqs: { question: string; answer: string }[] = [
   {
-    question: "What is GPT-6 Astra?",
+    question: "How can I try GPT-6 Astra?",
     answer:
-      'GPT-6 Astra is OpenAI\'s flagship frontier model, released on September 3, 2026 as the successor to GPT-5.6 "Sol". It is a multimodal reasoning model (text and image input) with a 1.05M-token context window, and it currently holds state-of-the-art results across coding, computer-use and agentic benchmarks.',
+      "Three ways: subscribe to ChatGPT Plus, Pro, Business or Enterprise and pick GPT-6 Astra in the model picker (rolling out from September 3, 2026); call the OpenAI API with the model ID gpt-6-astra; or use it through Microsoft Azure OpenAI or AWS Bedrock. There is no free tier yet — the cheapest entry is a ChatGPT Plus subscription.",
+  },
+  {
+    question: "How much does GPT-6 Astra cost?",
+    answer:
+      "It is included in existing ChatGPT paid subscription allowances, with extra usage available via credits. On the API, Astra costs $10 per million input tokens and $50 per million output tokens (up to 272K context; long-context requests bill at $20/$75). Cached input is $1 per million. Batch and Flex modes are half price, and Fast mode runs at up to 2× speed for 2× price.",
+  },
+  {
+    question: "How do I save tokens on GPT-6 Astra?",
+    answer:
+      "Three biggest levers: keep prompt prefixes stable so prompt caching hits (cached input is $1/M vs $10/M); keep input under the 272K-token line where long-context pricing kicks in for the whole request; and control output length — output tokens cost 5× input. For async work, Batch and Flex modes cut the bill by 50%.",
+  },
+  {
+    question: "What reasoning effort should I use for GPT-6 Astra?",
+    answer:
+      "Medium is the default for most tasks — it beats the previous GPT-5.6 Sol at max effort while costing less per task. Use low for quick Q&A and edits, and reserve high for long autonomous runs (Codex sessions, browser agents) where fewer wasted steps pays for the pricier thinking. Independent benchmarks show each step above high buys about one quality point for 22–39% more cost.",
   },
   {
     question: "Is GPT-6 Astra AGI?",
     answer:
       'It is the model that pushed the AGI debate into the mainstream — OpenAI positions it as "a new generation of intelligence", and on ARC-AGI-3 it beat the median human\'s action efficiency on 96% of levels, what ARC Prize calls "effectively reaching human parity on the benchmark". But ARC Prize itself is explicit: saturating a benchmark is not proof of AGI, and real-world open-endedness remains unsolved. The honest answer: it is the strongest step yet, and the debate is now live.',
-  },
-  {
-    question: "How can I access GPT-6 Astra?",
-    answer:
-      "It is rolling out to ChatGPT Plus, Pro, Business and Enterprise plans over the coming days from September 3, 2026, and is available via the OpenAI API (model ID: gpt-6-astra), Microsoft Azure and AWS Bedrock. Enterprise access is off by default and must be enabled by administrators.",
-  },
-  {
-    question: "How much does GPT-6 Astra cost?",
-    answer:
-      "It is included in existing ChatGPT subscription allowances, with extra usage available via credits. On the API, Astra costs $10 per million input tokens and $50 per million output tokens (up to 272K context; long-context requests bill at higher rates). Batch and Flex modes are half price, and Fast mode runs at up to 2× speed for 2× price.",
   },
   {
     question: "What can it actually do today?",
