@@ -8,6 +8,7 @@ import {
   MessageSquare,
   MonitorSmartphone,
   ShieldCheck,
+  Terminal,
 } from "lucide-react";
 
 export const gpt6Astra = {
@@ -18,13 +19,14 @@ export const gpt6Astra = {
   // official homepage to navigate users to
   officialUrl: "https://openai.com/index/gpt-6-astra/",
   chatgptUrl: "https://chatgpt.com",
+  codexUrl: "https://developers.openai.com/codex/cli",
   developerUrl: "https://developers.openai.com",
   systemCardUrl: "https://deploymentsafety.openai.com/gpt-6-astra",
   safetyUrl: "https://openai.com/index/path-to-astra/",
   arcPrizeUrl: "https://arcprize.org/blog/astra",
-  // meta description — targets "try / pricing / save tokens" search intent
+  // meta description — targets "try / codex / pricing / save tokens" search intent
   description:
-    "GPT-6 Astra is live on ChatGPT and the OpenAI API. See how to try it in minutes, what it costs, and how to save tokens — plus what its AGI-level results mean.",
+    "GPT-6 Astra is live on ChatGPT, Codex CLI, and the OpenAI API. See how to try it in minutes, what it costs, and how to save tokens — plus what its AGI-level results mean.",
   heroSubtitle:
     "OpenAI's most intelligent and aligned model yet — welcomed by many as the opening of the AGI era. It matches human experts on frontier benchmarks, operates computers like people do, and writes production-grade software.",
 };
@@ -45,11 +47,21 @@ export const accessRoutes: {
   {
     icon: MessageSquare,
     title: "ChatGPT",
-    requirement: "Plus, Pro, Business or Enterprise plan",
+    requirement: "Plus, Pro, Business or Enterprise",
     steps: [
-      "Open the model picker in ChatGPT",
-      "Select GPT-6 Astra (rolling out to all paid plans)",
-      "Pro, Business and Enterprise plans also unlock GPT-6 Astra Pro",
+      "Open model picker in ChatGPT Web or Desktop app",
+      "Select GPT-6 Astra (rolling out to all paid tiers)",
+      "Pro & Enterprise plans also unlock GPT-6 Astra Pro",
+    ],
+  },
+  {
+    icon: Terminal,
+    title: "Codex (CLI & IDE)",
+    requirement: "Included with ChatGPT Plus/Pro or API key",
+    steps: [
+      "Terminal agent: curl -fsSL https://chatgpt.com/codex/install.sh | sh",
+      "Run: codex -m gpt-6-astra or set model in ~/.codex/config.toml",
+      "Also in VS Code, Cursor, Windsurf & JetBrains extension sidebar",
     ],
   },
   {
@@ -65,11 +77,11 @@ export const accessRoutes: {
   {
     icon: Cloud,
     title: "Azure & AWS Bedrock",
-    requirement: "For teams already on cloud platforms",
+    requirement: "For enterprise cloud environments",
     steps: [
       "Available on Microsoft Azure OpenAI and AWS Bedrock",
-      "Same model ID and pricing structure as the OpenAI API",
-      "Enterprise access is off by default — admins must enable it",
+      "Same model ID and pricing structure as OpenAI API",
+      "Enterprise access off by default — admin must enable",
     ],
   },
 ];
@@ -315,7 +327,7 @@ export const faqs: { question: string; answer: string }[] = [
   {
     question: "How can I try GPT-6 Astra?",
     answer:
-      "Three ways: subscribe to ChatGPT Plus, Pro, Business or Enterprise and pick GPT-6 Astra in the model picker (rolling out from September 3, 2026); call the OpenAI API with the model ID gpt-6-astra; or use it through Microsoft Azure OpenAI or AWS Bedrock. There is no free tier yet — the cheapest entry is a ChatGPT Plus subscription.",
+      "Four official routes: (1) ChatGPT Web/Desktop in the model picker (Plus, Pro, Enterprise); (2) OpenAI Codex CLI (`codex -m gpt-6-astra`) and official IDE extensions (VS Code, Cursor, Windsurf, JetBrains) using your ChatGPT subscription credits or API key; (3) OpenAI API via the Responses API using model ID `gpt-6-astra` ($10/$50); and (4) Microsoft Azure OpenAI or AWS Bedrock. There is no free tier yet.",
   },
   {
     question: "How much does GPT-6 Astra cost?",

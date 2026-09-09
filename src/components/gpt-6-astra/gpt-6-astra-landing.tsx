@@ -228,19 +228,19 @@ function ChapterAccess() {
             number="01"
             label="Access Routes"
             title="How to try GPT-6 Astra in minutes"
-            subtitle="Three verified deployment routes. Choose the access point that fits your current toolchain."
+            subtitle="Four verified deployment routes: consumer web, terminal & IDE coding workflows, API integration, and enterprise cloud."
           />
 
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {accessRoutes.map((route, i) => (
               <div
                 key={route.title}
-                className="flex flex-col justify-between rounded-2xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+                className="flex flex-col justify-between rounded-2xl border border-border/60 bg-card p-5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
               >
-                <div className="space-y-4">
+                <div className="space-y-3.5">
                   <div className="flex items-center justify-between">
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <route.icon className="size-5" />
+                    <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <route.icon className="size-4" />
                     </div>
                     <span className="font-mono text-xs font-semibold text-muted-foreground">
                       ROUTE 0{i + 1}
@@ -248,18 +248,18 @@ function ChapterAccess() {
                   </div>
 
                   <div>
-                    <h3 className="font-bricolage text-lg font-semibold text-foreground">
+                    <h3 className="font-bricolage text-base font-semibold text-foreground">
                       {route.title}
                     </h3>
                     <Badge
                       variant="secondary"
-                      className="mt-1.5 text-xs font-normal"
+                      className="mt-1 text-[11px] font-normal"
                     >
                       {route.requirement}
                     </Badge>
                   </div>
 
-                  <ol className="space-y-2 border-t border-border/40 pt-4 text-xs leading-relaxed text-muted-foreground">
+                  <ol className="space-y-1.5 border-t border-border/40 pt-3 text-xs leading-relaxed text-muted-foreground">
                     {route.steps.map((step, idx) => (
                       <li key={step} className="flex gap-2">
                         <span className="font-mono font-semibold text-foreground">
@@ -274,20 +274,31 @@ function ChapterAccess() {
             ))}
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/40 px-5 py-3 text-xs text-muted-foreground">
+          <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-muted/40 px-5 py-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <span>
-              API requests require OpenAI's new Responses API. Custom
-              temperature and top_p are rejected.
+              💡 Codex CLI (v0.153.1+) & IDE extensions run on your ChatGPT
+              subscription credits — no separate API billing required.
             </span>
-            <a
-              href={gpt6Astra.officialUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 font-semibold text-foreground hover:text-primary hover:underline"
-            >
-              <span>Official Model Documentation</span>
-              <ArrowRight className="size-3.5" />
-            </a>
+            <div className="flex items-center gap-4">
+              <a
+                href={gpt6Astra.codexUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 font-semibold text-foreground hover:text-primary hover:underline"
+              >
+                <span>Codex CLI Reference</span>
+                <ExternalLink className="size-3" />
+              </a>
+              <a
+                href={gpt6Astra.officialUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 font-semibold text-foreground hover:text-primary hover:underline"
+              >
+                <span>Model Announcement</span>
+                <ArrowRight className="size-3.5" />
+              </a>
+            </div>
           </div>
         </div>
       </Container>
