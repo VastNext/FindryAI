@@ -49,9 +49,16 @@ export async function generateMetadata({
   }
 
   const imageProps = item?.image ? urlForImage(item?.image) : null;
+  const primaryCategory = item.categories?.[0]?.name;
+  const categorySuffix = primaryCategory ? ` (${primaryCategory})` : "";
+  const title = `${item.name}: Features, Pricing, Reviews & Alternatives`;
+  const description = item.description
+    ? `${item.description.trim().replace(/\.$/, "")}. Explore features, pricing, reviews, pros & cons, and curated alternatives for ${item.name} on Findry AI.`
+    : `Discover ${item.name}${categorySuffix}. Explore key features, pricing plans, user reviews, pros & cons, and top curated alternatives on Findry AI.`;
+
   return constructMetadata({
-    title: `${item.name}`,
-    description: item.description,
+    title,
+    description,
     canonicalUrl: `${siteConfig.url}/item/${params.slug}`,
     image: imageProps?.src,
   });
