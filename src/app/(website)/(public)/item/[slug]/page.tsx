@@ -1,6 +1,7 @@
 import ItemBreadCrumb from "@/components/item/item-bread-crumb";
 import SponsorItemCard from "@/components/item/item-card-sponsor";
 import ItemCustomMdx from "@/components/item/item-custom-mdx";
+import ItemEmbedBadge from "@/components/item/item-embed-badge";
 import ItemGrid from "@/components/item/item-grid";
 import BackButton from "@/components/shared/back-button";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -381,6 +382,9 @@ export default async function ItemPage({ params }: ItemPageProps) {
 
               {/* sponsor */}
               {sponsorItem && <SponsorItemCard item={sponsorItem} />}
+
+              {/* embed badge for backlinks */}
+              <ItemEmbedBadge itemName={item.name} itemSlug={params.slug} />
             </div>
           </div>
         </div>
