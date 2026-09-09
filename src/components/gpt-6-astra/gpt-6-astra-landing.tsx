@@ -221,17 +221,30 @@ function Hero() {
             </a>
           </div>
 
-          {/* Downward Hook: Guides users to read below */}
-          <div className="mt-8 flex items-center justify-center">
+          {/* Downward Hook: Prominent guide banner to hook visitors */}
+          <div className="mt-10 flex items-center justify-center">
             <a
               href="#best-practices"
-              className="group inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-medium text-foreground transition-all hover:border-primary/40 hover:bg-primary/10"
+              className="group inline-flex flex-wrap items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-primary/10 px-6 py-3.5 text-sm font-medium text-foreground shadow-sm transition-all hover:border-primary/60 hover:bg-gradient-to-r hover:from-indigo-500/15 hover:via-purple-500/15 hover:to-primary/15 hover:shadow-md hover:shadow-primary/5 sm:text-base"
             >
-              <span>
-                💡 Before you start: see our Token-Saving Guide & Reasoning
-                Effort Ladder below
+              <span className="flex items-center gap-1.5 font-semibold text-primary">
+                <span>💡</span>
+                <span>Pro Tip:</span>
               </span>
-              <ArrowDown className="size-3 text-primary transition-transform group-hover:translate-y-0.5" />
+              <span>
+                Before you start, see our{" "}
+                <strong className="font-semibold text-foreground underline decoration-primary/40 underline-offset-4 group-hover:decoration-primary">
+                  Token-Saving Guide
+                </strong>{" "}
+                &{" "}
+                <strong className="font-semibold text-foreground underline decoration-primary/40 underline-offset-4 group-hover:decoration-primary">
+                  Reasoning Effort Ladder
+                </strong>{" "}
+                below
+              </span>
+              <span className="inline-flex size-6 items-center justify-center rounded-full bg-primary/15 text-primary transition-transform group-hover:translate-y-1">
+                <ArrowDown className="size-3.5" />
+              </span>
             </a>
           </div>
         </div>
