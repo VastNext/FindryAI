@@ -1,6 +1,5 @@
 import Container from "@/components/container";
 import { Icons } from "@/components/icons/icons";
-import { HeaderSection } from "@/components/shared/header-section";
 import {
   Accordion,
   AccordionContent,
@@ -34,6 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import {
   ArrowDown,
+  ArrowRight,
   Cloud,
   Code2,
   ExternalLink,
@@ -43,410 +43,165 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-function SectionHeader(props: {
+/* -------------------------------------------------------------------------
+   Chapter Header Component: Replaces repetitive centered headers with
+   clean, left-aligned technical chapter markers (Linear / Cursor style)
+------------------------------------------------------------------------- */
+function ChapterHeader({
+  number,
+  label,
+  title,
+  subtitle,
+}: {
+  number: string;
   label: string;
   title: string;
   subtitle?: string;
 }) {
   return (
-    <HeaderSection
-      label={props.label}
-      titleAs="h2"
-      title={props.title}
-      subtitle={props.subtitle}
-      className="mx-auto max-w-3xl"
-    />
+    <div className="flex flex-col gap-2 pb-2">
+      <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-primary">
+        <span>{number}</span>
+        <span className="text-muted-foreground/40">/</span>
+        <span>{label}</span>
+      </div>
+      <h2 className="font-bricolage text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        {title}
+      </h2>
+      {subtitle ? (
+        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          {subtitle}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
+/* -------------------------------------------------------------------------
+   Sticky Chapter Sub-Navigation: Solves "don't know there is a 2nd screen"
+------------------------------------------------------------------------- */
+function StickyChapterNav() {
+  const chapters = [
+    { href: "#overview", label: "Overview" },
+    { href: "#access", label: "01 How to Try" },
+    { href: "#benchmarks", label: "02 Benchmarks & AGI" },
+    { href: "#cost-tokens", label: "03 Token Guide & Pricing" },
+    { href: "#faq-sources", label: "04 FAQ & Sources" },
+  ];
+
+  return (
+    <nav
+      aria-label="Chapter navigation"
+      className="sticky top-16 z-30 w-full border-b border-border/60 bg-background/85 py-2.5 backdrop-blur-md"
+    >
+      <Container>
+        <div className="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1 sm:gap-2">
+            {chapters.map((ch) => (
+              <a
+                key={ch.href}
+                href={ch.href}
+                className="whitespace-nowrap rounded-lg px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                {ch.label}
+              </a>
+            ))}
+          </div>
+
+          <a
+            href={gpt6Astra.chatgptUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="hidden items-center gap-1 text-xs font-semibold text-primary transition-opacity hover:opacity-80 sm:flex"
+          >
+            <span>Try on ChatGPT</span>
+            <ExternalLink className="size-3" />
+          </a>
+        </div>
+      </Container>
+    </nav>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Hero Section: Compact, narrative-first, peeks into content below
+------------------------------------------------------------------------- */
 function Hero() {
   return (
-    <section className="relative overflow-hidden pb-12 pt-10 md:pb-16 md:pt-14">
-      {/* decorative glow */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-[-12rem] size-[36rem] -translate-x-1/2 rounded-full bg-purple-500/15 blur-3xl" />
-        <div className="absolute left-[8%] top-[35%] size-[22rem] rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute right-[8%] top-[20%] size-[22rem] rounded-full bg-fuchsia-500/10 blur-3xl" />
-      </div>
-
+    <section
+      id="overview"
+      className="scroll-mt-32 pt-8 pb-10 md:pt-12 md:pb-12"
+    >
       <Container>
-        <div className="flex flex-col items-center text-center">
-          <Badge
-            variant="outline"
-            className="animate-fade-up gap-2 rounded-full px-4 py-1.5 text-sm uppercase tracking-wider"
-          >
-            <Sparkles className="size-4 text-primary" />
-            The AGI Era · The Future Is Here
-          </Badge>
-
-          <h1
-            className="animate-fade-up mt-8 max-w-4xl font-bricolage text-4xl font-bold text-balance sm:text-5xl md:text-6xl"
-            style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}
-          >
-            Try {gpt6Astra.name} —{" "}
-            <span className="text-gradient_indigo-purple">
-              {gpt6Astra.tagline}
+        <div className="flex flex-col gap-6">
+          {/* Eyebrow & Badges */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Badge
+              variant="outline"
+              className="gap-1.5 rounded-full border-primary/30 bg-primary/5 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-primary"
+            >
+              <Sparkles className="size-3" />
+              <span>Frontier Intelligence · Sep 2026</span>
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              Official announcement by OpenAI
             </span>
-          </h1>
+          </div>
 
-          <p
-            className="animate-fade-up mt-6 max-w-3xl text-balance text-lg leading-8 text-muted-foreground sm:text-xl"
-            style={{ animationDelay: "0.2s", animationFillMode: "forwards" }}
-          >
-            {gpt6Astra.heroSubtitle}
-          </p>
+          {/* Title & Tagline */}
+          <div className="space-y-3">
+            <h1 className="font-bricolage text-3xl font-bold tracking-tight text-balance sm:text-5xl md:text-6xl">
+              Try {gpt6Astra.name} —{" "}
+              <span className="text-gradient_indigo-purple">
+                {gpt6Astra.tagline}
+              </span>
+            </h1>
+            <p className="max-w-3xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {gpt6Astra.heroSubtitle}
+            </p>
+          </div>
 
-          {/* Primary Action Buttons */}
-          <div
-            className="animate-fade-up mt-8 flex flex-col items-center gap-4 sm:flex-row"
-            style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
-          >
+          {/* Actions Bar */}
+          <div className="flex flex-wrap items-center gap-3 pt-1">
             <a
               href={gpt6Astra.chatgptUrl}
               target="_blank"
               rel="noreferrer"
               className={cn(
-                buttonVariants({ size: "lg" }),
-                "rounded-full px-8 text-base",
+                buttonVariants({ size: "default" }),
+                "rounded-full px-6 font-semibold shadow-sm",
               )}
             >
               Try on ChatGPT
               <ExternalLink className="size-4" />
             </a>
             <a
-              href="#how-to-try"
+              href="#access"
               className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "rounded-full px-8 text-base",
+                buttonVariants({ variant: "outline", size: "default" }),
+                "rounded-full px-6",
               )}
             >
-              Read Setup & Token Guide
+              How to Try
               <ArrowDown className="size-4" />
             </a>
-          </div>
-
-          <p className="mt-3 text-xs text-muted-foreground">
-            Official announcement:{" "}
             <a
-              href={gpt6Astra.officialUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-foreground underline underline-offset-4 hover:text-primary"
+              href="#cost-tokens"
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "default" }),
+                "gap-1.5 rounded-full px-4 text-muted-foreground hover:text-foreground",
+              )}
             >
-              openai.com/index/gpt-6-astra ↗
-            </a>
-          </p>
-
-          {/* 3 Quick Access Cards right above the fold */}
-          <div className="mt-10 grid w-full max-w-4xl grid-cols-1 gap-4 text-left sm:grid-cols-3">
-            <a
-              href="#how-to-try"
-              className="group flex flex-col justify-between rounded-2xl border bg-card/80 p-5 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
-            >
-              <div>
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <MessageSquare className="size-4" />
-                  </div>
-                  <span className="font-bricolage text-base font-semibold">
-                    1. ChatGPT
-                  </span>
-                </div>
-                <Badge variant="secondary" className="mt-2.5 text-[11px]">
-                  Plus, Pro & Enterprise
-                </Badge>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                  Pick from the model dropdown. Pro plans also unlock GPT-6
-                  Astra Pro.
-                </p>
-              </div>
-              <span className="mt-4 flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
-                View access steps <ArrowDown className="size-3" />
-              </span>
-            </a>
-
-            <a
-              href="#how-to-try"
-              className="group flex flex-col justify-between rounded-2xl border bg-card/80 p-5 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
-            >
-              <div>
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Code2 className="size-4" />
-                  </div>
-                  <span className="font-bricolage text-base font-semibold">
-                    2. OpenAI API
-                  </span>
-                </div>
-                <Badge
-                  variant="secondary"
-                  className="mt-2.5 font-mono text-[11px]"
-                >
-                  model: gpt-6-astra
-                </Badge>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                  $10 in / $50 out per 1M tokens. Cached input is $1. Responses
-                  API only.
-                </p>
-              </div>
-              <span className="mt-4 flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
-                View pricing & API details <ArrowDown className="size-3" />
-              </span>
-            </a>
-
-            <a
-              href="#how-to-try"
-              className="group flex flex-col justify-between rounded-2xl border bg-card/80 p-5 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
-            >
-              <div>
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Cloud className="size-4" />
-                  </div>
-                  <span className="font-bricolage text-base font-semibold">
-                    3. Cloud Platforms
-                  </span>
-                </div>
-                <Badge variant="secondary" className="mt-2.5 text-[11px]">
-                  Azure & AWS Bedrock
-                </Badge>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                  Available in supported enterprise regions. Off by default for
-                  enterprise.
-                </p>
-              </div>
-              <span className="mt-4 flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
-                View cloud details <ArrowDown className="size-3" />
-              </span>
+              <span>Token-Saving Guide</span>
+              <ArrowDown className="size-3.5" />
             </a>
           </div>
 
-          {/* Downward Hook: Prominent guide banner to hook visitors */}
-          <div className="mt-10 flex items-center justify-center">
-            <a
-              href="#best-practices"
-              className="group inline-flex flex-wrap items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-primary/10 px-6 py-3.5 text-sm font-medium text-foreground shadow-sm transition-all hover:border-primary/60 hover:bg-gradient-to-r hover:from-indigo-500/15 hover:via-purple-500/15 hover:to-primary/15 hover:shadow-md hover:shadow-primary/5 sm:text-base"
-            >
-              <span className="flex items-center gap-1.5 font-semibold text-primary">
-                <span>💡</span>
-                <span>Pro Tip:</span>
-              </span>
-              <span>
-                Before you start, see our{" "}
-                <strong className="font-semibold text-foreground underline decoration-primary/40 underline-offset-4 group-hover:decoration-primary">
-                  Token-Saving Guide
-                </strong>{" "}
-                &{" "}
-                <strong className="font-semibold text-foreground underline decoration-primary/40 underline-offset-4 group-hover:decoration-primary">
-                  Reasoning Effort Ladder
-                </strong>{" "}
-                below
-              </span>
-              <span className="inline-flex size-6 items-center justify-center rounded-full bg-primary/15 text-primary transition-transform group-hover:translate-y-1">
-                <ArrowDown className="size-3.5" />
-              </span>
-            </a>
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-function HowToTrySection() {
-  return (
-    <section
-      id="how-to-try"
-      className="scroll-mt-16 border-t bg-muted/30 py-16 md:py-24"
-    >
-      <Container>
-        <div className="flex w-full flex-col gap-12">
-          <SectionHeader
-            label="Get Access"
-            title="How to try GPT-6 Astra in minutes"
-            subtitle="Three ways in — pick the one that matches how you already work."
-          />
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {accessRoutes.map((route) => (
-              <div
-                key={route.title}
-                className="flex flex-col gap-4 rounded-2xl border bg-card p-6"
-              >
-                <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <route.icon className="size-5" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h3 className="font-bricolage text-lg font-semibold">
-                    {route.title}
-                  </h3>
-                  <Badge
-                    variant="secondary"
-                    className="w-fit rounded-full text-xs"
-                  >
-                    {route.requirement}
-                  </Badge>
-                </div>
-                <ol className="flex flex-col gap-2 text-sm leading-6 text-muted-foreground">
-                  {route.steps.map((step, index) => (
-                    <li key={step} className="flex gap-2">
-                      <span className="font-mono text-primary">
-                        {index + 1}.
-                      </span>
-                      {step}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            ))}
-          </div>
-
-          <p className="mx-auto max-w-3xl text-center text-sm leading-6 text-muted-foreground">
-            Rolling out to paid ChatGPT plans since {gpt6Astra.releaseDate}.
-            Full API details live on the{" "}
-            <a
-              href={gpt6Astra.officialUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium text-primary underline-offset-4 hover:underline"
-            >
-              official GPT-6 Astra homepage
-            </a>
-            .
-          </p>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-function AgiEraSection() {
-  return (
-    <section className="border-t bg-muted/30 py-16 md:py-24">
-      <Container>
-        <div className="flex w-full flex-col gap-12">
-          <SectionHeader
-            label="The AGI Era"
-            title="Welcome to the AGI era"
-            subtitle={`Within a day of launch, GPT-6 Astra moved the AGI conversation from theory to front pages. On ARC-AGI-3 it used fewer actions than the median human tester on 96% of levels — what ARC Prize calls "effectively reaching human parity on the benchmark". Here is what independent evaluators are saying.`}
-          />
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {agiTakes.map((take) => (
-              <figure
-                key={take.author}
-                className="flex flex-col gap-4 rounded-2xl border bg-card p-6"
-              >
-                <Quote className="size-6 text-primary/60" />
-                <blockquote className="flex-1 text-lg font-medium leading-7">
-                  “{take.quote}”
-                </blockquote>
-                <figcaption className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">
-                    {take.author}
-                  </span>{" "}
-                  · {take.role}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-
-          <div className="mx-auto w-full max-w-3xl rounded-2xl border border-primary/20 bg-primary/5 p-6 text-left md:p-8">
-            <h3 className="font-bricolage text-xl font-semibold">
-              Is it actually AGI? The honest answer.
-            </h3>
-            <ul className="mt-4 flex flex-col gap-3 text-muted-foreground">
-              <li className="flex gap-3">
-                <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" />
-                OpenAI markets Astra as "the world's most intelligent and
-                aligned model" — a new generation of intelligence, and its
-                closest step toward AGI.
-              </li>
-              <li className="flex gap-3">
-                <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" />
-                ARC Prize, whose benchmark Astra essentially saturated, is
-                explicit: "we are not claiming that it is AGI" — deterministic
-                benchmarks don't capture real-world open-endedness.
-              </li>
-              <li className="flex gap-3">
-                <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" />
-                What's not in dispute: the frontier moved further in one release
-                than in years — and the future it points at is no longer
-                hypothetical.
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-function CapabilitiesSection() {
-  return (
-    <section className="py-16 md:py-24">
-      <Container>
-        <div className="flex w-full flex-col gap-12">
-          <SectionHeader
-            label="Capabilities"
-            title="One model, every frontier"
-            subtitle="Astra pairs state-of-the-art raw intelligence with the practical ability to do professional work end to end."
-          />
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {capabilities.map((capability) => (
-              <div
-                key={capability.title}
-                className="group flex flex-col gap-4 rounded-2xl border bg-card p-6 transition-colors hover:border-primary/40"
-              >
-                <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <capability.icon className="size-5" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h3 className="font-bricolage text-lg font-semibold">
-                    {capability.title}
-                  </h3>
-                  <Badge
-                    variant="secondary"
-                    className="w-fit rounded-full font-mono text-xs"
-                  >
-                    {capability.metric}
-                  </Badge>
-                  <p className="text-sm leading-6 text-muted-foreground">
-                    {capability.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-function BenchmarksSection() {
-  return (
-    <section
-      id="benchmarks"
-      className="scroll-mt-16 border-t bg-muted/30 py-16 md:py-24"
-    >
-      <Container>
-        <div className="flex w-full flex-col gap-12">
-          <SectionHeader
-            label="Benchmarks"
-            title="The numbers behind the moment"
-            subtitle={`GPT-6 Astra vs. its predecessor GPT-5.6 "Sol" and the strongest competing models at launch.`}
-          />
-
-          {/* 4 Key Benchmark Metric Cards */}
-          <div className="mx-auto grid w-full max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
+          {/* At-a-glance Metric Strip: Bridges the Hero into the Dossier */}
+          <div className="mt-4 grid grid-cols-2 gap-3 border-y border-border/60 py-5 sm:grid-cols-4">
             {heroStats.map((stat) => (
-              <div
-                key={stat.label}
-                className="flex flex-col items-center gap-1 rounded-2xl border bg-card px-4 py-5 text-center"
-              >
-                <span className="text-gradient_indigo-purple font-bricolage text-2xl font-bold md:text-3xl">
+              <div key={stat.label} className="flex flex-col gap-0.5 px-2">
+                <span className="font-bricolage text-2xl font-bold text-foreground sm:text-3xl">
                   {stat.value}
                 </span>
                 <span className="text-xs text-muted-foreground">
@@ -455,36 +210,147 @@ function BenchmarksSection() {
               </div>
             ))}
           </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
 
-          <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border bg-card">
+/* -------------------------------------------------------------------------
+   Chapter 1: Access Routes (#access)
+------------------------------------------------------------------------- */
+function ChapterAccess() {
+  return (
+    <section id="access" className="scroll-mt-32 py-10 md:py-14">
+      <Container>
+        <div className="flex flex-col gap-8">
+          <ChapterHeader
+            number="01"
+            label="Access Routes"
+            title="How to try GPT-6 Astra in minutes"
+            subtitle="Three verified deployment routes. Choose the access point that fits your current toolchain."
+          />
+
+          <div className="grid gap-5 md:grid-cols-3">
+            {accessRoutes.map((route, i) => (
+              <div
+                key={route.title}
+                className="flex flex-col justify-between rounded-2xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <route.icon className="size-5" />
+                    </div>
+                    <span className="font-mono text-xs font-semibold text-muted-foreground">
+                      ROUTE 0{i + 1}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="font-bricolage text-lg font-semibold text-foreground">
+                      {route.title}
+                    </h3>
+                    <Badge
+                      variant="secondary"
+                      className="mt-1.5 text-xs font-normal"
+                    >
+                      {route.requirement}
+                    </Badge>
+                  </div>
+
+                  <ol className="space-y-2 border-t border-border/40 pt-4 text-xs leading-relaxed text-muted-foreground">
+                    {route.steps.map((step, idx) => (
+                      <li key={step} className="flex gap-2">
+                        <span className="font-mono font-semibold text-foreground">
+                          {idx + 1}.
+                        </span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/40 px-5 py-3 text-xs text-muted-foreground">
+            <span>
+              API requests require OpenAI's new Responses API. Custom
+              temperature and top_p are rejected.
+            </span>
+            <a
+              href={gpt6Astra.officialUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 font-semibold text-foreground hover:text-primary hover:underline"
+            >
+              <span>Official Model Documentation</span>
+              <ArrowRight className="size-3.5" />
+            </a>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Chapter 2: Benchmarks & The AGI Debate (#benchmarks)
+------------------------------------------------------------------------- */
+function ChapterBenchmarks() {
+  return (
+    <section id="benchmarks" className="scroll-mt-32 py-10 md:py-14">
+      <Container>
+        <div className="flex flex-col gap-8">
+          <ChapterHeader
+            number="02"
+            label="Frontier Intelligence"
+            title="Benchmarks & the AGI debate"
+            subtitle="ARC-AGI-3 human parity, software engineering state-of-the-art, and what evaluators are actually saying."
+          />
+
+          {/* Benchmark Table Card */}
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+            <div className="border-b border-border/60 bg-muted/30 px-6 py-4">
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Frontier Evaluation Matrix (September 2026)
+              </span>
+            </div>
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[38%]">Benchmark</TableHead>
-                  <TableHead className="text-right">GPT-6 Astra</TableHead>
-                  <TableHead className="text-right">GPT-5.6 Sol</TableHead>
-                  <TableHead className="text-right">Best other</TableHead>
+                <TableRow className="border-border/60">
+                  <TableHead className="w-[40%] font-semibold">
+                    Benchmark
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    GPT-6 Astra
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    GPT-5.6 Sol
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    Competing Frontier
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {benchmarks.map((benchmark) => (
-                  <TableRow key={benchmark.name}>
-                    <TableCell className="font-medium">
-                      {benchmark.name}
+                {benchmarks.map((b) => (
+                  <TableRow key={b.name} className="border-border/40">
+                    <TableCell className="font-medium text-foreground">
+                      {b.name}
                     </TableCell>
-                    <TableCell className="text-right">
-                      <span className="text-gradient_indigo-purple font-semibold">
-                        {benchmark.astra}
-                      </span>
+                    <TableCell className="text-right font-mono font-bold text-primary">
+                      {b.astra}
                     </TableCell>
-                    <TableCell className="text-right text-muted-foreground">
-                      {benchmark.sol}
+                    <TableCell className="text-right font-mono text-muted-foreground">
+                      {b.sol}
                     </TableCell>
-                    <TableCell className="text-right text-muted-foreground">
-                      {benchmark.other}
-                      {benchmark.otherLabel ? (
-                        <span className="block text-xs">
-                          {benchmark.otherLabel}
+                    <TableCell className="text-right font-mono text-muted-foreground">
+                      {b.other}
+                      {b.otherLabel ? (
+                        <span className="block text-[11px] text-muted-foreground/70">
+                          {b.otherLabel}
                         </span>
                       ) : null}
                     </TableCell>
@@ -492,48 +358,108 @@ function BenchmarksSection() {
                 ))}
               </TableBody>
             </Table>
+            <div className="border-t border-border/40 bg-muted/10 px-6 py-3 text-xs leading-relaxed text-muted-foreground">
+              ARC-AGI-3's 99.9% was recorded under the provider-adapter harness
+              (62.7% under standard harness). Astra used 51.7% fewer actions per
+              level than the median human tester across 96% of tested
+              environments.
+            </div>
           </div>
 
-          <p className="mx-auto max-w-4xl text-sm leading-6 text-muted-foreground">
-            ARC-AGI-3's 99.9% is under the provider-adapter harness (62.7% under
-            the standard harness — both state of the art). On action efficiency,
-            Astra used ~51.7% fewer actions per level than the median human
-            tester. Scores as reported by OpenAI and ARC Prize, September 2026.
-          </p>
-        </div>
-      </Container>
-    </section>
-  );
-}
+          {/* AGI Perspectives: Side-by-side Discourse */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Direct Quotes */}
+            <div className="flex flex-col justify-between gap-4 rounded-2xl border border-border/60 bg-card p-6">
+              <div className="space-y-4">
+                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Evaluator Testimonials
+                </span>
+                <div className="space-y-4 divide-y divide-border/40">
+                  {agiTakes.map((take) => (
+                    <div key={take.author} className="pt-3 first:pt-0">
+                      <p className="text-sm font-medium italic text-foreground">
+                        “{take.quote}”
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        —{" "}
+                        <span className="font-semibold text-foreground">
+                          {take.author}
+                        </span>
+                        , {take.role}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-function SpecsSection() {
-  return (
-    <section className="py-16 md:py-24">
-      <Container>
-        <div className="flex w-full flex-col gap-12">
-          <SectionHeader
-            label="Specifications"
-            title="Under the hood"
-            subtitle="Key facts for builders evaluating the API and teams choosing a plan."
-          />
+            {/* Is it AGI: Analytical stance */}
+            <div className="flex flex-col justify-between gap-4 rounded-2xl border border-primary/25 bg-primary/5 p-6">
+              <div className="space-y-3">
+                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-primary">
+                  Critical Assessment · Is this AGI?
+                </span>
+                <h3 className="font-bricolage text-lg font-semibold text-foreground">
+                  The boundary has shifted, but open-endedness remains
+                </h3>
+                <ul className="space-y-2.5 text-xs leading-relaxed text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span className="font-bold text-primary">•</span>
+                    <span>
+                      <strong className="text-foreground">
+                        OpenAI perspective:
+                      </strong>{" "}
+                      Marketed as "a new generation of intelligence" and its
+                      closest step toward AGI to date.
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-bold text-primary">•</span>
+                    <span>
+                      <strong className="text-foreground">
+                        ARC Prize perspective:
+                      </strong>{" "}
+                      Succeeded in demonstrating human parity on deterministic
+                      interactive levels, but explicitly notes this is not a
+                      proof of real-world open-ended AGI.
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-bold text-primary">•</span>
+                    <span>
+                      <strong className="text-foreground">
+                        The consensus:
+                      </strong>{" "}
+                      A clear step-function leap in computer use and reasoning
+                      efficiency.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-          <div className="mx-auto grid w-full max-w-4xl gap-4 sm:grid-cols-2">
-            {specs.map((spec) => (
+          {/* Capabilities Grid */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {capabilities.map((c) => (
               <div
-                key={spec.label}
-                className="flex flex-col gap-1 rounded-2xl border bg-card p-6"
+                key={c.title}
+                className="flex flex-col gap-2.5 rounded-2xl border border-border/60 bg-card p-5 transition-all hover:border-primary/40"
               >
-                <span className="text-sm uppercase tracking-wider text-muted-foreground">
-                  {spec.label}
-                </span>
-                <span className="font-bricolage text-lg font-semibold">
-                  {spec.value}
-                </span>
-                {spec.note ? (
-                  <span className="text-sm text-muted-foreground">
-                    {spec.note}
-                  </span>
-                ) : null}
+                <div className="flex items-center justify-between">
+                  <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <c.icon className="size-4" />
+                  </div>
+                  <Badge variant="outline" className="font-mono text-[11px]">
+                    {c.metric}
+                  </Badge>
+                </div>
+                <h4 className="font-bricolage text-base font-semibold text-foreground">
+                  {c.title}
+                </h4>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  {c.description}
+                </p>
               </div>
             ))}
           </div>
@@ -543,138 +469,213 @@ function SpecsSection() {
   );
 }
 
-function BestPracticesSection() {
+/* -------------------------------------------------------------------------
+   Chapter 3: Cost Efficiency & Best Practices (#cost-tokens)
+------------------------------------------------------------------------- */
+function ChapterCostAndTokens() {
   return (
-    <section
-      id="best-practices"
-      className="scroll-mt-16 border-t bg-muted/30 py-16 md:py-24"
-    >
+    <section id="cost-tokens" className="scroll-mt-32 py-10 md:py-14">
       <Container>
-        <div className="flex w-full flex-col gap-12">
-          <SectionHeader
-            label="Tips & Best Practices"
-            title="GPT-6 Astra best practices: save tokens, get better answers"
-            subtitle="Astra's API pricing rewards the right defaults. These are the settings and habits that cut bills without cutting quality."
+        <div className="flex flex-col gap-8">
+          <ChapterHeader
+            number="03"
+            label="Economics & Practice"
+            title="Token-saving guide & reasoning effort ladder"
+            subtitle="Astra's $10/$50 token pricing makes configuration discipline essential. Here is how production teams cut per-task costs by up to 60%."
           />
 
-          <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border bg-card">
+          {/* Effort Ladder Table */}
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+            <div className="flex items-center justify-between border-b border-border/60 bg-muted/30 px-6 py-4">
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Reasoning Effort Ladder (Artificial Analysis Index v4.2)
+              </span>
+              <span className="font-mono text-xs text-primary">
+                Default: medium
+              </span>
+            </div>
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[110px]">Effort</TableHead>
-                  <TableHead className="text-right">Quality score</TableHead>
-                  <TableHead className="text-right">Cost / task</TableHead>
-                  <TableHead className="w-[46%]">When to use</TableHead>
+                <TableRow className="border-border/60">
+                  <TableHead className="w-[120px] font-semibold">
+                    Tier
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    Score
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    Cost / Task
+                  </TableHead>
+                  <TableHead className="w-[50%] font-semibold">
+                    When to Use
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {effortLadder.map((row) => (
-                  <TableRow key={row.effort}>
-                    <TableCell className="font-medium">
+                  <TableRow key={row.effort} className="border-border/40">
+                    <TableCell className="font-mono font-semibold uppercase text-foreground">
                       {row.effort}
                       {row.effort === "medium" ? (
-                        <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                          default
+                        <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                          SWEET SPOT
                         </span>
                       ) : null}
                     </TableCell>
-                    <TableCell className="text-right">{row.score}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right font-mono font-semibold">
+                      {row.score}
+                    </TableCell>
+                    <TableCell className="text-right font-mono font-semibold text-foreground">
                       {row.costPerTask}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="text-xs text-muted-foreground">
                       {row.guidance}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+            <div className="border-t border-border/40 bg-muted/10 px-6 py-3 text-xs leading-relaxed text-muted-foreground">
+              Astra on <strong className="text-foreground">medium</strong>{" "}
+              scores 52, outperforming GPT-5.6 Sol at max effort (51) while
+              costing $0.09 less per task. Do not jump to high or max without
+              measured failure data.
+            </div>
           </div>
 
-          <div className="mx-auto grid w-full max-w-4xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {tokenTips.map((tip) => (
-              <div
-                key={tip.title}
-                className="flex flex-col gap-2 rounded-2xl border bg-card p-5"
+          {/* 6 Rules of Token Optimization */}
+          <div>
+            <div className="mb-4">
+              <h3 className="font-bricolage text-lg font-semibold text-foreground">
+                The 6 Rules of GPT-6 Astra Token Optimization
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Actionable practices compiled from production deployments and
+                developer benchmarks.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {tokenTips.map((tip, i) => (
+                <div
+                  key={tip.title}
+                  className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-card p-5 transition-all hover:border-primary/40"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="flex size-5 items-center justify-center rounded-full bg-primary/10 font-mono text-[10px] font-bold text-primary">
+                      {i + 1}
+                    </span>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      {tip.title}
+                    </h4>
+                  </div>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    {tip.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Specifications Matrix */}
+          <div className="rounded-2xl border border-border/60 bg-card p-6">
+            <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Technical Specifications Summary
+            </span>
+            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {specs.map((s) => (
+                <div
+                  key={s.label}
+                  className="border-l-2 border-primary/30 pl-3"
+                >
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {s.label}
+                  </span>
+                  <p className="font-bricolage text-sm font-semibold text-foreground">
+                    {s.value}
+                  </p>
+                  {s.note ? (
+                    <p className="text-[11px] text-muted-foreground">
+                      {s.note}
+                    </p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Chapter 4: FAQ & Primary Source References (#faq-sources)
+   Unified 2-column layout to prevent separate sparse sections
+------------------------------------------------------------------------- */
+function ChapterFaqAndSources() {
+  return (
+    <section id="faq-sources" className="scroll-mt-32 py-10 md:py-14">
+      <Container>
+        <div className="flex flex-col gap-8">
+          <ChapterHeader
+            number="04"
+            label="Inquiries & Evidence"
+            title="Frequently asked questions & primary documentation"
+            subtitle="Direct answers to operational queries alongside links to official deployment cards and independent benchmark reports."
+          />
+
+          <div className="grid gap-8 lg:grid-cols-12">
+            {/* Left Column: FAQ Accordion (7 cols) */}
+            <div className="lg:col-span-7">
+              <Accordion
+                type="single"
+                collapsible
+                className="w-full space-y-2.5"
               >
-                <h3 className="font-medium">{tip.title}</h3>
-                <p className="text-sm leading-6 text-muted-foreground">
-                  {tip.description}
-                </p>
+                {faqs.map((faq, index) => (
+                  <AccordionItem
+                    key={faq.question}
+                    value={`faq-${index}`}
+                    className="rounded-xl border border-border/60 bg-card px-4"
+                  >
+                    <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:no-underline">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-xs leading-relaxed text-muted-foreground">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+
+            {/* Right Column: Primary Sources Cards (5 cols) */}
+            <div className="flex flex-col gap-3 lg:col-span-5">
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Primary Documentation & Reports
+              </span>
+              <div className="flex flex-col gap-2.5">
+                {sources.map((src) => (
+                  <a
+                    key={src.url}
+                    href={src.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex flex-col gap-1 rounded-xl border border-border/60 bg-card p-3.5 transition-all hover:border-primary/40 hover:bg-muted/30"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-foreground group-hover:text-primary">
+                        {src.label}
+                      </span>
+                      <ExternalLink className="size-3 text-muted-foreground transition-colors group-hover:text-primary" />
+                    </div>
+                    <p className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                      {src.description}
+                    </p>
+                  </a>
+                ))}
               </div>
-            ))}
-          </div>
-
-          <p className="mx-auto max-w-4xl text-sm leading-6 text-muted-foreground">
-            Prompting essentials: give Astra a finish line ("implement and
-            verify" beats "look into it"), feed it error messages and what
-            you've already tried before raising effort, ask for prose when you
-            don't want tables, and request "the smallest clear change that
-            satisfies the requirement". Effort scores and per-task costs from
-            the Artificial Analysis Index v4.2, September 2026.
-          </p>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-function FaqSection() {
-  return (
-    <section className="border-t bg-muted/30 py-16 md:py-24">
-      <Container>
-        <div className="flex w-full flex-col gap-12">
-          <SectionHeader label="FAQ" title="Frequently asked questions" />
-          <Accordion
-            type="single"
-            collapsible
-            className="mx-auto w-full max-w-3xl"
-          >
-            {faqs.map((faq, index) => (
-              <AccordionItem key={faq.question} value={`faq-${index}`}>
-                <AccordionTrigger className="text-left text-base font-medium">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-base leading-7 text-muted-foreground">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-function SourcesSection() {
-  return (
-    <section className="py-16 md:py-24">
-      <Container>
-        <div className="flex w-full flex-col gap-12">
-          <SectionHeader
-            label="Deep dives"
-            title="Read the primary sources"
-            subtitle="Everything on this page is drawn from official releases and independent evaluations."
-          />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {sources.map((source) => (
-              <a
-                key={source.url}
-                href={source.url}
-                target="_blank"
-                rel="noreferrer"
-                className="group flex flex-col gap-2 rounded-2xl border bg-card p-5 transition-colors hover:border-primary/40"
-              >
-                <span className="flex items-center justify-between gap-3 font-medium">
-                  {source.label}
-                  <ExternalLink className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {source.description}
-                </span>
-              </a>
-            ))}
+            </div>
           </div>
         </div>
       </Container>
@@ -682,51 +683,48 @@ function SourcesSection() {
   );
 }
 
-function FinalCta() {
+/* -------------------------------------------------------------------------
+   Closing Dossier Banner: Understated, coherent callout
+------------------------------------------------------------------------- */
+function ClosingBanner() {
   return (
-    <section className="pb-20 md:pb-28">
+    <section className="pt-6 pb-16 md:pb-24">
       <Container>
-        <div className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-indigo-500/10 via-background to-purple-500/10 px-6 py-16 text-center md:py-20">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-0 size-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-3xl"
-          />
-          <div className="relative flex flex-col items-center gap-6">
-            <h2 className="max-w-2xl font-bricolage text-3xl font-bold text-balance sm:text-4xl">
-              The future is here.{" "}
-              <span className="text-gradient_indigo-purple">Go meet it.</span>
+        <div className="rounded-3xl border border-border/70 bg-gradient-to-br from-indigo-500/10 via-background to-purple-500/10 p-8 text-center sm:p-12">
+          <div className="mx-auto max-w-2xl space-y-4">
+            <h2 className="font-bricolage text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Ready to explore GPT-6 Astra?
             </h2>
-            <p className="max-w-xl text-balance text-muted-foreground">
-              GPT-6 Astra is rolling out now across ChatGPT, the OpenAI API,
-              Azure and AWS Bedrock.
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              OpenAI's most capable system is accessible today across ChatGPT
+              Plus, Pro, Enterprise, and the Responses API.
             </p>
-            <div className="flex flex-col items-center gap-4 sm:flex-row">
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <a
-                href={gpt6Astra.officialUrl}
+                href={gpt6Astra.chatgptUrl}
                 target="_blank"
                 rel="noreferrer"
                 className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "rounded-full px-8 text-base",
+                  buttonVariants({ size: "default" }),
+                  "rounded-full px-6 font-semibold",
                 )}
               >
-                GPT-6 Astra Homepage
-                <Icons.arrowRight className="size-4" />
+                Launch in ChatGPT
+                <ExternalLink className="size-3.5" />
               </a>
               <Link
                 href={siteConfig.url}
                 className={cn(
-                  buttonVariants({ variant: "outline", size: "lg" }),
-                  "rounded-full px-8 text-base",
+                  buttonVariants({ variant: "outline", size: "default" }),
+                  "rounded-full px-6",
                 )}
               >
-                Explore more AI tools
+                Explore More AI Tools on Findry
               </Link>
             </div>
-            <p className="mt-4 max-w-2xl text-xs leading-5 text-muted-foreground">
-              This page is an independent overview published by Findry AI, an AI
-              tools directory. GPT-6 Astra is a product of OpenAI — benchmark
-              figures as reported in the sources above, September 2026.
+            <p className="pt-4 text-[11px] text-muted-foreground/80">
+              Independent technical dossier published by Findry AI. GPT-6 Astra
+              is a product of OpenAI.
             </p>
           </div>
         </div>
@@ -735,19 +733,19 @@ function FinalCta() {
   );
 }
 
+/* -------------------------------------------------------------------------
+   Root Landing Component Assembly
+------------------------------------------------------------------------- */
 export function Gpt6AstraLanding() {
   return (
-    <div className="flex w-full flex-col">
+    <div className="relative flex w-full flex-col">
+      <StickyChapterNav />
       <Hero />
-      <HowToTrySection />
-      <AgiEraSection />
-      <CapabilitiesSection />
-      <BenchmarksSection />
-      <SpecsSection />
-      <BestPracticesSection />
-      <FaqSection />
-      <SourcesSection />
-      <FinalCta />
+      <ChapterAccess />
+      <ChapterBenchmarks />
+      <ChapterCostAndTokens />
+      <ChapterFaqAndSources />
+      <ClosingBanner />
     </div>
   );
 }
