@@ -29,15 +29,9 @@ import { Logo } from "../logo";
 interface NavBarProps {
   scroll?: boolean;
   config: DashboardConfig | MarketingConfig;
-  /** where the logo / "Home" should point; on landing domains this is the main site URL */
-  homeHref?: string;
 }
 
-export function Navbar({
-  scroll = false,
-  config,
-  homeHref = "/",
-}: NavBarProps) {
+export function Navbar({ scroll = false, config }: NavBarProps) {
   const scrolled = useScroll(50);
   const user = useCurrentUser();
   // console.log(`navbar: user:`, user);
@@ -46,8 +40,6 @@ export function Navbar({
   // console.log(`Navbar, pathname: ${pathname}`);
   const links = config.menus;
   // console.log(`Navbar, links: ${links.map((link) => link.title)}`);
-
-  const withHomeHref = (href: string) => (href === "/" ? homeHref : href);
 
   const isLinkActive = (href: string) => {
     if (href === "/") {
@@ -80,7 +72,7 @@ export function Navbar({
           {/* navbar left show logo and links */}
           <div className="flex items-center gap-6 md:gap-10">
             {/* logo */}
-            <Link href={homeHref} className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center space-x-2">
               <Logo />
 
               <span className="text-xl font-bold">{siteConfig.name}</span>
@@ -93,7 +85,7 @@ export function Navbar({
                   {links.map((item) => (
                     <NavigationMenuItem key={item.title}>
                       <NavigationMenuLink
-                        href={item.disabled ? "#" : withHomeHref(item.href)}
+                        href={item.disabled ? "#" : item.href}
                         target={item.external ? "_blank" : ""}
                         className={cn(
                           navigationMenuTriggerStyle(),
@@ -157,7 +149,7 @@ export function Navbar({
                 <div className="flex h-screen flex-col">
                   {/* logo */}
                   <Link
-                    href={homeHref}
+                    href="/"
                     className="flex items-center space-x-2 pl-4 pt-4"
                     onClick={() => setOpen(false)}
                   >
@@ -172,7 +164,7 @@ export function Navbar({
                       return (
                         <Link
                           key={item.title}
-                          href={item.disabled ? "#" : withHomeHref(item.href)}
+                          href={item.disabled ? "#" : item.href}
                           target={item.external ? "_blank" : ""}
                           onClick={() => {
                             if (!item.disabled) setOpen(false);
@@ -198,7 +190,7 @@ export function Navbar({
 
             {/* logo */}
             <Link
-              href={homeHref}
+              href="/"
               className="flex items-center space-x-2"
               onClick={() => setOpen(false)}
             >

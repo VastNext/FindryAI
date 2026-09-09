@@ -1,6 +1,5 @@
 import authConfig from "@/auth.config";
 import { siteConfig } from "@/config/site";
-import { landingHosts } from "@/lib/landing-hosts";
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
@@ -10,6 +9,14 @@ import {
 import NextAuth from "next-auth";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+
+// dedicated domains that 301 to the GPT-6 Astra subpage on the main site,
+// so search ranking and link equity accrue to findryai.com
+const landingHosts = new Set([
+  "gpt-6.findryai.com",
+  "gpt-6-astra.findryai.com",
+  "astra.findryai.com",
+]);
 
 /**
  * https://www.youtube.com/watch?v=1MTyCvS05V4
@@ -48,20 +55,13 @@ const authHandler = auth((req) => {
 export default function middleware(req: NextRequest) {
   const { nextUrl } = req;
 
-  // dedicated GPT-6 Astra domains serve the landing page at the root, and send
-  // every other page navigation (navbar, footer, etc.) back to the main site
+  // dedicated GPT-6 Astra domains permanently redirect to the subpage on the
+  // main site (301 keeps ranking signals consolidating on findryai.com)
   const host = req.headers.get("host")?.toLowerCase();
-  if (host && landingHosts.has(host)) {
-    const { pathname, search } = nextUrl;
-    if (pathname === "/" || pathname.startsWith("/gpt-6-astra")) {
-      return NextResponse.rewrite(new URL("/gpt-6-astra", nextUrl));
-    }
-    if (!pathname.startsWith("/api")) {
-      return NextResponse.redirect(
-        new URL(`${siteConfig.url}${pathname}${search}`),
-        307,
-      );
-    }
+  if (host && landingHosts.has(host) && !nextUrl.pathname.startsWith("/api")) {
+    const target = new URL("/gpt-6-astra", siteConfig.url);
+    target.search = nextUrl.search;
+    return NextResponse.redirect(target, 301);
   }
 
   if (nextUrl.pathname === "/" && nextUrl.searchParams.has("page")) {

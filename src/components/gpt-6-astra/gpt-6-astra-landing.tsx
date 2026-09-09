@@ -82,7 +82,7 @@ function Hero() {
             className="animate-fade-up mt-6 max-w-3xl text-balance text-lg leading-8 text-muted-foreground sm:text-xl"
             style={{ animationDelay: "0.2s", animationFillMode: "forwards" }}
           >
-            {gpt6Astra.description}
+            {gpt6Astra.heroSubtitle}
           </p>
 
           <div

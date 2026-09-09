@@ -20,8 +20,11 @@ export const gpt6Astra = {
   systemCardUrl: "https://deploymentsafety.openai.com/gpt-6-astra",
   safetyUrl: "https://openai.com/index/path-to-astra/",
   arcPrizeUrl: "https://arcprize.org/blog/astra",
+  // meta description — promises something the visitor can act on
   description:
-    "GPT-6 Astra is OpenAI's most intelligent and aligned model yet — a frontier system welcomed by many as the opening of the AGI era. It matches human experts on frontier benchmarks, operates computers like people do, and writes production-grade software.",
+    "GPT-6 Astra is live on ChatGPT and the OpenAI API. See how to get access in minutes, what it costs, and what its AGI-level benchmark results mean for your work.",
+  heroSubtitle:
+    "OpenAI's most intelligent and aligned model yet — welcomed by many as the opening of the AGI era. It matches human experts on frontier benchmarks, operates computers like people do, and writes production-grade software.",
 };
 
 export const heroStats: { value: string; label: string }[] = [
