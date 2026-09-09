@@ -32,7 +32,15 @@ import {
   tokenTips,
 } from "@/data/gpt-6-astra";
 import { cn } from "@/lib/utils";
-import { ExternalLink, Quote, Sparkles } from "lucide-react";
+import {
+  ArrowDown,
+  Cloud,
+  Code2,
+  ExternalLink,
+  MessageSquare,
+  Quote,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 
 function SectionHeader(props: {
@@ -53,7 +61,7 @@ function SectionHeader(props: {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden pb-16 pt-14 md:pb-24 md:pt-20">
+    <section className="relative overflow-hidden pb-12 pt-10 md:pb-16 md:pt-14">
       {/* decorative glow */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-[-12rem] size-[36rem] -translate-x-1/2 rounded-full bg-purple-500/15 blur-3xl" />
@@ -88,12 +96,13 @@ function Hero() {
             {gpt6Astra.heroSubtitle}
           </p>
 
+          {/* Primary Action Buttons */}
           <div
-            className="animate-fade-up mt-10 flex flex-col items-center gap-4 sm:flex-row"
+            className="animate-fade-up mt-8 flex flex-col items-center gap-4 sm:flex-row"
             style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
           >
             <a
-              href={gpt6Astra.officialUrl}
+              href={gpt6Astra.chatgptUrl}
               target="_blank"
               rel="noreferrer"
               className={cn(
@@ -101,37 +110,129 @@ function Hero() {
                 "rounded-full px-8 text-base",
               )}
             >
-              Visit the Official Homepage
-              <Icons.arrowRight className="size-4" />
+              Try on ChatGPT
+              <ExternalLink className="size-4" />
             </a>
             <a
-              href={gpt6Astra.chatgptUrl}
-              target="_blank"
-              rel="noreferrer"
+              href="#how-to-try"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
                 "rounded-full px-8 text-base",
               )}
             >
-              Try it on ChatGPT
-              <ExternalLink className="size-4" />
+              Read Setup & Token Guide
+              <ArrowDown className="size-4" />
             </a>
           </div>
 
-          <div className="mt-16 grid w-full grid-cols-2 gap-6 md:grid-cols-4">
-            {heroStats.map((stat) => (
-              <div
-                key={stat.label}
-                className="flex flex-col items-center gap-1 rounded-2xl border bg-card/60 px-4 py-6"
-              >
-                <span className="text-gradient_indigo-purple font-bricolage text-3xl font-bold md:text-4xl">
-                  {stat.value}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {stat.label}
-                </span>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Official announcement:{" "}
+            <a
+              href={gpt6Astra.officialUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-foreground underline underline-offset-4 hover:text-primary"
+            >
+              openai.com/index/gpt-6-astra ↗
+            </a>
+          </p>
+
+          {/* 3 Quick Access Cards right above the fold */}
+          <div className="mt-10 grid w-full max-w-4xl grid-cols-1 gap-4 text-left sm:grid-cols-3">
+            <a
+              href="#how-to-try"
+              className="group flex flex-col justify-between rounded-2xl border bg-card/80 p-5 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <MessageSquare className="size-4" />
+                  </div>
+                  <span className="font-bricolage text-base font-semibold">
+                    1. ChatGPT
+                  </span>
+                </div>
+                <Badge variant="secondary" className="mt-2.5 text-[11px]">
+                  Plus, Pro & Enterprise
+                </Badge>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  Pick from the model dropdown. Pro plans also unlock GPT-6
+                  Astra Pro.
+                </p>
               </div>
-            ))}
+              <span className="mt-4 flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
+                View access steps <ArrowDown className="size-3" />
+              </span>
+            </a>
+
+            <a
+              href="#how-to-try"
+              className="group flex flex-col justify-between rounded-2xl border bg-card/80 p-5 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Code2 className="size-4" />
+                  </div>
+                  <span className="font-bricolage text-base font-semibold">
+                    2. OpenAI API
+                  </span>
+                </div>
+                <Badge
+                  variant="secondary"
+                  className="mt-2.5 font-mono text-[11px]"
+                >
+                  model: gpt-6-astra
+                </Badge>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  $10 in / $50 out per 1M tokens. Cached input is $1. Responses
+                  API only.
+                </p>
+              </div>
+              <span className="mt-4 flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
+                View pricing & API details <ArrowDown className="size-3" />
+              </span>
+            </a>
+
+            <a
+              href="#how-to-try"
+              className="group flex flex-col justify-between rounded-2xl border bg-card/80 p-5 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Cloud className="size-4" />
+                  </div>
+                  <span className="font-bricolage text-base font-semibold">
+                    3. Cloud Platforms
+                  </span>
+                </div>
+                <Badge variant="secondary" className="mt-2.5 text-[11px]">
+                  Azure & AWS Bedrock
+                </Badge>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  Available in supported enterprise regions. Off by default for
+                  enterprise.
+                </p>
+              </div>
+              <span className="mt-4 flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
+                View cloud details <ArrowDown className="size-3" />
+              </span>
+            </a>
+          </div>
+
+          {/* Downward Hook: Guides users to read below */}
+          <div className="mt-8 flex items-center justify-center">
+            <a
+              href="#best-practices"
+              className="group inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-medium text-foreground transition-all hover:border-primary/40 hover:bg-primary/10"
+            >
+              <span>
+                💡 Before you start: see our Token-Saving Guide & Reasoning
+                Effort Ladder below
+              </span>
+              <ArrowDown className="size-3 text-primary transition-transform group-hover:translate-y-0.5" />
+            </a>
           </div>
         </div>
       </Container>
@@ -141,7 +242,10 @@ function Hero() {
 
 function HowToTrySection() {
   return (
-    <section className="border-t bg-muted/30 py-16 md:py-24">
+    <section
+      id="how-to-try"
+      className="scroll-mt-16 border-t bg-muted/30 py-16 md:py-24"
+    >
       <Container>
         <div className="flex w-full flex-col gap-12">
           <SectionHeader
@@ -310,7 +414,10 @@ function CapabilitiesSection() {
 
 function BenchmarksSection() {
   return (
-    <section className="border-t bg-muted/30 py-16 md:py-24">
+    <section
+      id="benchmarks"
+      className="scroll-mt-16 border-t bg-muted/30 py-16 md:py-24"
+    >
       <Container>
         <div className="flex w-full flex-col gap-12">
           <SectionHeader
@@ -318,6 +425,23 @@ function BenchmarksSection() {
             title="The numbers behind the moment"
             subtitle={`GPT-6 Astra vs. its predecessor GPT-5.6 "Sol" and the strongest competing models at launch.`}
           />
+
+          {/* 4 Key Benchmark Metric Cards */}
+          <div className="mx-auto grid w-full max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
+            {heroStats.map((stat) => (
+              <div
+                key={stat.label}
+                className="flex flex-col items-center gap-1 rounded-2xl border bg-card px-4 py-5 text-center"
+              >
+                <span className="text-gradient_indigo-purple font-bricolage text-2xl font-bold md:text-3xl">
+                  {stat.value}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
+          </div>
 
           <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border bg-card">
             <Table>
@@ -408,7 +532,10 @@ function SpecsSection() {
 
 function BestPracticesSection() {
   return (
-    <section className="border-t bg-muted/30 py-16 md:py-24">
+    <section
+      id="best-practices"
+      className="scroll-mt-16 border-t bg-muted/30 py-16 md:py-24"
+    >
       <Container>
         <div className="flex w-full flex-col gap-12">
           <SectionHeader
