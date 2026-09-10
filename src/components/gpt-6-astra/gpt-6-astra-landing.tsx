@@ -164,26 +164,26 @@ function Hero() {
           {/* Actions Bar */}
           <div className="flex flex-wrap items-center gap-3 pt-1">
             <a
-              href={gpt6Astra.chatgptUrl}
-              target="_blank"
-              rel="noreferrer"
+              href="#access"
               className={cn(
                 buttonVariants({ size: "default" }),
                 "rounded-full px-6 font-semibold shadow-sm",
               )}
             >
-              Try on ChatGPT
-              <ExternalLink className="size-4" />
+              How to Try
+              <ArrowDown className="size-4" />
             </a>
             <a
-              href="#access"
+              href={gpt6Astra.chatgptUrl}
+              target="_blank"
+              rel="noreferrer"
               className={cn(
                 buttonVariants({ variant: "outline", size: "default" }),
                 "rounded-full px-6",
               )}
             >
-              How to Try
-              <ArrowDown className="size-4" />
+              Try on ChatGPT
+              <ExternalLink className="size-4" />
             </a>
             <a
               href="#cost-tokens"
