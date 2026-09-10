@@ -1,10 +1,4 @@
 import Container from "@/components/container";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -20,35 +14,27 @@ import {
   faceSwapGifConfig,
   faqs,
   heroStats,
-  popularMemeTemplates,
   proTips,
   stepByStepGuide,
   topPicks,
+  visualComparisonDemonstration,
 } from "@/data/face-swap-gif";
 import { cn } from "@/lib/utils";
 import {
-  AlertCircle,
+  AlertTriangle,
   ArrowRight,
   CheckCircle2,
+  ChevronDown,
   ExternalLink,
-  Flame,
-  HelpCircle,
-  Image as ImageIcon,
-  Layers,
+  FileCheck2,
   Lightbulb,
-  ShieldAlert,
-  ShieldCheck,
   Sparkles,
-  Users,
-  Video,
-  Wand2,
   XCircle,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
 /* -------------------------------------------------------------------------
-   Chapter Header Component
+   Chapter Header Component (Editorial Mintlify / Runway Style)
 ------------------------------------------------------------------------- */
 function ChapterHeader({
   number,
@@ -62,13 +48,13 @@ function ChapterHeader({
   subtitle?: string;
 }) {
   return (
-    <div className="flex flex-col gap-2 pb-2">
-      <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-primary">
+    <div className="flex flex-col gap-2.5 pb-3">
+      <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-primary">
         <span>{number}</span>
         <span className="text-muted-foreground/40">/</span>
         <span>{label}</span>
       </div>
-      <h2 className="font-bricolage text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+      <h2 className="font-bricolage text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
         {title}
       </h2>
       {subtitle ? (
@@ -81,39 +67,41 @@ function ChapterHeader({
 }
 
 /* -------------------------------------------------------------------------
-   Sticky Chapter Sub-Navigation
+   Sticky Chapter Sub-Navigation (Touch-Friendly, Clean Offset)
 ------------------------------------------------------------------------- */
 function StickyChapterNav() {
   const chapters = [
     { href: "#picks", label: "Top Picks" },
-    { href: "#comparison", label: "01 Full Comparison" },
-    { href: "#how-to", label: "02 How-To Guide" },
-    { href: "#memes", label: "03 Popular Memes" },
-    { href: "#tips", label: "04 Pro Tips & Ethics" },
+    { href: "#comparison", label: "01 Matrix & Rules" },
+    { href: "#visual-guide", label: "02 Visual Scenarios" },
+    { href: "#how-to", label: "03 Workflow" },
+    { href: "#pro-tips", label: "04 Quality & Privacy" },
     { href: "#faq", label: "05 FAQ" },
   ];
 
   return (
     <nav
       aria-label="Chapter navigation"
-      className="sticky top-16 z-30 w-full border-b border-border/60 bg-background/85 py-2.5 backdrop-blur-md"
+      className="sticky top-16 z-30 w-full border-b border-border/70 bg-background/90 py-2.5 backdrop-blur-md"
     >
       <Container>
         <div className="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {chapters.map((ch) => (
               <a
                 key={ch.href}
                 href={ch.href}
-                className="whitespace-nowrap rounded-md px-3 py-1 font-mono text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="inline-flex min-h-[36px] items-center whitespace-nowrap rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {ch.label}
               </a>
             ))}
           </div>
-          <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex">
-            <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Updated {faceSwapGifConfig.updatedDate}</span>
+          <div className="hidden items-center gap-2 font-mono text-xs text-muted-foreground md:flex">
+            <FileCheck2 className="h-3.5 w-3.5 text-emerald-500" />
+            <span>
+              Documented &amp; Verified {faceSwapGifConfig.lastVerifiedDate}
+            </span>
           </div>
         </div>
       </Container>
@@ -125,65 +113,68 @@ export function FaceSwapGifLanding() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* ====================================================================
-          HERO SECTION
+          HERO SECTION (High-Contrast Editorial Header)
       ==================================================================== */}
-      <section className="relative overflow-hidden border-b border-border/60 py-16 sm:py-20 lg:py-24">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]" />
+      <section className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-muted/30 via-background to-background py-16 sm:py-24">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(120,119,198,0.12),rgba(255,255,255,0))]" />
 
         <Container>
           <div className="flex flex-col items-center text-center">
             {/* Tag Pill */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-medium text-primary">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>2026 Curated Guide • Verified No-Watermark Picks</span>
+              <span>
+                2026 Curated Guide • Verified Quotas &amp; Watermark Terms
+              </span>
             </div>
 
             {/* Main Title */}
-            <h1 className="font-bricolage text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl max-w-4xl leading-tight">
-              Best AI <span className="text-primary">Face Swap GIF</span> Tools
-              Online (Free &amp; No Watermark)
+            <h1 className="max-w-4xl font-bricolage text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.15]">
+              AI <span className="text-primary">Face Swap GIF</span> Tools: Free
+              Quotas, Watermarks &amp; Limits Compared
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
-              Swap faces into animated reaction GIFs, memes, and movie clips in
-              seconds. No credit cards, no fake sign-up loops, and zero
-              watermark stamps on your final meme exports.
+            <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg leading-relaxed">
+              Looking to swap faces in reaction GIFs and memes? We audited the
+              leading web-based AI tools to uncover real guest quotas,
+              multi-face detection support, and which platforms offer genuine
+              zero-watermark exports.
             </p>
 
             {/* Quick CTAs */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
               <a
                 href="#picks"
                 className={cn(
                   buttonVariants({ size: "lg" }),
-                  "h-11 px-6 font-semibold",
+                  "h-12 px-7 font-bold text-sm shadow-sm",
                 )}
               >
-                View Top Free Picks <ArrowRight className="ml-2 h-4 w-4" />
+                Explore Top Picks <ArrowRight className="ml-2 h-4 w-4" />
               </a>
               <a
-                href="#how-to"
+                href="#comparison"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
-                  "h-11 px-6",
+                  "h-12 px-7 text-sm font-semibold",
                 )}
               >
-                Step-by-Step Tutorial
+                View Full Comparison Matrix
               </a>
             </div>
 
             {/* Hero Stats Snapshot */}
-            <div className="mt-12 grid w-full max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+            <div className="mt-12 grid w-full max-w-4xl grid-cols-2 gap-3.5 sm:grid-cols-4 sm:gap-4">
               {heroStats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="flex flex-col items-center justify-center rounded-xl border border-border/60 bg-muted/40 p-4 text-center backdrop-blur-sm"
+                  className="flex flex-col items-center justify-center rounded-xl border border-border/70 bg-card/60 p-4 text-center backdrop-blur-sm shadow-xs"
                 >
                   <span className="font-bricolage text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                     {stat.value}
                   </span>
-                  <span className="mt-1 text-xs text-muted-foreground">
+                  <span className="mt-1 text-xs text-muted-foreground font-medium">
                     {stat.label}
                   </span>
                 </div>
@@ -197,122 +188,188 @@ export function FaceSwapGifLanding() {
       <StickyChapterNav />
 
       {/* ====================================================================
-          CHAPTER: TOP PICKS (Quick Answer for Impatient Users)
+          CHAPTER 00: TOP PICKS (Asymmetric Hierarchy / Primary Hero Card)
       ==================================================================== */}
       <section
         id="picks"
-        className="scroll-mt-24 py-14 border-b border-border/60"
+        className="scroll-mt-24 py-16 border-b border-border/60"
       >
         <Container>
           <ChapterHeader
             number="00"
-            label="Quick Verdict"
-            title="Editor's Top Tested Picks"
-            subtitle="Skip the trial-and-error. Here are the standout AI face swappers tested for watermark policy, speed, and real meme reliability."
+            label="Quick Selection"
+            title="Top Recommended Tools by Use Case"
+            subtitle="Based on documented free tiers, watermark policies, and file format allowances from official portals."
           />
 
-          <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {topPicks.map((pick) => (
-              <div
-                key={pick.tool}
-                className="group relative flex flex-col justify-between rounded-xl border border-border/60 bg-card p-5 transition-all hover:border-primary/50 hover:shadow-md"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono text-xs font-medium text-muted-foreground">
-                      {pick.category}
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="text-[10px] font-semibold"
-                    >
-                      {pick.badge}
-                    </Badge>
-                  </div>
-                  <h3 className="mt-3 font-bricolage text-xl font-bold text-foreground">
-                    {pick.tool}
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                    {pick.highlight}
-                  </p>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-border/50">
-                  <a
-                    href={pick.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "sm" }),
-                      "w-full justify-between text-xs group-hover:border-primary group-hover:text-primary",
-                    )}
+          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* Primary Highlight Card */}
+            <div className="relative flex flex-col justify-between rounded-2xl border-2 border-primary/40 bg-card p-6 shadow-md lg:col-span-2">
+              <div>
+                <div className="flex items-center justify-between gap-2">
+                  <Badge
+                    variant="default"
+                    className="text-xs font-bold px-3 py-1"
                   >
-                    <span>Try {pick.tool}</span>
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
+                    Featured Choice • {topPicks[0].category}
+                  </Badge>
+                  <span className="font-mono text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    100% Free / Clean Export
+                  </span>
+                </div>
+                <h3 className="mt-4 font-bricolage text-2xl font-bold text-foreground">
+                  {topPicks[0].tool}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {topPicks[0].highlight}
+                </p>
+
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 rounded-xl bg-muted/40 p-4 text-xs">
+                  <div>
+                    <span className="text-muted-foreground block font-medium">
+                      Cost Model:
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      Free (No Credits)
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block font-medium">
+                      Watermark:
+                    </span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                      None on export
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block font-medium">
+                      Account:
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      Instant Guest Use
+                    </span>
+                  </div>
                 </div>
               </div>
-            ))}
+
+              <div className="mt-6 flex items-center justify-between gap-4 pt-4 border-t border-border/50">
+                <span className="text-xs text-muted-foreground">
+                  Best for single-subject reaction GIFs &amp; stickers
+                </span>
+                <a
+                  href={topPicks[0].url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    buttonVariants({ size: "sm" }),
+                    "font-semibold text-xs",
+                  )}
+                >
+                  <span>Visit {topPicks[0].tool}</span>
+                  <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* Side Highlights */}
+            <div className="flex flex-col gap-4">
+              {topPicks.slice(1).map((pick) => (
+                <div
+                  key={pick.tool}
+                  className="flex flex-col justify-between rounded-xl border border-border/70 bg-card p-5 transition-all hover:border-primary/40 shadow-xs"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs font-semibold text-primary">
+                        {pick.category}
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] font-semibold"
+                      >
+                        {pick.badge}
+                      </Badge>
+                    </div>
+                    <h4 className="mt-2 font-bricolage text-lg font-bold text-foreground">
+                      {pick.tool}
+                    </h4>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      {pick.highlight}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-border/40">
+                    <a
+                      href={pick.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                    >
+                      <span>Open {pick.tool}</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </Container>
       </section>
 
       {/* ====================================================================
-          CHAPTER 01: FULL COMPARISON TABLE
+          CHAPTER 01: COMPREHENSIVE FEATURE MATRIX
       ==================================================================== */}
       <section
         id="comparison"
-        className="scroll-mt-24 py-14 border-b border-border/60 bg-muted/20"
+        className="scroll-mt-24 py-16 border-b border-border/60 bg-muted/20"
       >
         <Container>
           <ChapterHeader
             number="01"
-            label="Side-by-Side Review"
-            title="Comprehensive Feature & Watermark Matrix"
-            subtitle="Most platforms hide their watermark policy until you reach the final download step. Here is the unvarnished breakdown of how each tool performs."
+            label="Specifications"
+            title="Feature, Watermark &amp; Data Policy Matrix"
+            subtitle="Directly comparing published allowances, export policies, and upload thresholds across vetted platforms."
           />
 
-          <div className="mt-8 overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm">
+          <div className="mt-8 overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader className="bg-muted/50">
+                <TableHeader className="bg-muted/60">
                   <TableRow>
-                    <TableHead className="w-[180px] font-semibold">
-                      Tool
+                    <TableHead className="w-[170px] font-bold text-foreground">
+                      Platform
                     </TableHead>
                     <TableHead className="w-[140px] font-semibold">
-                      Free Allowance
+                      Free Quota
                     </TableHead>
-                    <TableHead className="w-[150px] font-semibold">
-                      Watermark Status
+                    <TableHead className="w-[140px] font-semibold">
+                      Watermark Policy
                     </TableHead>
-                    <TableHead className="w-[120px] font-semibold">
-                      No Sign-Up?
+                    <TableHead className="w-[110px] font-semibold">
+                      Sign-Up
                     </TableHead>
-                    <TableHead className="w-[120px] font-semibold">
-                      Multi-Face?
+                    <TableHead className="w-[110px] font-semibold">
+                      Multi-Face
                     </TableHead>
-                    <TableHead className="w-[100px] font-semibold">
-                      Speed
+                    <TableHead className="w-[110px] font-semibold">
+                      Max Upload
                     </TableHead>
-                    <TableHead className="w-[180px] font-semibold">
-                      Best For
+                    <TableHead className="w-[160px] font-semibold">
+                      Data Retention
                     </TableHead>
-                    <TableHead className="w-[100px] text-right font-semibold">
-                      Link
+                    <TableHead className="w-[90px] text-right font-semibold">
+                      Source
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="text-sm">
                   {comparisonTools.map((tool) => (
-                    <TableRow key={tool.name} className="hover:bg-muted/40">
-                      <TableCell className="font-medium">
+                    <TableRow key={tool.name} className="hover:bg-muted/30">
+                      <TableCell className="font-semibold text-foreground">
                         <div className="flex flex-col">
-                          <span className="font-bold text-foreground">
-                            {tool.name}
-                          </span>
+                          <span>{tool.name}</span>
                           {tool.badge ? (
-                            <span className="text-[10px] text-primary font-medium">
+                            <span className="text-[11px] font-mono font-medium text-primary">
                               {tool.badge}
                             </span>
                           ) : null}
@@ -322,7 +379,7 @@ export function FaceSwapGifLanding() {
                         {tool.freeTier}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1.5 text-xs">
+                        <div className="flex items-center gap-1.5 text-xs font-medium">
                           {tool.watermarkOnFree ? (
                             <>
                               <XCircle className="h-4 w-4 text-amber-500 shrink-0" />
@@ -333,7 +390,7 @@ export function FaceSwapGifLanding() {
                           ) : (
                             <>
                               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                              <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                              <span className="text-emerald-600 dark:text-emerald-400">
                                 No Watermark
                               </span>
                             </>
@@ -346,39 +403,39 @@ export function FaceSwapGifLanding() {
                             variant="outline"
                             className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[10px]"
                           >
-                            Yes (Instant)
+                            Optional (Guest)
                           </Badge>
                         ) : (
                           <span className="text-xs text-muted-foreground">
-                            Login required
+                            Required
                           </span>
                         )}
                       </TableCell>
                       <TableCell>
                         {tool.multiFaceSupport ? (
-                          <span className="text-xs font-medium text-primary">
-                            Yes (Group)
+                          <span className="text-xs font-semibold text-primary">
+                            Up to 4 Faces
                           </span>
                         ) : (
                           <span className="text-xs text-muted-foreground">
-                            Single only
+                            Single Only
                           </span>
                         )}
                       </TableCell>
                       <TableCell className="text-xs font-mono text-muted-foreground">
-                        {tool.renderSpeed}
+                        {tool.maxFileSize}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
-                        {tool.bestFor}
+                        {tool.retentionPolicy}
                       </TableCell>
                       <TableCell className="text-right">
                         <a
-                          href={tool.url}
+                          href={tool.sourceDocUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline"
                         >
-                          Visit <ExternalLink className="h-3 w-3" />
+                          Portal <ExternalLink className="h-3 w-3" />
                         </a>
                       </TableCell>
                     </TableRow>
@@ -388,40 +445,88 @@ export function FaceSwapGifLanding() {
             </div>
           </div>
 
-          <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-            <Lightbulb className="h-4 w-4 text-amber-500" />
-            <span>
-              <strong>Pro-tip:</strong> If you frequently swap group reaction
-              GIFs (like the 3-person Distracted Boyfriend meme), select tools
-              with multi-face support to map individual portraits in one pass.
-            </span>
+          <div className="mt-5 flex items-start gap-2.5 rounded-xl border border-border/60 bg-card p-4 text-xs text-muted-foreground">
+            <Lightbulb className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong>Understanding Watermarks:</strong> Some platforms
+              advertise free access on search engines but restrict clean
+              downloads to paid tiers. If you plan to export reaction GIFs
+              directly for Discord, Slack, or X, select tools marked with{" "}
+              <em>No Watermark</em>.
+            </p>
           </div>
         </Container>
       </section>
 
       {/* ====================================================================
-          CHAPTER 02: STEP-BY-STEP TUTORIAL
+          CHAPTER 02: VISUAL SCENARIO DEMONSTRATIONS (Runway / Output Style)
       ==================================================================== */}
       <section
-        id="how-to"
-        className="scroll-mt-24 py-14 border-b border-border/60"
+        id="visual-guide"
+        className="scroll-mt-24 py-16 border-b border-border/60"
       >
         <Container>
           <ChapterHeader
             number="02"
-            label="Tutorial"
-            title="How to Face Swap an Animated GIF (4 Easy Steps)"
-            subtitle="Follow this streamlined walkthrough to create smooth, natural-looking face swap GIFs that do not jitter or flicker."
+            label="Visual Scenarios"
+            title="Choosing the Right Pipeline for Your GIF"
+            subtitle="Different animation formats pose distinct challenges for AI landmark detection. Here is how to match your clip type to the optimal tool."
+          />
+
+          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {visualComparisonDemonstration.map((demo, idx) => (
+              <div
+                key={demo.title}
+                className="flex flex-col justify-between rounded-2xl border border-border/70 bg-card p-6 shadow-xs"
+              >
+                <div>
+                  <div className="flex items-center gap-2 font-mono text-xs font-bold text-primary">
+                    <span>CASE 0{idx + 1}</span>
+                  </div>
+                  <h3 className="mt-2 font-bricolage text-lg font-bold text-foreground">
+                    {demo.title}
+                  </h3>
+                  <div className="mt-3 rounded-lg bg-primary/5 p-3 text-xs font-medium text-primary">
+                    <strong>Recommended:</strong> {demo.recommendedTool}
+                  </div>
+                  <p className="mt-3 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                    {demo.whyItWorks}
+                  </p>
+                </div>
+
+                <div className="mt-5 border-t border-border/50 pt-3 text-xs text-muted-foreground">
+                  <strong className="text-foreground">Key Tip:</strong>{" "}
+                  {demo.keyCheck}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ====================================================================
+          CHAPTER 03: STEP-BY-STEP WORKFLOW
+      ==================================================================== */}
+      <section
+        id="how-to"
+        className="scroll-mt-24 py-16 border-b border-border/60 bg-muted/20"
+      >
+        <Container>
+          <ChapterHeader
+            number="03"
+            label="Walkthrough"
+            title="How to Execute a Smooth GIF Face Swap"
+            subtitle="A four-step framework to avoid edge jitter, color banding, and misaligned facial landmarks."
           />
 
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             {stepByStepGuide.map((item) => (
               <div
                 key={item.step}
-                className="relative flex flex-col rounded-xl border border-border/60 bg-card p-6 shadow-sm"
+                className="flex flex-col rounded-2xl border border-border/70 bg-card p-6 shadow-xs"
               >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 font-mono text-sm font-bold text-primary">
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 font-mono text-base font-bold text-primary">
                     {item.step}
                   </div>
                   <h3 className="font-bricolage text-lg font-bold text-foreground">
@@ -429,12 +534,14 @@ export function FaceSwapGifLanding() {
                   </h3>
                 </div>
 
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                   {item.description}
                 </p>
 
-                <div className="mt-4 rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
-                  <strong className="text-foreground">Recommendation:</strong>{" "}
+                <div className="mt-5 rounded-xl bg-muted/50 p-3.5 text-xs text-muted-foreground">
+                  <strong className="text-foreground font-semibold">
+                    Practical Advice:
+                  </strong>{" "}
                   {item.tips}
                 </div>
               </div>
@@ -444,187 +551,131 @@ export function FaceSwapGifLanding() {
       </section>
 
       {/* ====================================================================
-          CHAPTER 03: MEME TEMPLATES
+          CHAPTER 04: PRO TIPS, ETHICS & PRIVACY
       ==================================================================== */}
       <section
-        id="memes"
-        className="scroll-mt-24 py-14 border-b border-border/60 bg-muted/20"
-      >
-        <Container>
-          <ChapterHeader
-            number="03"
-            label="Inspiration"
-            title="Classic Meme GIF Templates Tested"
-            subtitle="These evergreen meme animations consistently deliver the highest comedic payoff when personalized for group chats or Twitter threads."
-          />
-
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {popularMemeTemplates.map((template) => (
-              <div
-                key={template.name}
-                className="flex flex-col justify-between rounded-xl border border-border/60 bg-card p-5"
-              >
-                <div>
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] mb-2 font-mono"
-                  >
-                    {template.difficulty} Difficulty
-                  </Badge>
-                  <h4 className="font-bricolage text-base font-bold text-foreground">
-                    {template.name}
-                  </h4>
-                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    {template.scenario}
-                  </p>
-                </div>
-
-                <div className="mt-4 border-t border-border/40 pt-3 text-[11px] text-muted-foreground">
-                  <div>
-                    <span className="font-medium text-foreground">Faces:</span>{" "}
-                    {template.faces}
-                  </div>
-                  <div className="mt-1">
-                    <span className="font-medium text-foreground">
-                      Recommended:
-                    </span>{" "}
-                    <span className="text-primary">{template.bestTool}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ====================================================================
-          CHAPTER 04: PRO TIPS & SAFETY/ETHICS
-      ==================================================================== */}
-      <section
-        id="tips"
-        className="scroll-mt-24 py-14 border-b border-border/60"
+        id="pro-tips"
+        className="scroll-mt-24 py-16 border-b border-border/60"
       >
         <Container>
           <ChapterHeader
             number="04"
-            label="Quality & Ethics"
-            title="Pro Tips for Seamless Blends & Responsible Use"
-            subtitle="Ensure your GIFs look professional while keeping personal data and facial biometrics protected."
+            label="Technical &amp; Ethics"
+            title="Quality Optimizations &amp; Responsible Usage"
+            subtitle="Technical strategies to overcome GIF palette compression while respecting individual consent and data privacy."
           />
 
           <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2">
             {proTips.map((tip) => (
               <div
                 key={tip.title}
-                className="flex flex-col rounded-xl border border-border/60 bg-card p-6"
+                className="flex flex-col rounded-xl border border-border/70 bg-card p-6"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
                   <h4 className="font-bricolage text-base font-bold text-foreground">
                     {tip.title}
                   </h4>
                 </div>
-                <p className="mt-3 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                   {tip.body}
                 </p>
               </div>
             ))}
           </div>
 
-          {/* Ethics Banner */}
-          <div className="mt-8 rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 text-xs sm:text-sm leading-relaxed text-muted-foreground">
-            <div className="flex items-center gap-2 font-bold text-foreground text-sm">
-              <ShieldAlert className="h-4 w-4 text-amber-500" />
-              <span>Ethical AI &amp; Fair Use Reminder</span>
+          {/* Ethical Disclaimer */}
+          <div className="mt-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6 text-sm text-muted-foreground leading-relaxed">
+            <div className="flex items-center gap-2 font-bold text-foreground text-base">
+              <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
+              <span>Consent &amp; Ethical AI Guidelines</span>
             </div>
-            <p className="mt-2">
-              AI face swap technology is intended for parody, harmless
-              entertainment, personal memes, and creative projects with mutual
-              consent. Always obtain explicit consent before uploading
-              friends&apos; portraits. Never create non-consensual sexual
-              material (NCII), defamatory deepfakes, or misleading political
-              misinformation.
+            <p className="mt-2.5">
+              Face swap tools should be used strictly for consensual creative
+              projects, parody, and entertainment. Never create non-consensual
+              sexual imagery (NCII), impersonate individuals for deceptive
+              purposes, or infringe on copyrighted media. Reputable tools
+              enforce automated data deletion policies to safeguard uploaded
+              biometrics.
             </p>
           </div>
         </Container>
       </section>
 
       {/* ====================================================================
-          CHAPTER 05: FAQ (ACCORDION)
+          CHAPTER 05: FAQ (DETAILS/SUMMARY NATIVE DOM PRESERVATION)
       ==================================================================== */}
       <section
         id="faq"
-        className="scroll-mt-24 py-14 border-b border-border/60 bg-muted/20"
+        className="scroll-mt-24 py-16 border-b border-border/60 bg-muted/20"
       >
         <Container>
           <ChapterHeader
             number="05"
-            label="Common Questions"
-            title="Frequently Asked Questions About GIF Face Swapping"
-            subtitle="Everything you need to know regarding watermarks, multi-face algorithms, format compatibility, and data security."
+            label="Inquiries"
+            title="Frequently Asked Questions"
+            subtitle="Key answers regarding export watermarks, multi-person support, color artifacts, and account requirements."
           />
 
-          <div className="mt-8 max-w-3xl">
-            <Accordion type="single" collapsible className="w-full space-y-3">
-              {faqs.map((faq, idx) => (
-                <AccordionItem
-                  key={faq.question}
-                  value={`faq-${idx}`}
-                  className="rounded-lg border border-border/60 bg-card px-4 py-1"
-                >
-                  <AccordionTrigger className="text-left font-bricolage text-sm font-semibold hover:no-underline">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs sm:text-sm leading-relaxed text-muted-foreground">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+          <div className="mt-8 max-w-3xl space-y-4">
+            {faqs.map((faq) => (
+              <details
+                key={faq.question}
+                className="group rounded-xl border border-border/70 bg-card p-5 transition-colors open:bg-card/90"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between font-bricolage text-base font-bold text-foreground [&::-webkit-details-marker]:hidden">
+                  <span>{faq.question}</span>
+                  <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-open:rotate-180 text-muted-foreground" />
+                </summary>
+                <div className="pt-3 text-sm leading-relaxed text-muted-foreground border-t border-border/40 mt-3">
+                  {faq.answer}
+                </div>
+              </details>
+            ))}
           </div>
         </Container>
       </section>
 
       {/* ====================================================================
-          INTER-LINKING / SISTER TOPIC BANNER
+          CROSS-LINKING CALLOUT
       ==================================================================== */}
       <section className="py-16">
         <Container>
-          <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-card via-card to-muted/40 p-8 sm:p-10">
+          <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-card via-card to-muted/40 p-8 sm:p-12">
             <div className="max-w-2xl">
               <Badge
                 variant="outline"
-                className="mb-3 font-mono text-xs text-primary"
+                className="mb-3.5 font-mono text-xs text-primary"
               >
-                Next in the Series
+                Explore More AI Tools
               </Badge>
               <h3 className="font-bricolage text-2xl font-bold text-foreground sm:text-3xl">
-                Need Full HD Video Swaps Instead of GIFs?
+                Looking for Full Video &amp; Image Editing Suites?
               </h3>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                GIFs are perfect for lightweight loops, but full MP4 videos
-                deliver 4K resolution, voice matching, and lip-syncing. Explore
-                our in-depth evaluation of the best AI Video Face Swap software.
+              <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+                Discover hundreds of curated generative AI tools across video
+                synthesis, image upscaling, voice cloning, and coding assistants
+                in our main directory.
               </p>
-              <div className="mt-6 flex flex-wrap items-center gap-3">
+              <div className="mt-6 flex flex-wrap items-center gap-3.5">
                 <Link
-                  href="/search?q=video+face+swap"
+                  href="/category"
                   className={cn(
                     buttonVariants({ size: "default" }),
-                    "font-semibold text-xs",
+                    "font-bold text-xs h-10 px-5",
                   )}
                 >
-                  Explore AI Video Tools{" "}
+                  Browse AI Categories{" "}
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
                 <Link
                   href="/"
                   className={cn(
                     buttonVariants({ variant: "outline", size: "default" }),
-                    "text-xs",
+                    "text-xs h-10 px-5 font-semibold",
                   )}
                 >
-                  Back to All AI Directory
+                  Return to Home
                 </Link>
               </div>
             </div>

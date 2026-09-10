@@ -78,6 +78,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: "gpt-6-astra",
       lastModified: new Date(),
     },
+    {
+      url: "face-swap-gif",
+      lastModified: new Date(),
+    },
   ];
 
   for (const route of sitemapRoutes) {

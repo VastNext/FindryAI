@@ -1,4 +1,3 @@
-import Container from "@/components/container";
 import { FaceSwapGifLanding } from "@/components/face-swap-gif/face-swap-gif-landing";
 import { siteConfig } from "@/config/site";
 import { faceSwapGifConfig, faqs } from "@/data/face-swap-gif";
@@ -7,7 +6,7 @@ import { constructMetadata } from "@/lib/metadata";
 const canonicalUrl = `${siteConfig.url}/face-swap-gif`;
 
 const baseMetadata = constructMetadata({
-  title: "Best AI Face Swap GIF Tools (2026) — Free, No Watermark & Online",
+  title: "AI Face Swap GIF Guide (2026): Best Free Tools & Limits Compared",
   description: faceSwapGifConfig.description,
   canonicalUrl,
 });
@@ -26,14 +25,14 @@ export const metadata = {
   openGraph: {
     ...baseMetadata.openGraph,
     url: canonicalUrl,
-    title: "Best AI Face Swap GIF Tools (2026) — Free, No Watermark & Online",
+    title: "AI Face Swap GIF Guide (2026): Best Free Tools & Limits Compared",
     description: faceSwapGifConfig.description,
   },
 };
 
 export const revalidate = 86400; // 24 hours ISR cache
 
-// FAQPage structured data for Google Rich Results
+// FAQPage structured data (kept for semantic indexers while acknowledging rich results changes)
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -67,7 +66,7 @@ const breadcrumbJsonLd = {
     {
       "@type": "ListItem",
       position: 3,
-      name: "Face Swap GIF",
+      name: "Face Swap GIF Guide",
       item: canonicalUrl,
     },
   ],
@@ -75,7 +74,7 @@ const breadcrumbJsonLd = {
 
 export default function FaceSwapGifPage() {
   return (
-    <Container className="mt-0 pb-0">
+    <>
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: Valid JSON-LD schema
@@ -87,6 +86,6 @@ export default function FaceSwapGifPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <FaceSwapGifLanding />
-    </Container>
+    </>
   );
 }
