@@ -33,8 +33,8 @@ const trendingGuides: TrendingGuideItem[] = [
     href: "/gpt-6-astra",
   },
   {
-    label: "Agent Skills",
-    href: "/agent-skills",
+    label: "FakeFace",
+    href: "/item/fakeface",
   },
 ];
 
