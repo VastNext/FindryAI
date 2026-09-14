@@ -71,7 +71,24 @@ export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
               )}
             </div>
 
-            <BuiltWithButton />
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <BuiltWithButton />
+              <a
+                href="https://fazier.com/launches/findryai.com"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=light"
+                  width={120}
+                  height={32}
+                  alt="Fazier badge"
+                  className="h-8 w-auto"
+                />
+              </a>
+            </div>
           </div>
         </div>
 
