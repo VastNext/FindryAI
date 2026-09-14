@@ -1,9 +1,9 @@
+import { readFileSync } from "node:fs";
 import { slugify } from "@/lib/utils";
 import type { Category, Tag } from "@/sanity.types";
 import mql from "@microlink/mql";
 import { createClient } from "@sanity/client";
 import dotenv from "dotenv";
-import { readFileSync } from "node:fs";
 import fetch from "node-fetch";
 import { z } from "zod";
 dotenv.config();
@@ -22,22 +22,22 @@ const client = createClient({
 
 /**
  * AI-Powered Item Management System
- * 
+ *
  * An automated script for managing content items in Sanity CMS using AI SDK
  * and Microlink for data enrichment.
- * 
+ *
  * Core Functions:
  * 1. Content Scraping: Extract data from URLs using Microlink
  * 2. AI Analysis: Process content using Google's Gemini AI
  * 3. Asset Management: Handle images and icons
  * 4. Database Operations: CRUD operations in Sanity
- * 
+ *
  * Data Processing Flow:
  * 1. URL → Microlink (metadata) + AI SDK (content analysis)
  * 2. Data Enrichment → Categories & Tags mapping
  * 3. Asset Processing → Icon & Image handling
  * 4. Sanity Import → Structured content creation
- * 
+ *
  * Content Structure:
  * - name: Title of the item
  * - slug: Auto-generated URL-friendly identifier
@@ -48,20 +48,20 @@ const client = createClient({
  * - tags: Auto-mapped tag references
  * - image: Screenshot or main image
  * - icon: Favicon or logo
- * 
+ *
  * Key Features:
  * - AI-powered content analysis
  * - Automated metadata extraction
  * - Smart category/tag mapping
  * - Automated asset management
  * - Bulk processing support
- * 
+ *
  * Requirements:
  * - Sanity CMS credentials
  * - Google AI SDK access
  * - Microlink API access
  * - Environment variables configured
- * 
+ *
  * Usage:
  * 1. pnpm run item remove
  * remove all items
@@ -98,6 +98,29 @@ const CATEGORY_MAPPING: Record<string, string> = {
   翻译工具: "Translation",
 };
 
+// 常见第三方目录站黑名单，严防将竞品聚合站当成工具真实官网
+const COMPETITOR_DIRECTORY_HOSTS = new Set([
+  "easywithai.com",
+  "theresanaiforthat.com",
+  "toolify.ai",
+  "futurepedia.io",
+  "futuretools.io",
+  "aitools.inc",
+  "aitools.fyi",
+  "topai.tools",
+  "insidr.ai",
+  "taaft.com",
+]);
+
+export function isCompetitorDirectory(url: string): boolean {
+  try {
+    const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
+    return COMPETITOR_DIRECTORY_HOSTS.has(hostname);
+  } catch {
+    return false;
+  }
+}
+
 export const removeItems = async () => {
   const data = await client.delete({
     query: "*[_type == 'item']",
@@ -109,8 +132,14 @@ export const removeItems = async () => {
  * fetch item info for the specified url with Microlink and AI SDK
  */
 export const fetchItem = async (url: string) => {
-  const meta =
-    coldstartMeta[url] || coldstartMeta[url.replace(/\/+$/, "")];
+  if (isCompetitorDirectory(url)) {
+    console.error(
+      `fetchItem: REJECTED competitor directory URL "${url}". Use the direct official tool website URL instead.`,
+    );
+    return null;
+  }
+
+  const meta = coldstartMeta[url] || coldstartMeta[url.replace(/\/+$/, "")];
 
   // step 1: fetch item info with Microlink
   const microlinkData = await fetchItemWithMicrolink(url);
@@ -137,9 +166,7 @@ export const fetchItem = async (url: string) => {
   const mappedCategory = meta ? CATEGORY_MAPPING[meta.category] : undefined;
   const mergedCategories = [
     ...(mappedCategory ? [mappedCategory] : []),
-    ...aisdkData.object.categories.filter(
-      (c: string) => c !== mappedCategory,
-    ),
+    ...aisdkData.object.categories.filter((c: string) => c !== mappedCategory),
   ].slice(0, 3);
   const finalCategories =
     mergedCategories.length > 0 ? mergedCategories : ["AI Tools"];
@@ -191,7 +218,7 @@ export const fetchItemWithMicrolink = async (url: string) => {
       error,
     );
     return null;
-  } 
+  }
 };
 
 /**
@@ -221,20 +248,25 @@ export const fetchItemWithAISdk = async (
         .describe("Array of category names that best match the content"),
       tags: z
         .array(z.string())
-        .describe("Array of tag names that best match the content")
+        .describe("Array of tag names that best match the content"),
     });
 
     // 抓取目标站 HTML，超时/被墙时仍交给 AI 凭元数据知识写简介；截断防超上游 token 上限
     let htmlContent = "";
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(30000) as never });
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(30000) as never,
+      });
       htmlContent = (await response.text())
-        .replace(/class="[^"]*"/g, '')
-        .replace(/<svg[^>]*>.*?<\/svg>/g, '')
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/class="[^"]*"/g, "")
+        .replace(/<svg[^>]*>.*?<\/svg>/g, "")
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
         .slice(0, 30000);
     } catch (e) {
-      console.error(`fetchItemWithAISdk: html fetch failed for ${url}:`, e instanceof Error ? e.message : e);
+      console.error(
+        `fetchItemWithAISdk: html fetch failed for ${url}:`,
+        e instanceof Error ? e.message : e,
+      );
       htmlContent = "";
     }
 
@@ -284,12 +316,12 @@ ${htmlContent || "(unavailable — fetch failed or was blocked. Rely on the know
     );
     let ogImage = (ogm?.[1] || ogm?.[2] || "").trim();
     if (ogImage.startsWith("//")) ogImage = `https:${ogImage}`;
-    else if (ogImage.startsWith("/"))
-      ogImage = new URL(url).origin + ogImage;
+    else if (ogImage.startsWith("/")) ogImage = new URL(url).origin + ogImage;
 
     // 直接非流式调用本地网关（json_schema 结构化输出），避开 SDK 流式解析不兼容；带重试
     const aiBaseURL = process.env.AI_BASE_URL || "http://localhost:20128/v1";
-    const aiApiKey = process.env.AI_API_KEY || "sk-d88c82e9aa88b941-1fe8bc-47954127";
+    const aiApiKey =
+      process.env.AI_API_KEY || "sk-d88c82e9aa88b941-1fe8bc-47954127";
     const aiModel = process.env.AI_MODEL || "agy/gemini-3.6-flash-high";
     const requestBody = JSON.stringify({
       model: aiModel,
@@ -310,7 +342,13 @@ ${htmlContent || "(unavailable — fetch failed or was blocked. Rely on the know
               categories: { type: "array", items: { type: "string" } },
               tags: { type: "array", items: { type: "string" } },
             },
-            required: ["title", "description", "introduction", "categories", "tags"],
+            required: [
+              "title",
+              "description",
+              "introduction",
+              "categories",
+              "tags",
+            ],
           },
         },
       },
@@ -374,9 +412,7 @@ ${htmlContent || "(unavailable — fetch failed or was blocked. Rely on the know
 };
 
 // 下载图片，失败或可疑内容返回 null（不阻塞导入）
-const downloadMaybe = async (
-  url?: string | null,
-): Promise<Buffer | null> => {
+const downloadMaybe = async (url?: string | null): Promise<Buffer | null> => {
   if (!url) return null;
   try {
     const res = await fetch(url, {
@@ -405,7 +441,10 @@ const uploadAssetMaybe = async (
     const asset = await client.assets.upload("image", buf, { filename });
     return asset._id;
   } catch (e) {
-    console.error(`uploadAssetMaybe failed (${filename}):`, e instanceof Error ? e.message : e);
+    console.error(
+      `uploadAssetMaybe failed (${filename}):`,
+      e instanceof Error ? e.message : e,
+    );
     return null;
   }
 };
@@ -421,9 +460,7 @@ export const importItems = async () => {
 
   // 断点续跑：跳过已存在的链接
   const existingLinks = new Set(
-    (
-      await client.fetch<Array<{ link?: string }>>(`*[_type == "item"]{link}`)
-    )
+    (await client.fetch<Array<{ link?: string }>>(`*[_type == "item"]{link}`))
       .map((x) => x.link && normalizeLink(x.link))
       .filter(Boolean) as string[],
   );
@@ -523,9 +560,7 @@ export const importItems = async () => {
     }
   };
 
-  await Promise.all(
-    Array.from({ length: CONCURRENCY }, () => worker()),
-  );
+  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
 
   console.log(`importItems done: ok=${ok}, fail=${fail}`);
 };

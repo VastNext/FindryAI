@@ -29,12 +29,16 @@ const trendingGuides: TrendingGuideItem[] = [
     badge: "Hot",
   },
   {
-    label: "GPT-6 Astra",
-    href: "/gpt-6-astra",
+    label: "Face Swap Video",
+    href: "/ai-face-swap-video",
   },
   {
     label: "FakeFace",
     href: "/item/fakeface",
+  },
+  {
+    label: "GPT-6 Astra",
+    href: "/gpt-6-astra",
   },
 ];
 

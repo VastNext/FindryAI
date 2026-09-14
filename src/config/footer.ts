@@ -16,6 +16,7 @@ export const footerConfig: FooterConfig = {
         { title: "Agent Skills", href: "/agent-skills" },
         { title: "AI Feed", href: "/ai-daily-feeds" },
         { title: "Face Swap GIF", href: "/face-swap-gif" },
+        { title: "Face Swap Video", href: "/ai-face-swap-video" },
         { title: "Pricing", href: "/pricing" },
         { title: "Submit", href: "/submit" },
         { title: "Studio", href: "/studio", external: true },

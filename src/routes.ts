@@ -21,6 +21,7 @@ export const publicRoutes = [
   "/ai-daily-feeds(/.*)?",
   "/gpt-6-astra(/.*)?",
   "/face-swap-gif(/.*)?",
+  "/ai-face-swap-video(/.*)?",
 
   "/about(/.*)?",
   "/terms(/.*)?",
@@ -38,6 +39,9 @@ export const publicRoutes = [
 
   // send emails, like submission approval or rejection emails
   "/api/send-email",
+
+  // badge svg for backlinks
+  "/badge.svg",
 
   // og images
   "/api/og",

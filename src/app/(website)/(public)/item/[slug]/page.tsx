@@ -1,12 +1,15 @@
 import ItemBreadCrumb from "@/components/item/item-bread-crumb";
 import SponsorItemCard from "@/components/item/item-card-sponsor";
+import { ItemCuratedDossier } from "@/components/item/item-curated-dossier";
 import ItemCustomMdx from "@/components/item/item-custom-mdx";
+import ItemEmbedBadge from "@/components/item/item-embed-badge";
 import ItemGrid from "@/components/item/item-grid";
 import BackButton from "@/components/shared/back-button";
 import { JsonLd } from "@/components/shared/json-ld";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { fakefaceCuratedData } from "@/data/item-curated/fakeface";
 import { urlForIcon, urlForImage } from "@/lib/image";
 import { constructMetadata } from "@/lib/metadata";
 import { cn, getItemTargetLinkInWebsite, getLocaleDate } from "@/lib/utils";
@@ -49,9 +52,17 @@ export async function generateMetadata({
   }
 
   const imageProps = item?.image ? urlForImage(item?.image) : null;
+  const isFakeFace = params.slug.toLowerCase() === "fakeface";
+  const title = isFakeFace
+    ? "FakeFace: AI Face Swap & Portrait Generator Review, Free Limits & Pricing (2026)"
+    : `${item.name}`;
+  const description = isFakeFace
+    ? "Comprehensive review of FakeFace (fakeface.io). Compare free starter limits, avatar generation, photo blending accuracy, and how it compares to top face swap alternatives."
+    : item.description;
+
   return constructMetadata({
-    title: `${item.name}`,
-    description: item.description,
+    title,
+    description,
     canonicalUrl: `${siteConfig.url}/item/${params.slug}`,
     image: imageProps?.src,
   });
@@ -160,6 +171,22 @@ export default async function ItemPage({ params }: ItemPageProps) {
       "@type": "BreadcrumbList",
       itemListElement: breadcrumbItems,
     },
+    ...(params.slug.toLowerCase() === "fakeface"
+      ? [
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: fakefaceCuratedData.faqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -381,10 +408,18 @@ export default async function ItemPage({ params }: ItemPageProps) {
 
               {/* sponsor */}
               {sponsorItem && <SponsorItemCard item={sponsorItem} />}
+
+              {/* embed badge for backlinks */}
+              <ItemEmbedBadge itemName={item.name} itemSlug={params.slug} />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Curated In-Depth Dossier for Priority High-Intent Items (FakeFace, etc.) */}
+      {params.slug.toLowerCase() === "fakeface" && (
+        <ItemCuratedDossier data={fakefaceCuratedData} />
+      )}
 
       {/* Footer section shows related items */}
       {item.related && item.related.length > 0 && (

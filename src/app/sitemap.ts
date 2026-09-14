@@ -82,6 +82,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: "face-swap-gif",
       lastModified: new Date(),
     },
+    {
+      url: "ai-face-swap-video",
+      lastModified: new Date(),
+    },
   ];
 
   for (const route of sitemapRoutes) {

@@ -4,6 +4,7 @@ import Container from "@/components/container";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { BackToTop } from "./back-to-top";
+import { TweetFeedSeoSummary } from "./tweet-feed-seo-summary";
 import { TweetGrid } from "./tweet-grid";
 import { TweetHero } from "./tweet-hero";
 import { TweetRelatedLinks } from "./tweet-related-links";
@@ -72,6 +73,9 @@ export function TweetFeedView({ initialData }: TweetFeedViewProps) {
       <div className="flex flex-col w-full">
         {/* Hero 区域 */}
         <TweetHero />
+
+        {/* 静态 SSR 可读摘要（针对搜索引擎收录与首屏免 JS 内容承接） */}
+        <TweetFeedSeoSummary />
 
         {/* 频道标签 */}
         <TweetTabs

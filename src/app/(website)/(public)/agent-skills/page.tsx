@@ -9,20 +9,34 @@ import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+const canonicalUrl = `${siteConfig.url}/agent-skills`;
+
 const baseMetadata = constructMetadata({
-  title: "Agent Skills",
+  title: "280+ Best AI Agent Skills, Frameworks & GitHub Tools (2026)",
   description:
-    "Explore curated open-source AI Agent skills, harnesses, tools, and workflows to supercharge your AI agents.",
-  canonicalUrl: `${siteConfig.url}/agent-skills`,
+    "Explore 280+ battle-tested open-source AI agent skills, MCP servers, harnesses, frameworks, and autonomous workflows with direct GitHub repositories.",
+  canonicalUrl,
 });
 
 export const revalidate = 172800; // 48 hours ISR cache
 
 export const metadata = {
   ...baseMetadata,
+  keywords: [
+    "agent skills",
+    "ai agent skills",
+    "open source agent tools",
+    "mcp servers",
+    "agent harnesses",
+    "ai agent directory",
+    "github agent skills",
+  ],
   openGraph: {
     ...baseMetadata.openGraph,
-    url: `${siteConfig.url}/agent-skills`,
+    url: canonicalUrl,
+    title: "280+ Best AI Agent Skills, Frameworks & GitHub Tools (2026)",
+    description:
+      "Explore 280+ battle-tested open-source AI agent skills, MCP servers, harnesses, frameworks, and autonomous workflows with direct GitHub repositories.",
   },
 };
 

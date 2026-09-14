@@ -650,32 +650,33 @@ export function FaceSwapGifLanding() {
                 Explore More AI Tools
               </Badge>
               <h3 className="font-bricolage text-2xl font-bold text-foreground sm:text-3xl">
-                Looking for Full Video &amp; Image Editing Suites?
+                Need Full Cinematic Video Face Swaps?
               </h3>
               <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-                Discover hundreds of curated generative AI tools across video
-                synthesis, image upscaling, voice cloning, and coding assistants
-                in our main directory.
+                Animated GIFs are ideal for lightweight memes, but if you need
+                continuous 30–60 FPS video tracking, multi-character dialogue
+                replacements, or high-definition MP4 exports, explore our
+                dedicated Video Face Swap Guide.
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3.5">
                 <Link
-                  href="/category"
+                  href="/ai-face-swap-video"
                   className={cn(
                     buttonVariants({ size: "default" }),
-                    "font-bold text-xs h-10 px-5",
+                    "font-bold text-xs h-10 px-5 gap-1.5",
                   )}
                 >
-                  Browse AI Categories{" "}
-                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                  <span>Read Video Face Swap Guide</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
                 <Link
-                  href="/"
+                  href="/category"
                   className={cn(
                     buttonVariants({ variant: "outline", size: "default" }),
                     "text-xs h-10 px-5 font-semibold",
                   )}
                 >
-                  Return to Home
+                  Browse AI Categories
                 </Link>
               </div>
             </div>
