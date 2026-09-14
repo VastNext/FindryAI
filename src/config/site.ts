@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
   logo: "/logo.png",
   logoDark: "/logo-dark.png",
   // please increase the version number when you update the image
-  image: `${SITE_URL}/og.png?v=1`,
+  image: `${SITE_URL}/og.png?v=2`,
   mail: "support@findryai.com",
   utm: {
     source: SITE_HOST,
