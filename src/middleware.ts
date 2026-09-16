@@ -94,5 +94,9 @@ export default function middleware(req: NextRequest) {
 // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
 // https://clerk.com/docs/references/nextjs/auth-middleware#usage
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    "/((?!.+\\.[\\w]+$|_next|sitemap\\.xml|robots\\.txt).*)",
+    "/",
+    "/(api|trpc)(.*)",
+  ],
 };
