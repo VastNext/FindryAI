@@ -7,6 +7,21 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/home2",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/search-old",
+        destination: "/search",
+        permanent: true,
+      },
+      {
+        source: "/search/:slug",
+        destination: "/category/:slug",
+        permanent: true,
+      },
     ];
   },
 

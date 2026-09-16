@@ -103,18 +103,27 @@ export function CategorySeoSubnav({ seo }: CategorySeoSubnavProps) {
 
 interface CategorySeoFooterProps {
   seo: CategorySeoDetail;
+  featuredItems?: Array<{ name: string; slug?: { current?: string } }>;
 }
 
 /**
  * Zone 3（网格下方）：深度内容区。
- * 顺序遵循目录页标准：About 长文 → FAQ → 相关分类出口。
+ * 顺序遵循目录页标准：About 长文 → FAQ → 相关分类出口 → 热门竞品对比内链。
  */
-export function CategorySeoFooter({ seo }: CategorySeoFooterProps) {
+export function CategorySeoFooter({
+  seo,
+  featuredItems,
+}: CategorySeoFooterProps) {
   const hasIntro = seo.intro && seo.intro.length > 0;
   const hasFaqs = seo.faqs && seo.faqs.length > 0;
   const hasRelated = seo.relatedCategories && seo.relatedCategories.length > 0;
+  const validFeaturedItems = (featuredItems || []).filter(
+    (tool): tool is { name: string; slug: { current: string } } =>
+      Boolean(tool.slug?.current),
+  );
+  const hasFeaturedAlternatives = validFeaturedItems.length > 0;
 
-  if (!hasIntro && !hasFaqs && !hasRelated) {
+  if (!hasIntro && !hasFaqs && !hasRelated && !hasFeaturedAlternatives) {
     return null;
   }
 
@@ -188,6 +197,33 @@ export function CategorySeoFooter({ seo }: CategorySeoFooterProps) {
               >
                 {rel.name}
                 <ArrowRightIcon className="h-3.5 w-3.5 opacity-50 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Popular Alternatives in this Category：为孤岛竞品页打通权重通道 */}
+      {hasFeaturedAlternatives && (
+        <div className="max-w-3xl mx-auto space-y-4 border-t pt-8">
+          <div className="text-center space-y-1">
+            <h2 className="text-xl font-bold tracking-tight">
+              Compare Popular {seo.h1 || "Tools"} & Alternatives
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Discover side-by-side comparisons, pricing tiers, and alternative
+              choices.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2.5 pt-2">
+            {validFeaturedItems.map((tool) => (
+              <Link
+                key={tool.slug.current}
+                href={`/item/${tool.slug.current}/alternatives`}
+                className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border bg-card/60 text-xs sm:text-sm text-muted-foreground transition-all hover:border-indigo-500/40 hover:text-indigo-600 dark:hover:text-indigo-400 hover:shadow-sm"
+              >
+                <span>{tool.name} Alternatives</span>
+                <ArrowRightIcon className="h-3 w-3 opacity-50 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
               </Link>
             ))}
           </div>

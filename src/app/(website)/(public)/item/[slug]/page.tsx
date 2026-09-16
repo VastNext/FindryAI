@@ -424,14 +424,28 @@ export default async function ItemPage({ params }: ItemPageProps) {
       {/* Footer section shows related items */}
       {item.related && item.related.length > 0 && (
         <div className="flex flex-col gap-4 mt-8">
-          <div className="flex items-center gap-2">
-            <LayoutGridIcon className="w-4 h-4 text-indigo-500" />
-            <h2 className="text-lg tracking-wider font-semibold text-gradient_indigo-purple">
-              More Products
-            </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3">
+            <div className="flex items-center gap-2">
+              <LayoutGridIcon className="w-4 h-4 text-indigo-500" />
+              <h2 className="text-lg tracking-wider font-semibold text-gradient_indigo-purple">
+                More Products & Alternatives
+              </h2>
+            </div>
+            <Link
+              href={`/item/${params.slug}/alternatives`}
+              className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 group"
+            >
+              <span>Compare all {item.name} alternatives</span>
+              <span
+                aria-hidden="true"
+                className="transition-transform group-hover:translate-x-0.5"
+              >
+                &rarr;
+              </span>
+            </Link>
           </div>
 
-          <div className="mt-4">
+          <div className="mt-2">
             <ItemGrid
               items={item.related}
               sponsorItems={sponsorItems}

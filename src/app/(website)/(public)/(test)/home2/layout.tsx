@@ -1,11 +1,5 @@
 import Container from "@/components/container";
 import HomeHero from "@/components/home2/home2-hero";
-import { constructMetadata } from "@/lib/metadata";
-
-export const metadata = constructMetadata({
-  title: "",
-  noIndex: true,
-});
 
 export default function HomeLayout({
   children,

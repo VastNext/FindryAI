@@ -1,3 +1,4 @@
+import { SITEMAP_SEGMENTS } from "@/app/sitemap";
 import { siteConfig } from "@/config/site";
 import type { MetadataRoute } from "next";
 
@@ -20,12 +21,16 @@ export default function robots(): MetadataRoute.Robots {
           "/payment/",
           "/auth/",
           "/api/",
-          "/search",
           "/unsubscribe/",
         ],
       },
     ],
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    sitemap: [
+      `${siteConfig.url}/sitemap.xml`,
+      ...SITEMAP_SEGMENTS.map(
+        (segment) => `${siteConfig.url}/sitemap/${segment}.xml`,
+      ),
+    ],
     host: siteConfig.url,
   };
 }
