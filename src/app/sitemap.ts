@@ -33,6 +33,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const sitemapList: MetadataRoute.Sitemap = []; // final result
 
+  const [
+    itemListQueryResult,
+    categoryListQueryResult,
+    tagListQueryResult,
+    collectionListQueryResult,
+    blogListQueryResult,
+    blogCategoryListQueryResult,
+    pageListQueryResult,
+  ] = await Promise.all([
+    sanityFetch<ItemListQueryForSitemapResult>({
+      query: itemListQueryForSitemap,
+    }),
+    sanityFetch<CategoryListQueryForSitemapResult>({
+      query: categoryListQueryForSitemap,
+    }),
+    sanityFetch<TagListQueryForSitemapResult>({
+      query: tagListQueryForSitemap,
+    }),
+    sanityFetch<CollectionListQueryForSitemapResult>({
+      query: collectionListQueryForSitemap,
+    }),
+    sanityFetch<BlogListQueryForSitemapResult>({
+      query: blogListQueryForSitemap,
+    }),
+    sanityFetch<BlogCategoryListQueryForSitemapResult>({
+      query: blogCategoryListQueryForSitemap,
+    }),
+    sanityFetch<PageListQueryForSitemapResult>({
+      query: pageListQueryForSitemap,
+    }),
+  ]);
+
   const sitemapRoutes: MetadataRoute.Sitemap = [
     {
       url: "", // home
@@ -46,14 +78,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: "tag",
       lastModified: new Date(),
     },
-    {
-      url: "collection",
-      lastModified: new Date(),
-    },
-    {
-      url: "blog",
-      lastModified: new Date(),
-    },
+    // Only include collection index if collections exist to prevent Soft 404
+    ...(collectionListQueryResult.length > 0
+      ? [
+          {
+            url: "collection",
+            lastModified: new Date(),
+          },
+        ]
+      : []),
+    // Only include blog index if blog posts exist to prevent Soft 404
+    ...(blogListQueryResult.length > 0
+      ? [
+          {
+            url: "blog",
+            lastModified: new Date(),
+          },
+        ]
+      : []),
     {
       url: "pricing",
       lastModified: new Date(),
@@ -96,38 +138,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  const [
-    itemListQueryResult,
-    categoryListQueryResult,
-    tagListQueryResult,
-    collectionListQueryResult,
-    blogListQueryResult,
-    blogCategoryListQueryResult,
-    pageListQueryResult,
-  ] = await Promise.all([
-    sanityFetch<ItemListQueryForSitemapResult>({
-      query: itemListQueryForSitemap,
-    }),
-    sanityFetch<CategoryListQueryForSitemapResult>({
-      query: categoryListQueryForSitemap,
-    }),
-    sanityFetch<TagListQueryForSitemapResult>({
-      query: tagListQueryForSitemap,
-    }),
-    sanityFetch<CollectionListQueryForSitemapResult>({
-      query: collectionListQueryForSitemap,
-    }),
-    sanityFetch<BlogListQueryForSitemapResult>({
-      query: blogListQueryForSitemap,
-    }),
-    sanityFetch<BlogCategoryListQueryForSitemapResult>({
-      query: blogCategoryListQueryForSitemap,
-    }),
-    sanityFetch<PageListQueryForSitemapResult>({
-      query: pageListQueryForSitemap,
-    }),
-  ]);
-
   for (const item of itemListQueryResult) {
     if (item.slug) {
       sitemapList.push({
@@ -142,7 +152,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const category of categoryListQueryResult) {
-    if (category.slug) {
+    if (category.slug && (category.count ?? 0) > 0) {
       sitemapList.push({
         url: `${site_url}/category/${category.slug}`,
         lastModified: new Date(category._updatedAt).toISOString(),
@@ -151,7 +161,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const tag of tagListQueryResult) {
-    if (tag.slug) {
+    if (tag.slug && (tag.count ?? 0) > 0) {
       sitemapList.push({
         url: `${site_url}/tag/${tag.slug}`,
         lastModified: new Date(tag._updatedAt).toISOString(),

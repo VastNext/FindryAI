@@ -201,8 +201,11 @@ export default async function CategoryPage({
         </section>
       )}
 
-      {/* Zone 3: deep content below the grid (About → FAQ → Related categories) */}
-      <CategorySeoFooter seo={seo} />
+      {/* Zone 3: deep content below the grid (About → FAQ → Related categories → Popular Comparisons) */}
+      <CategorySeoFooter
+        seo={seo}
+        featuredItems={items ? items.slice(0, 8) : undefined}
+      />
     </div>
   );
 }

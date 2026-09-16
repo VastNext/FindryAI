@@ -20,7 +20,6 @@ export default function robots(): MetadataRoute.Robots {
           "/payment/",
           "/auth/",
           "/api/",
-          "/search",
           "/unsubscribe/",
         ],
       },
