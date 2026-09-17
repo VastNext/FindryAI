@@ -30,7 +30,27 @@ export async function GET(request: Request) {
       hasSponsorItem: false,
     });
 
-    return NextResponse.json({ items, totalCount });
+    // 检查是否请求强制刷新（如传递 nocache=1 或 fresh=1）
+    const isNoCache =
+      searchParams.get("nocache") === "1" ||
+      searchParams.get("fresh") === "1" ||
+      request.headers.get("cache-control") === "no-cache";
+
+    // 默认提供 24 小时 (86400秒) 边缘缓存，并允许 48 小时 (172800秒) 的 stale-while-revalidate 异步平滑更新
+    const cacheControl = isNoCache
+      ? "no-store, no-cache, must-revalidate"
+      : "public, s-maxage=86400, stale-while-revalidate=172800";
+
+    return NextResponse.json(
+      { items, totalCount },
+      {
+        headers: {
+          "Cache-Control": cacheControl,
+          "CDN-Cache-Control": cacheControl,
+          "Vercel-CDN-Cache-Control": cacheControl,
+        },
+      },
+    );
   } catch (error) {
     console.error("api/items error:", error);
     return NextResponse.json({ error: "获取条目列表失败" }, { status: 500 });

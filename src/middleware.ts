@@ -92,11 +92,17 @@ export default function middleware(req: NextRequest) {
 }
 
 // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
-// https://clerk.com/docs/references/nextjs/auth-middleware#usage
+// Only match routes requiring authentication or specific middleware logic.
+// Bypassing public pages and public API routes avoids Vercel Middleware double-counting on Fast Origin Transfer.
 export const config = {
   matcher: [
-    "/((?!.+\\.[\\w]+$|_next|sitemap\\.xml|robots\\.txt).*)",
-    "/",
-    "/(api|trpc)(.*)",
+    "/dashboard/:path*",
+    "/settings/:path*",
+    "/submit/:path*",
+    "/edit/:path*",
+    "/admin/:path*",
+    "/auth/:path*",
+    "/api/auth/:path*",
+    "/api/upload-image/:path*",
   ],
 };
