@@ -1,0 +1,87 @@
+{
+  "research_goal": "Investigate why fountainchans-projects reached 7.5GB+ Fast Origin Transfer on Vercel Hobby tier and provide concrete fixes.",
+  "scope": {
+    "objects": ["Vercel Hobby Plan (10GB Fast Origin Transfer limit)", "Team fountainchans-projects", "Next.js architecture", "findryai & subprojects"],
+    "time_range": "Current billing cycle (September 2026)",
+    "region": "Global (Edge CDN & Serverless Origins)",
+    "audience_or_use": "Project developer / team owner",
+    "exclusions": ["Upgrading to Pro as sole solution without technical remediation"],
+    "assumptions": ["Usage alert is team-wide across 7 projects", "findryai & vast-translator are high-traffic/high-compute projects"]
+  },
+  "report_shape": {
+    "format_basis": [
+      {
+        "type": "official_template",
+        "name": "Vercel Fast Origin Transfer Diagnostic & Optimization Guide",
+        "credibility_reason": "Vercel Official Docs on CDN Pricing and Usage",
+        "what_extracted": ["Fast Origin Transfer definition (ingress+egress on compute/blobs/middleware)", "Mitigation levers (middleware matcher, edge caching, image unoptimized impact, payload reduction)"]
+      }
+    ],
+    "sections": [
+      "一、执行摘要：75% 预警的真实含义与紧急风险",
+      "二、根因拆解：Fast Origin Transfer 为什么会消耗 7.5GB+",
+      "三、项目与代码层面的高风险点深度审计",
+      "四、系统级优化与防穿透方案（按投入产出比排序）",
+      "五、立即可执行的操作清单（Checklist）与监控建议"
+    ],
+    "mandatory_elements": ["流量构成示意图", "高风险代码与优化对比表", "立即可执行的改造清单"],
+    "style": "严谨技术分析、清晰结论、代码级实操建议"
+  },
+  "completion_criteria": [
+    "全面阐述 Vercel Fast Origin Transfer 的计量机制",
+    "结合本仓库及 team 下多项目架构精准定位 4 大主要流量泄漏点",
+    "给出代码级、配置级与 CDN 级改造方案"
+  ],
+  "change_notes": [],
+  "dimensions": [
+    {
+      "id": "d1",
+      "name": "Vercel 计量机制与计费口径研究",
+      "description": "研究 Fast Origin Transfer 的触发条件与计费边界",
+      "key_questions": ["什么是 Fast Origin Transfer？", "与 Fast Data Transfer 有何区别？", "Hobby 免费版 10GB 耗尽后的后果？"],
+      "method": "官方文档分析",
+      "search_strategy": {
+        "source_types": ["Vercel Docs"],
+        "seed_queries": ["Vercel Fast Origin Transfer calculate", "Vercel Hobby limits"],
+        "freshness_requirement": "Current docs",
+        "sufficiency": ["明确 incoming / outgoing 规则及 middleware 翻倍机制"]
+      },
+      "expected_output": "准确的计费模型定义",
+      "depends_on": [],
+      "status": "done"
+    },
+    {
+      "id": "d2",
+      "name": "代码库架构与潜在泄漏点审计",
+      "description": "深度扫描 findryai 仓库中引起 Serverless 回源与 Middleware 消耗的代码",
+      "key_questions": ["Middleware matcher 是否拦截了不必要资源？", "API 路由是否存在大 payload / 未缓存？", "ISR 与 Sanity 数据流是否触发源站回源？", "图片 unoptimized: true 的真实流量流向？"],
+      "method": "静态代码分析与架构反思",
+      "search_strategy": {
+        "source_types": ["Codebase"],
+        "seed_queries": ["middleware.ts", "next.config.mjs", "sanityFetch", "api/items"],
+        "freshness_requirement": "Local files",
+        "sufficiency": ["找出所有高频回源与无缓存路由"]
+      },
+      "expected_output": "具体的代码缺陷与优化点",
+      "depends_on": ["d1"],
+      "status": "done"
+    },
+    {
+      "id": "d3",
+      "name": "Team 范围多项目协同与外部反代分析",
+      "description": "分析 fountainchans-projects 团队下 7 个项目的流量特征以及 Cloudflare 橙云反代的作用与局限",
+      "key_questions": ["7 个项目如何共享 10GB？", "Cloudflare 反代为何依然产生 Fast Origin Transfer？", "如何通过 Cloudflare 缓存规则彻底拦截 Vercel 回源？"],
+      "method": "多项目配置分析与 CDN 架构梳理",
+      "search_strategy": {
+        "source_types": ["Vercel project inspect", "AGENTS.md cloudflare rules"],
+        "seed_queries": ["Cloudflare reverse proxy Vercel caching"],
+        "freshness_requirement": "Current architecture",
+        "sufficiency": ["理清 Cloudflare 缓存未命中所导致的回源"]
+      },
+      "expected_output": "CDN 与多项目协同治理策略",
+      "depends_on": ["d2"],
+      "status": "done"
+    }
+  ],
+  "execution_order": ["d1", "d2", "d3"]
+}
