@@ -52,6 +52,7 @@ export default async function HomePage({
   const { sortKey, reverse } =
     SORT_FILTER_LIST.find((item) => item.slug === sort) || DEFAULT_SORT;
   const currentPage = parsePageParam(searchParams?.page);
+  const isFresh = searchParams?.fresh === "1" || searchParams?.nocache === "1";
   const { items, totalCount } = await getItems({
     category,
     tag,
@@ -61,6 +62,7 @@ export default async function HomePage({
     filter,
     currentPage,
     hasSponsorItem,
+    disableCache: isFresh,
   });
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
   const lastValidPage = Math.max(1, totalPages);

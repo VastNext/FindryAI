@@ -59,8 +59,9 @@ export async function getItems({
   reverse,
   query,
   filter,
-  currentPage,
-  hasSponsorItem,
+  currentPage = 1,
+  hasSponsorItem = false,
+  disableCache = false,
 }: {
   collection?: string;
   category?: string;
@@ -69,8 +70,9 @@ export async function getItems({
   reverse?: boolean;
   query?: string;
   filter?: string;
-  currentPage: number;
+  currentPage?: number;
   hasSponsorItem?: boolean;
+  disableCache?: boolean;
 }) {
   console.log(
     "getItems, collection",
@@ -98,8 +100,8 @@ export async function getItems({
     itemsPerPage,
   );
   const [totalCount, items] = await Promise.all([
-    sanityFetch<number>({ query: countQuery }),
-    sanityFetch<ItemListQueryResult>({ query: dataQuery }),
+    sanityFetch<number>({ query: countQuery, disableCache }),
+    sanityFetch<ItemListQueryResult>({ query: dataQuery, disableCache }),
   ]);
   return { items, totalCount };
 }
