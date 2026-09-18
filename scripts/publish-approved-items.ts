@@ -71,6 +71,29 @@ async function publishApprovedSubmissions() {
     }
 
     console.log(`\n🎉 全部 ${items.length} 个用户提交条目已成功发布上线！`);
+
+    // 触发网站首页缓存刷新
+    const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://findryai.com";
+    const secret =
+      process.env.REVALIDATE_SECRET ||
+      process.env.AUTH_SECRET ||
+      process.env.SANITY_API_TOKEN;
+
+    if (secret) {
+      try {
+        console.log(`\n正在请求刷新 ${siteUrl} 首页缓存...`);
+        const revalidateUrl = `${siteUrl}/api/revalidate?secret=${encodeURIComponent(secret)}&path=/`;
+        const res = await fetch(revalidateUrl, { method: "POST" });
+        if (res.ok) {
+          console.log("⚡ 首页缓存已成功刷新！前台已即时更新最新排序。");
+        } else {
+          console.log(`⚠️ 缓存刷新请求返回状态: ${res.status}`);
+        }
+      } catch (err: unknown) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        console.log(`⚠️ 尝试刷新线上缓存时提示: ${errorMsg}`);
+      }
+    }
   } catch (error) {
     console.error("执行发布过程中出错:", error);
   }

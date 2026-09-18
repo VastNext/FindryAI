@@ -49,6 +49,9 @@ export const publicRoutes = [
   // items list for infinite scroll, same public data as item pages
   "/api/items",
 
+  // on-demand cache revalidation endpoint (protected by secret)
+  "/api/revalidate",
+
   // public text translation endpoint
   "/api/translate",
 
