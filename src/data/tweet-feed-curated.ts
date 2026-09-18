@@ -5,6 +5,7 @@ export interface CuratedTweetSummary {
   authorAvatar?: string;
   verified?: boolean;
   date: string;
+  datePublished: string;
   category: "agent" | "research" | "openclaw" | "hermes" | "tools";
   categoryLabel: string;
   title: string;
@@ -15,10 +16,48 @@ export interface CuratedTweetSummary {
 
 export const curatedTweetSummaries: CuratedTweetSummary[] = [
   {
+    id: "2094475193829012480",
+    authorName: "Peter Steinberger",
+    authorHandle: "steipete",
+    date: "Today",
+    datePublished: "2026-09-18T08:30:00Z",
+    category: "agent",
+    categoryLabel: "Autonomous Agents",
+    title:
+      "Coding with Autonomous AI Agents: Practical Workflows & OpenClaw Lessons",
+    summary:
+      "Peter Steinberger shares hands-on architectural reflections on delegating full-stack engineering to autonomous agent swarms, leveraging Git worktrees for safe isolation, and minimizing token waste with Think-in-Code sandboxes.",
+    url: "https://x.com/steipete/status/2094475193829012480",
+    keyTakeaways: [
+      "Subagent delegation with strict verification gates outperforms monolithic agent prompting",
+      "Git worktree branching isolates risky agent refactors without corrupting active worktrees",
+      "Structured session logs create persistent memory trails across long-running developer loops",
+    ],
+  },
+  {
+    id: "2094471048291048192",
+    authorName: "Google Research & Time Series",
+    authorHandle: "googleresearch",
+    date: "Today",
+    datePublished: "2026-09-18T07:15:00Z",
+    category: "research",
+    categoryLabel: "Foundation Models",
+    title: "TimesFM 3.0: Zero-Shot Time-Series Forecasting at Frontier Scale",
+    summary:
+      "Google's TimesFM 3.0 foundation model demonstrates state-of-the-art zero-shot forecasting across financial, server telemetry, and climate benchmarks with 4x inference throughput improvements.",
+    url: "https://x.com/googleresearch/status/2094471048291048192",
+    keyTakeaways: [
+      "Zero-shot generalization matches supervised domain-specific architectures",
+      "Extended context horizon enables multi-seasonal trend capture without retraining",
+      "Optimized ONNX runtime support for low-latency edge deployment",
+    ],
+  },
+  {
     id: "2094463924007498190",
     authorName: "AI Agent Pulse",
     authorHandle: "agentpulse_ai",
     date: "Today",
+    datePublished: "2026-09-18T06:00:00Z",
     category: "agent",
     categoryLabel: "Autonomous Agents",
     title: "Multi-Agent Orchestration Frameworks Leap Forward",
@@ -36,6 +75,7 @@ export const curatedTweetSummaries: CuratedTweetSummary[] = [
     authorName: "OpenClaw Updates",
     authorHandle: "openclaw_dev",
     date: "Today",
+    datePublished: "2026-09-18T04:30:00Z",
     category: "openclaw",
     categoryLabel: "OpenClaw Ecosystem",
     title: "OpenClaw v2.4 Release: Native Webhook Streaming & Tool Registry",
@@ -52,7 +92,8 @@ export const curatedTweetSummaries: CuratedTweetSummary[] = [
     id: "2094434546573832631",
     authorName: "Hermes Agent Hub",
     authorHandle: "hermes_agents",
-    date: "Today",
+    date: "Yesterday",
+    datePublished: "2026-09-17T16:00:00Z",
     category: "hermes",
     categoryLabel: "Hermes Agent",
     title: "Hermes 3 Function Calling Optimization in Local Inference",
@@ -69,7 +110,8 @@ export const curatedTweetSummaries: CuratedTweetSummary[] = [
     id: "2094432569077137732",
     authorName: "Swarm Intelligence Lab",
     authorHandle: "swarmlab_ai",
-    date: "1 day ago",
+    date: "Yesterday",
+    datePublished: "2026-09-17T12:00:00Z",
     category: "agent",
     categoryLabel: "Agent Protocols",
     title: "Memory Persistence Patterns for Long-Horizon Coding Agents",
@@ -86,7 +128,8 @@ export const curatedTweetSummaries: CuratedTweetSummary[] = [
     id: "2094431070481752434",
     authorName: "AI Research Wire",
     authorHandle: "airesearchwire",
-    date: "1 day ago",
+    date: "Sep 16",
+    datePublished: "2026-09-16T18:00:00Z",
     category: "research",
     categoryLabel: "LLM Research",
     title: "Test-Time Compute Scaling Across Modern Reasoning Models",
@@ -103,7 +146,8 @@ export const curatedTweetSummaries: CuratedTweetSummary[] = [
     id: "2094428759097245768",
     authorName: "Developer Tooling Digest",
     authorHandle: "devtools_digest",
-    date: "2 days ago",
+    date: "Sep 16",
+    datePublished: "2026-09-16T10:00:00Z",
     category: "tools",
     categoryLabel: "Developer Tools",
     title: "CLI Coding Agents vs. GUI Web Interfaces: Where Devs Are Shifting",
@@ -120,7 +164,8 @@ export const curatedTweetSummaries: CuratedTweetSummary[] = [
     id: "2094426225573818511",
     authorName: "OpenSource AI Frontier",
     authorHandle: "os_ai_frontier",
-    date: "2 days ago",
+    date: "Sep 15",
+    datePublished: "2026-09-15T15:00:00Z",
     category: "openclaw",
     categoryLabel: "Open Source",
     title: "Self-Hosting Autonomous Agent Runtimes: Security & Sandboxing",
@@ -137,7 +182,8 @@ export const curatedTweetSummaries: CuratedTweetSummary[] = [
     id: "2094424468269437358",
     authorName: "Next-Gen Prompting",
     authorHandle: "promptcraft_hq",
-    date: "3 days ago",
+    date: "Sep 15",
+    datePublished: "2026-09-15T09:00:00Z",
     category: "tools",
     categoryLabel: "Prompt Engineering",
     title: "System Prompt Patterns That Prevent Agent Infinite Loops",

@@ -5,7 +5,7 @@ import { type TweetFeedData, fetchMogeTweetFeed } from "./moge-tweet-feed";
 const getCachedMogeTweetFeed = unstable_cache(
   fetchMogeTweetFeed,
   ["moge-ai-daily-feeds-v1"],
-  { revalidate: 86_400 },
+  { revalidate: 10_800 }, // 3 hours cache
 );
 
 function hasUsableFallback(data: TweetFeedData) {

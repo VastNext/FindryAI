@@ -7,11 +7,14 @@ import { getTweetFeedData } from "@/lib/tweet-feed";
 
 const canonicalUrl = `${siteConfig.url}/ai-daily-feeds`;
 
+const pageTitle =
+  "AI Daily Pulse: Top AI Agent Updates, LLM Breakthroughs & Curated Tweets";
+const pageDescription =
+  "Real-time daily curated AI breakthroughs, autonomous agent frameworks (OpenClaw, Hermes 3), TimesFM, LLM benchmarks, and developer discussions. Updated every 3 hours with key takeaways.";
+
 const baseMetadata = constructMetadata({
-  title:
-    "AI Daily Feeds: Top AI Agent Updates, Breakthroughs & Curated Tweets (Today)",
-  description:
-    "Real-time daily curated AI tweets, autonomous agent breakthroughs, prompt techniques, and developer discussions across OpenClaw, Hermes, and leading AI labs.",
+  title: pageTitle,
+  description: pageDescription,
   canonicalUrl,
 });
 
@@ -19,32 +22,38 @@ export const metadata = {
   ...baseMetadata,
   keywords: [
     "ai daily feeds",
-    "curated ai tweets",
     "ai agent updates",
+    "curated ai tweets",
     "openclaw agent",
     "hermes 3 agent",
+    "timesfm 3.0",
+    "autonomous coding agents",
     "llm breakthroughs today",
-    "autonomous agents tweets",
+    "multi-agent orchestration",
+    "ai research takeaways",
+    "ai daily digest",
   ],
   openGraph: {
     ...baseMetadata.openGraph,
     url: canonicalUrl,
-    title:
-      "AI Daily Feeds: Top AI Agent Updates, Breakthroughs & Curated Tweets (Today)",
-    description:
-      "Real-time daily curated AI tweets, autonomous agent breakthroughs, prompt techniques, and developer discussions across OpenClaw, Hermes, and leading AI labs.",
+    title: pageTitle,
+    description: pageDescription,
+  },
+  twitter: {
+    ...baseMetadata.twitter,
+    title: pageTitle,
+    description: pageDescription,
   },
 };
 
-export const revalidate = 172800; // 48 hours ISR cache
+export const revalidate = 10800; // 3 hours ISR cache (3 * 3600 seconds)
 
-// ItemList structured data for search engine rich indexing
+// ItemList structured data for search engine rich indexing with accurate timestamps
 const tweetFeedJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "AI Daily Feeds & Agent Highlights",
-  description:
-    "Curated daily updates and key takeaways from top AI researchers, agent developers, and builders.",
+  name: "AI Daily Pulse: Curated Agent Highlights & Developer Briefings",
+  description: pageDescription,
   url: canonicalUrl,
   numberOfItems: curatedTweetSummaries.length,
   itemListElement: curatedTweetSummaries.map((summary, index) => ({
@@ -59,7 +68,7 @@ const tweetFeedJsonLd = {
         name: summary.authorName,
       },
       url: summary.url,
-      datePublished: new Date().toISOString(),
+      datePublished: summary.datePublished,
     },
   })),
 };

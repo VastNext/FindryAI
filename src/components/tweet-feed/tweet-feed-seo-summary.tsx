@@ -34,7 +34,7 @@ export function TweetFeedSeoSummary({
               <span>Today's Curated Briefing</span>
             </Badge>
             <span className="text-xs text-muted-foreground">
-              Updated Daily • Static Snapshot for Fast Access
+              Refreshed Every 3 Hours • Verified Key Takeaways
             </span>
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
