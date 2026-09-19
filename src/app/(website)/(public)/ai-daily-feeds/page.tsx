@@ -66,6 +66,7 @@ const tweetFeedJsonLd = {
       author: {
         "@type": "Person",
         name: summary.authorName,
+        url: `https://x.com/${summary.authorHandle}`,
       },
       url: summary.url,
       datePublished: summary.datePublished,
