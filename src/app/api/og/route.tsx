@@ -1,7 +1,7 @@
 import { ogImageSchema } from "@/lib/schemas";
 import { ImageResponse } from "next/og";
 
-// export const runtime = "edge";
+export const runtime = "edge";
 
 /**
  * og image route
