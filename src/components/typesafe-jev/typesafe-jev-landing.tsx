@@ -100,14 +100,14 @@ function ChapterHeader({
 
 function StickyChapterNav() {
   const chapters = [
-    { href: "#overview", label: "概览" },
-    { href: "#primitives", label: "01 核心基元" },
-    { href: "#architecture", label: "02 RLCD 架构" },
-    { href: "#patterns", label: "03 生产设计模式" },
-    { href: "#code", label: "04 多框架实战" },
-    { href: "#comparison", label: "05 LLM 全面对比" },
-    { href: "#simulator", label: "06 交互模拟器" },
-    { href: "#faq", label: "07 FAQ 与信源" },
+    { href: "#overview", label: "Overview" },
+    { href: "#primitives", label: "01 Primitives" },
+    { href: "#architecture", label: "02 RLCD Architecture" },
+    { href: "#patterns", label: "03 Design Patterns" },
+    { href: "#code", label: "04 SDK & Frameworks" },
+    { href: "#comparison", label: "05 LLM Comparison" },
+    { href: "#simulator", label: "06 Interactive Playground" },
+    { href: "#faq", label: "07 FAQ & Sources" },
   ];
 
   return (
@@ -138,7 +138,7 @@ function StickyChapterNav() {
                 "h-7 text-xs",
               )}
             >
-              <span>TypeSafe 官网</span>
+              <span>TypeSafe Official</span>
               <ExternalLink className="ml-1 size-3" />
             </Link>
           </div>
@@ -194,7 +194,7 @@ export function TypesafeJevLanding() {
               className="border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 gap-1.5 px-3 py-1 text-xs font-semibold"
             >
               <Flame className="size-3.5 fill-amber-500 text-amber-500 animate-pulse" />
-              <span>2026 前沿新范式 · System One 决策模型</span>
+              <span>2026 Frontier Paradigm · System One Decision Model</span>
             </Badge>
             <Badge variant="secondary" className="font-mono text-xs">
               Model: {typesafeJev.version}
@@ -204,7 +204,7 @@ export function TypesafeJevLanding() {
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl text-balance max-w-4xl">
             TypeSafe Jev:{" "}
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              彻底告别文本生成的系统一 AI 决策引擎
+              The First System One AI Decision Model
             </span>
           </h1>
 
@@ -216,17 +216,18 @@ export function TypesafeJevLanding() {
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs sm:text-sm text-muted-foreground/90 font-medium">
             <span className="flex items-center gap-1.5">
               <Sparkles className="size-4 text-indigo-500" />
-              创始人：Diogo Almeida (前 OpenAI RLHF 联合发明人)
+              Founder: Diogo Almeida (Former OpenAI Researcher, Co-inventor of
+              RLHF)
             </span>
             <span className="hidden sm:inline">•</span>
             <span className="flex items-center gap-1.5">
               <DollarSign className="size-4 text-emerald-500" />
-              DCVC 领投 $40M 种子轮融资
+              $40M Seed led by DCVC
             </span>
             <span className="hidden sm:inline">•</span>
             <span className="flex items-center gap-1.5">
               <Clock className="size-4 text-amber-500" />
-              2026 年 9 月正式发布上线
+              Released September 2026
             </span>
           </div>
 
@@ -241,7 +242,7 @@ export function TypesafeJevLanding() {
                 "gap-2 font-semibold shadow-md",
               )}
             >
-              <span>立即申请官方 API 体验</span>
+              <span>Get Early Access API Key</span>
               <ArrowRight className="size-4" />
             </Link>
 
@@ -254,7 +255,7 @@ export function TypesafeJevLanding() {
                 "gap-2",
               )}
             >
-              <span>阅读官方发布论文</span>
+              <span>Read Research Announcement</span>
               <ExternalLink className="size-4" />
             </Link>
 
@@ -267,7 +268,7 @@ export function TypesafeJevLanding() {
                 "gap-2 text-muted-foreground hover:text-foreground",
               )}
             >
-              <span>Vercel AI Gateway 直连</span>
+              <span>Vercel AI Gateway Model</span>
             </Link>
           </div>
 
@@ -278,7 +279,7 @@ export function TypesafeJevLanding() {
                 key={stat.label}
                 className="flex flex-col items-center justify-center rounded-xl border border-border/70 bg-card/60 p-4 text-center shadow-xs backdrop-blur-xs transition-colors hover:border-primary/40 hover:bg-card"
               >
-                <span className="font-mono text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl lg:text-4xl text-gradient_indigo_purple">
+                <span className="font-mono text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl lg:text-4xl text-gradient_indigo-purple">
                   {stat.value}
                 </span>
                 <span className="mt-1 text-xs font-semibold text-foreground/90 sm:text-sm">
@@ -303,8 +304,8 @@ export function TypesafeJevLanding() {
         <ChapterHeader
           number="CHAPTER 01"
           label="Three Core Primitives"
-          title="三大类型化判定基元：Noul / Choice / Score"
-          subtitle="Jev 放弃自回归文本生成，将所有业务逻辑精炼为三个离散数学基元。每个基元均在单次前向传播中输出精准校准的概率与置信度。"
+          title="Three Typed Primitives: Noul / Choice / Score"
+          subtitle="Jev abandons open-ended text generation, distilling all software decisions into three discrete mathematical primitives evaluated in parallel with calibrated confidence."
         />
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -325,7 +326,7 @@ export function TypesafeJevLanding() {
                     </Badge>
                   </div>
                   <CardTitle className="mt-3 text-lg font-bold">
-                    {primitive.name}
+                    {primitive.name} ({primitive.nameEn})
                   </CardTitle>
                   <CardDescription className="text-xs font-medium text-foreground/80">
                     {primitive.typeDesc}
@@ -363,8 +364,8 @@ export function TypesafeJevLanding() {
         <ChapterHeader
           number="CHAPTER 02"
           label="Architecture & RLCD"
-          title="突破性底层架构：RLCD 与非自回归并行采样"
-          subtitle="为什么 Jev 能做到比传统大模型快 40 到 200 倍？揭秘 TypeSafe AI 在模型拓扑与训练范式上的两大突破。"
+          title="Under the Hood: RLCD & Non-Autoregressive Sampling"
+          subtitle="Why is Jev 40x to 200x faster than traditional LLMs? Inside TypeSafe AI's breakthrough training paradigm and model topology."
         />
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -404,16 +405,16 @@ export function TypesafeJevLanding() {
             </div>
             <div className="flex flex-col gap-2">
               <h3 className="text-lg font-bold text-foreground sm:text-xl">
-                杰文斯悖论（Jevons Paradox）在 AI 决策领域的具现
+                The Jevons Paradox in Machine Decision-Making
               </h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                传统 LLM 让人们养成了「按 Token
-                谨慎提问」的肌肉记忆——生怕多问一个问题就让延迟暴增 3 秒、Token
-                账单飙升。而 Jev
-                的非自回归并行采样使问题提问的边际成本趋近于零（Speculative
-                Fan-out）。开发者可以像调用原生 CPU
-                指令一样，在单次请求中无顾虑地派发 30
-                个维度的业务断言。智能决策从昂贵的奢侈品变成了充裕的基础设施。
+                Traditional LLMs trained developers to be token-frugal — asking
+                fewer questions to avoid latency spikes and bloated API bills.
+                Jev's parallel sampler drops the marginal cost of additional
+                questions to near zero (Speculative Fan-out). Engineers can now
+                dispatch 30+ business assertions in a single sub-100ms
+                round-trip, turning automated intelligence into ubiquitous
+                infrastructure.
               </p>
             </div>
           </div>
@@ -425,8 +426,8 @@ export function TypesafeJevLanding() {
         <ChapterHeader
           number="CHAPTER 03"
           label="Design Patterns"
-          title="五大生产级系统工程设计模式"
-          subtitle="如何将 TypeSafe Jev 无缝融入现代分布式架构、Agent 工作流与企业级 API 网关中？"
+          title="Five Production-Grade System Architecture Patterns"
+          subtitle="How to integrate TypeSafe Jev into microservices, agent loops, RAG pipelines, and enterprise API gateways."
         />
 
         <div className="grid gap-6">
@@ -460,7 +461,7 @@ export function TypesafeJevLanding() {
                     <div className="rounded-lg bg-muted/40 p-3.5 text-xs">
                       <div className="font-semibold text-foreground/90 mb-1 flex items-center gap-1.5">
                         <span className="size-1.5 rounded-full bg-red-500" />
-                        传统 LLM 架构痛点：
+                        Traditional LLM Bottleneck:
                       </div>
                       <p className="text-muted-foreground leading-relaxed">
                         {pattern.scenario}
@@ -469,7 +470,7 @@ export function TypesafeJevLanding() {
                     <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3.5 text-xs">
                       <div className="font-semibold text-emerald-700 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
                         <CheckCircle2 className="size-3.5" />
-                        Jev 优化方案：
+                        Jev Optimization:
                       </div>
                       <p className="text-foreground/80 leading-relaxed">
                         {pattern.solution}
@@ -488,8 +489,8 @@ export function TypesafeJevLanding() {
         <ChapterHeader
           number="CHAPTER 04"
           label="Developer Code Snippets"
-          title="全栈生态代码实战：TS / Python / LangChain / Vercel"
-          subtitle="Jev 提供了极其符合现代软件工程审美的 SDK 与生态接入驱动，支持类型推导、函数装饰器与中间件拦截。"
+          title="Full-Stack SDK Integration: TS / Python / LangChain / Vercel"
+          subtitle="Jev offers developer-first SDKs supporting static type inference, decorator compilation, and agent middleware."
         />
 
         <Tabs defaultValue="typescript-sdk" className="w-full">
@@ -528,12 +529,12 @@ export function TypesafeJevLanding() {
                     {copiedCodeId === example.id ? (
                       <>
                         <CheckCircle2 className="size-3.5 text-emerald-400" />
-                        <span className="text-emerald-400">已复制</span>
+                        <span className="text-emerald-400">Copied</span>
                       </>
                     ) : (
                       <>
                         <Copy className="size-3.5" />
-                        <span>复制代码</span>
+                        <span>Copy Code</span>
                       </>
                     )}
                   </Button>
@@ -553,8 +554,8 @@ export function TypesafeJevLanding() {
         <ChapterHeader
           number="CHAPTER 05"
           label="Benchmarks & ROI"
-          title="生成式 LLM vs TypeSafe Jev 深度技术对照"
-          subtitle="从推理范式、延迟分位数、Token 成本结构到生产可靠性的全方位横向评测。"
+          title="Generative LLMs vs TypeSafe Jev: Full Comparison"
+          subtitle="A comprehensive architectural, financial, and latency comparison between traditional LLMs and System One models."
         />
 
         {/* Detailed Comparison Table */}
@@ -563,16 +564,16 @@ export function TypesafeJevLanding() {
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="w-[180px] font-bold text-foreground">
-                  对比维度
+                  Dimension
                 </TableHead>
                 <TableHead className="w-[280px] font-bold text-muted-foreground">
-                  传统生成式 LLM (GPT-5/Claude)
+                  Traditional Generative LLM (GPT-5/Claude)
                 </TableHead>
                 <TableHead className="w-[280px] font-bold text-primary">
                   TypeSafe Jev (System One)
                 </TableHead>
                 <TableHead className="font-bold text-foreground">
-                  架构价值解析
+                  Architectural Impact
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -607,12 +608,12 @@ export function TypesafeJevLanding() {
               <div className="flex items-center gap-2">
                 <Calculator className="size-5 text-primary" />
                 <h3 className="text-lg font-bold text-foreground sm:text-xl">
-                  实时算力降本计算器（Cost & Latency ROI）
+                  Interactive Cost & Latency ROI Calculator
                 </h3>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                调整您的月度高频决策调用量与单次平均 Token 大小，查看替换为
-                TypeSafe Jev 后的直接成本节省：
+                Adjust monthly decision volume and average state token size to
+                evaluate direct infrastructure savings:
               </p>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -621,9 +622,9 @@ export function TypesafeJevLanding() {
                     htmlFor="monthly-queries-input"
                     className="text-xs font-semibold text-foreground flex justify-between"
                   >
-                    <span>月度决策调用次数：</span>
+                    <span>Monthly Decision Volume:</span>
                     <span className="font-mono text-primary font-bold">
-                      {monthlyQueries.toLocaleString()} 次/月
+                      {monthlyQueries.toLocaleString()} calls/mo
                     </span>
                   </label>
                   <input
@@ -647,7 +648,7 @@ export function TypesafeJevLanding() {
                     htmlFor="avg-tokens-input"
                     className="text-xs font-semibold text-foreground flex justify-between"
                   >
-                    <span>单次输入平均 Token：</span>
+                    <span>Avg Input Tokens Per Query:</span>
                     <span className="font-mono text-primary font-bold">
                       {avgTokensPerQuery} Tokens
                     </span>
@@ -674,13 +675,13 @@ export function TypesafeJevLanding() {
 
             <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/5 p-6 lg:w-[360px] shrink-0 text-center">
               <span className="text-xs font-medium text-muted-foreground">
-                预计每月可为您节省
+                Estimated Monthly Savings
               </span>
               <div className="font-mono text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">
                 ${Math.round(savings).toLocaleString()}
                 <span className="text-sm font-normal text-muted-foreground">
                   {" "}
-                  / 月
+                  / mo
                 </span>
               </div>
               <div className="flex items-center justify-center gap-2">
@@ -688,15 +689,15 @@ export function TypesafeJevLanding() {
                   variant="default"
                   className="bg-emerald-600 hover:bg-emerald-600 text-xs"
                 >
-                  节省率 {savingsPercentage}%
+                  {savingsPercentage}% Cost Reduction
                 </Badge>
                 <Badge variant="outline" className="text-xs">
-                  Jev 月费仅 ${jevCost.toFixed(2)}
+                  Jev: ${jevCost.toFixed(2)}/mo
                 </Badge>
               </div>
               <span className="text-[11px] text-muted-foreground/80">
-                传统 LLM 月均耗费: ~$
-                {Math.round(traditionalLlmTotalCost).toLocaleString()}
+                Traditional LLM Estimate: ~$
+                {Math.round(traditionalLlmTotalCost).toLocaleString()}/mo
               </span>
             </div>
           </div>
@@ -708,15 +709,15 @@ export function TypesafeJevLanding() {
         <ChapterHeader
           number="CHAPTER 06"
           label="Live Playground"
-          title="在线决策模拟器 (Interactive Evaluator)"
-          subtitle="选择典型企业级业务场景，体验 Jev 如何在单次请求中并行输出强类型布尔值、分类与分级判定。"
+          title="Interactive Decision Playground"
+          subtitle="Test how Jev simultaneously evaluates Boolean truth values, categorical classifications, and ordinal ratings on identical context in ~100ms."
         />
 
         <div className="flex flex-col gap-6 rounded-2xl border border-border/80 bg-card p-6 sm:p-8 shadow-lg">
           {/* Scenario Selector Tabs */}
           <div className="flex flex-wrap items-center gap-2 border-b border-border pb-4">
             <span className="text-xs font-bold text-muted-foreground mr-2">
-              场景预设：
+              Preset Scenarios:
             </span>
             {interactiveScenarios.map((sc) => (
               <Button
@@ -741,7 +742,7 @@ export function TypesafeJevLanding() {
             <div className="flex flex-col gap-2 lg:col-span-5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Input State (上下文状态)
+                  Input State Context
                 </span>
                 <Badge variant="outline" className="text-[10px] font-mono">
                   JSON / Text
@@ -757,7 +758,7 @@ export function TypesafeJevLanding() {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Zap className="size-3.5 text-amber-500" />
-                  Jev 并行概率求值结果 (~92ms)
+                  Jev Parallel Output (~92ms)
                 </span>
                 <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
                   RLCD Calibrated
@@ -776,7 +777,7 @@ export function TypesafeJevLanding() {
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-[11px] font-bold text-primary">
-                          置信度 {(q.confidence * 100).toFixed(1)}%
+                          Confidence {(q.confidence * 100).toFixed(1)}%
                         </span>
                         {q.probability !== undefined && (
                           <Badge
@@ -813,8 +814,8 @@ export function TypesafeJevLanding() {
           <ChapterHeader
             number="CHAPTER 07"
             label="FAQ & Getting Started"
-            title="开发者常见疑问全解 (FAQ)"
-            subtitle="关于 TypeSafe Jev 的技术细节、能力边界与工程落地关键问题。"
+            title="Frequently Asked Questions (FAQ)"
+            subtitle="Essential technical details, boundaries, and architectural guidance for deploying TypeSafe Jev."
           />
 
           <Accordion type="single" collapsible className="w-full">
@@ -834,7 +835,7 @@ export function TypesafeJevLanding() {
         {/* Access Pathways */}
         <div className="flex flex-col gap-6 pt-6">
           <h3 className="text-xl font-bold text-foreground">
-            四种官方集成与接入渠道
+            Official Access Routes & SDK Channels
           </h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {accessRoutes.map((route) => {
@@ -880,7 +881,7 @@ export function TypesafeJevLanding() {
         <div className="flex flex-col gap-4 rounded-xl border border-border/60 bg-muted/30 p-6">
           <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
             <ExternalLink className="size-4 text-primary" />
-            权威信源与官方参考文档
+            Official Documentation & Technical Citations
           </h4>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {sources.map((src) => (

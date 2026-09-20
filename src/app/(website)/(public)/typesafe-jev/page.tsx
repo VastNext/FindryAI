@@ -6,7 +6,7 @@ import { constructMetadata } from "@/lib/metadata";
 
 const baseMetadata = constructMetadata({
   title:
-    "TypeSafe Jev AI 深度全解 — System One 架构、RLCD 训练、SDK 实战与降本指南",
+    "TypeSafe Jev AI Deep Dive — System One Architecture, RLCD, SDKs & Cost Savings",
   description: typesafeJev.description,
   canonicalUrl: `${siteConfig.url}/typesafe-jev`,
 });
