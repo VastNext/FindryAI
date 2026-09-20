@@ -13,6 +13,7 @@ export const footerConfig: FooterConfig = {
     {
       title: "Resources",
       items: [
+        { title: "TypeSafe Jev", href: "/typesafe-jev" },
         { title: "Agent Skills", href: "/agent-skills" },
         { title: "AI Feed", href: "/ai-daily-feeds" },
         { title: "Face Swap GIF", href: "/face-swap-gif" },

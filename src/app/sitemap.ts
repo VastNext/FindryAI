@@ -122,6 +122,10 @@ export default async function sitemap({
           lastModified: new Date(),
         },
         {
+          url: "typesafe-jev",
+          lastModified: new Date(),
+        },
+        {
           url: "face-swap-gif",
           lastModified: new Date(),
         },

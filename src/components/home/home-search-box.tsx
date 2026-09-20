@@ -24,17 +24,17 @@ interface TrendingGuideItem {
 
 const trendingGuides: TrendingGuideItem[] = [
   {
+    label: "TypeSafe Jev",
+    href: "/typesafe-jev",
+    badge: "Hot",
+  },
+  {
     label: "Face Swap GIF",
     href: "/face-swap-gif",
-    badge: "Hot",
   },
   {
     label: "Face Swap Video",
     href: "/ai-face-swap-video",
-  },
-  {
-    label: "FakeFace",
-    href: "/item/fakeface",
   },
   {
     label: "GPT-6 Astra",
