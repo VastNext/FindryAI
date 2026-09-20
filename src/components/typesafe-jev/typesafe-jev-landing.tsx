@@ -99,6 +99,8 @@ function ChapterHeader({
 }
 
 function StickyChapterNav() {
+  const [activeHash, setActiveHash] = useState("#overview");
+
   const chapters = [
     { href: "#overview", label: "Overview" },
     { href: "#primitives", label: "01 Primitives" },
@@ -110,36 +112,53 @@ function StickyChapterNav() {
     { href: "#faq", label: "07 FAQ" },
   ];
 
+  useState(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      setActiveHash(window.location.hash);
+    }
+  });
+
   return (
     <nav
       aria-label="Chapter navigation"
-      className="sticky top-16 z-30 w-full border-b border-border/60 bg-background/90 py-2 backdrop-blur-md"
+      className="sticky top-16 z-30 w-full border-b border-border/70 bg-background/95 py-2.5 backdrop-blur-md transition-all"
     >
       <Container>
-        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5 overflow-hidden">
-          <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
-            {chapters.map((ch) => (
-              <a
-                key={ch.href}
-                href={ch.href}
-                className="whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                {ch.label}
-              </a>
-            ))}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* Segmented Pill Tabs Container */}
+          <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 rounded-xl border border-border/80 bg-muted/70 p-1 shadow-2xs">
+            {chapters.map((ch) => {
+              const isActive = activeHash === ch.href;
+              return (
+                <a
+                  key={ch.href}
+                  href={ch.href}
+                  onClick={() => setActiveHash(ch.href)}
+                  className={cn(
+                    "whitespace-nowrap rounded-lg px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all duration-200",
+                    isActive
+                      ? "bg-background text-primary shadow-xs border border-border/60 font-bold"
+                      : "text-muted-foreground hover:bg-background/60 hover:text-foreground",
+                  )}
+                >
+                  {ch.label}
+                </a>
+              );
+            })}
           </div>
-          <div className="hidden items-center gap-2 lg:flex">
+
+          <div className="hidden items-center gap-2 xl:flex">
             <Link
               href={typesafeJev.officialUrl}
               target="_blank"
               rel="noreferrer"
               className={cn(
                 buttonVariants({ variant: "outline", size: "sm" }),
-                "h-7 px-2.5 text-xs font-medium",
+                "h-9 px-3.5 text-xs sm:text-sm font-semibold rounded-lg shadow-2xs border-border/80 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all",
               )}
             >
               <span>TypeSafe Official</span>
-              <ExternalLink className="ml-1 size-3" />
+              <ExternalLink className="ml-1.5 size-3.5" />
             </Link>
           </div>
         </div>
