@@ -102,40 +102,40 @@ function StickyChapterNav() {
   const chapters = [
     { href: "#overview", label: "Overview" },
     { href: "#primitives", label: "01 Primitives" },
-    { href: "#architecture", label: "02 RLCD Architecture" },
-    { href: "#patterns", label: "03 Design Patterns" },
-    { href: "#code", label: "04 SDK & Frameworks" },
-    { href: "#comparison", label: "05 LLM Comparison" },
-    { href: "#simulator", label: "06 Interactive Playground" },
-    { href: "#faq", label: "07 FAQ & Sources" },
+    { href: "#architecture", label: "02 Architecture" },
+    { href: "#patterns", label: "03 Patterns" },
+    { href: "#code", label: "04 SDKs" },
+    { href: "#comparison", label: "05 LLM vs Jev" },
+    { href: "#simulator", label: "06 Playground" },
+    { href: "#faq", label: "07 FAQ" },
   ];
 
   return (
     <nav
       aria-label="Chapter navigation"
-      className="sticky top-16 z-30 w-full border-b border-border/60 bg-background/85 py-2.5 backdrop-blur-md"
+      className="sticky top-16 z-30 w-full border-b border-border/60 bg-background/90 py-2 backdrop-blur-md"
     >
       <Container>
-        <div className="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5 overflow-hidden">
+          <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
             {chapters.map((ch) => (
               <a
                 key={ch.href}
                 href={ch.href}
-                className="whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {ch.label}
               </a>
             ))}
           </div>
-          <div className="hidden items-center gap-2 md:flex">
+          <div className="hidden items-center gap-2 lg:flex">
             <Link
               href={typesafeJev.officialUrl}
               target="_blank"
               rel="noreferrer"
               className={cn(
                 buttonVariants({ variant: "outline", size: "sm" }),
-                "h-7 text-xs",
+                "h-7 px-2.5 text-xs font-medium",
               )}
             >
               <span>TypeSafe Official</span>
