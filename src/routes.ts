@@ -21,6 +21,7 @@ export const publicRoutes = [
   "/ai-daily-feeds(/.*)?",
   "/gpt-6-astra(/.*)?",
   "/typesafe-jev(/.*)?",
+  "/how-to-use-jev(/.*)?",
   "/face-swap-gif(/.*)?",
   "/ai-face-swap-video(/.*)?",
 

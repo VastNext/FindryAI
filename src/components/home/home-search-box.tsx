@@ -29,12 +29,17 @@ const trendingGuides: TrendingGuideItem[] = [
     badge: "Hot",
   },
   {
-    label: "Face Swap GIF",
-    href: "/face-swap-gif",
+    label: "How to Use Jev",
+    href: "/how-to-use-jev",
+    badge: "New",
   },
   {
-    label: "Face Swap Video",
-    href: "/ai-face-swap-video",
+    label: "Agent Skills",
+    href: "/agent-skills",
+  },
+  {
+    label: "Face Swap GIF",
+    href: "/face-swap-gif",
   },
   {
     label: "GPT-6 Astra",

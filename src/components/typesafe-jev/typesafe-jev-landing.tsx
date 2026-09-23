@@ -246,9 +246,24 @@ export function TypesafeJevLanding() {
             <span className="hidden sm:inline">•</span>
             <span className="flex items-center gap-1.5">
               <Clock className="size-4 text-amber-500" />
-              Released September 2026
+              Released September 2026 (Verified {typesafeJev.lastUpdated})
             </span>
           </div>
+
+          {/* Integration Guide Banner Pill */}
+          <Link
+            href="/how-to-use-jev"
+            className="group flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs sm:text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/10"
+          >
+            <span className="flex size-2 rounded-full bg-primary animate-ping" />
+            <span>
+              Looking for practical recipes & API key access? Read our{" "}
+              <strong className="text-primary underline-offset-4 group-hover:underline">
+                How to Use Jev AI Guide (7 Access Routes)
+              </strong>
+            </span>
+            <ArrowRight className="size-3.5 text-primary transition-transform group-hover:translate-x-0.5" />
+          </Link>
 
           {/* Action CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -511,6 +526,23 @@ export function TypesafeJevLanding() {
           title="Full-Stack SDK Integration: TS / Python / LangChain / Vercel"
           subtitle="Jev offers developer-first SDKs supporting static type inference, decorator compilation, and agent middleware."
         />
+
+        <div className="flex items-center justify-between rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-4 text-xs sm:text-sm">
+          <div className="flex items-center gap-2.5 text-foreground/90">
+            <Terminal className="size-4 text-indigo-500 shrink-0" />
+            <span>
+              Need copy-paste recipes for support ticket triage, RAG filtering,
+              or agent action safety guards?
+            </span>
+          </div>
+          <Link
+            href="/how-to-use-jev"
+            className="flex items-center gap-1 font-semibold text-primary hover:underline shrink-0 ml-3"
+          >
+            <span>View 4 Production Recipes</span>
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
 
         <Tabs defaultValue="typescript-sdk" className="w-full">
           <div className="overflow-x-auto pb-2 no-scrollbar">

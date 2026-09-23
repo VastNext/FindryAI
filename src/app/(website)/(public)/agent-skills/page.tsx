@@ -10,11 +10,14 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const canonicalUrl = `${siteConfig.url}/agent-skills`;
+const pageTitle =
+  "280+ Best AI Agent Skills & MCP Servers: Ready-to-Use GitHub Tools (2026)";
+const pageDescription =
+  "Discover 280+ battle-tested open-source AI agent skills, MCP servers, and harnesses with direct GitHub repos, quickstart configs, and execution benchmarks.";
 
 const baseMetadata = constructMetadata({
-  title: "280+ Best AI Agent Skills, Frameworks & GitHub Tools (2026)",
-  description:
-    "Explore 280+ battle-tested open-source AI agent skills, MCP servers, harnesses, frameworks, and autonomous workflows with direct GitHub repositories.",
+  title: pageTitle,
+  description: pageDescription,
   canonicalUrl,
 });
 
@@ -25,8 +28,8 @@ export const metadata = {
   keywords: [
     "agent skills",
     "ai agent skills",
-    "open source agent tools",
     "mcp servers",
+    "open source agent tools",
     "agent harnesses",
     "ai agent directory",
     "github agent skills",
@@ -34,9 +37,13 @@ export const metadata = {
   openGraph: {
     ...baseMetadata.openGraph,
     url: canonicalUrl,
-    title: "280+ Best AI Agent Skills, Frameworks & GitHub Tools (2026)",
-    description:
-      "Explore 280+ battle-tested open-source AI agent skills, MCP servers, harnesses, frameworks, and autonomous workflows with direct GitHub repositories.",
+    title: pageTitle,
+    description: pageDescription,
+  },
+  twitter: {
+    ...baseMetadata.twitter,
+    title: pageTitle,
+    description: pageDescription,
   },
 };
 

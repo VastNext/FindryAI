@@ -123,7 +123,11 @@ export default async function sitemap({
         },
         {
           url: "typesafe-jev",
-          lastModified: new Date(),
+          lastModified: new Date("2026-09-24T00:00:00.000Z"),
+        },
+        {
+          url: "how-to-use-jev",
+          lastModified: new Date("2026-09-24T00:00:00.000Z"),
         },
         {
           url: "face-swap-gif",

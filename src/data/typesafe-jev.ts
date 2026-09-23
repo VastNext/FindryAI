@@ -30,6 +30,9 @@ export const typesafeJev = {
   founder:
     "Diogo Almeida (Former OpenAI Researcher, Co-inventor of RLHF & InstructGPT)",
   funding: "$40M Seed led by DCVC",
+  lastUpdated: "2026-09-24",
+  changelog:
+    "Updated with official benchmark figures (193.6x faster, 444.6x cheaper), refined etymology notes, and streamlined SERP meta specifications.",
   // Official URLs
   officialUrl: "https://typesafe.ai",
   consoleUrl: "https://console.typesafe.ai",
@@ -43,7 +46,7 @@ export const typesafeJev = {
   pypiUrl: "https://pypi.org/project/jev/",
   // Meta description & Hero
   description:
-    "TypeSafe Jev is the first System One frontier model from TypeSafe AI, created by former OpenAI researcher and RLHF co-inventor Diogo Almeida. Built specifically for automated software decisions, it drops string generation to deliver typed, probabilistic decisions in 70–500ms at $0.042/1M input tokens with free output and zero hallucinations.",
+    "TypeSafe Jev AI deep dive: 193x faster, 444x cheaper System One decision model. $0.042/1M input tokens, free output, 70-500ms latency, zero hallucinations.",
   heroSubtitle:
     "A new paradigm for software automation: input unstructured state, get typed probabilistic decisions with mathematical confidence in milliseconds — without waiting for token-by-token autoregressive generation.",
 };
@@ -53,12 +56,12 @@ export const heroStats: { value: string; label: string; sublabel?: string }[] =
     {
       value: "70–500ms",
       label: "End-to-End Latency",
-      sublabel: "40x–200x faster than chat LLMs",
+      sublabel: "193.6x faster on official benchmark (0.114s vs 8.566s)",
     },
     {
       value: "$0.042",
       label: "Per 1M Input Tokens",
-      sublabel: "Approx. $0.00004 per decision",
+      sublabel: "444.6x cheaper ($0.000081 vs $0.013880)",
     },
     {
       value: "$0.00",
@@ -186,9 +189,10 @@ export const comparisonTable: {
   {
     feature: "Input Pricing (per 1M Tokens)",
     traditionalLlm: "$2.50 – $30.00 / 1M Tokens",
-    typesafeJev: "$0.042 / 1M Tokens (60x–700x cost reduction)",
+    typesafeJev:
+      "$0.042 / 1M Tokens (444.6x cheaper on official benchmark: $0.000081 vs $0.013880)",
     whyItMatters:
-      "Drops per-decision cost down to $0.00004, unlocking high-frequency workflow automation",
+      "Drops per-decision cost down to fractions of a cent, unlocking high-frequency workflow automation",
   },
   {
     feature: "Output Token Pricing",
@@ -624,7 +628,7 @@ export const faqs: { question: string; answer: string }[] = [
   {
     question: "What is the origin of the names 'System One' and 'Jev'?",
     answer:
-      "The 'System One' moniker originates from Daniel Kahneman's cognitive framework in 'Thinking, Fast and Slow', distinguishing fast, intuitive thinking (System 1) from slow, deliberate reasoning (System 2). 'Jev' is named after 19th-century economist William Stanley Jevons, discoverer of the Jevons Paradox. As the cost and latency of intelligence drops by orders of magnitude (from cents/seconds to microcents/milliseconds), the demand for high-frequency automated decisions in software will multiply exponentially.",
+      "The 'System One' moniker originates from Daniel Kahneman's cognitive framework in 'Thinking, Fast and Slow', distinguishing fast, intuitive thinking (System 1) from slow, deliberate reasoning (System 2). While TypeSafe AI has not officially documented the etymology of 'Jev', the AI engineering community widely attributes it to 19th-century economist William Stanley Jevons, author of the Jevons Paradox: as the cost and latency of decision intelligence drops exponentially (from cents/seconds to microcents/milliseconds), the aggregate volume and demand for automated software decisions will multiply exponentially.",
   },
   {
     question: "What is RLCD (Reinforcement Learning for Calibrated Decisions)?",
