@@ -246,7 +246,7 @@ export function TypesafeJevLanding() {
             <span className="hidden sm:inline">•</span>
             <span className="flex items-center gap-1.5">
               <Clock className="size-4 text-amber-500" />
-              Released September 2026 (Verified {typesafeJev.lastUpdated})
+              Released September 2026 (Updated {typesafeJev.lastUpdated})
             </span>
           </div>
 

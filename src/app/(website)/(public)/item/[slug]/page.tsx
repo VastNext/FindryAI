@@ -10,6 +10,7 @@ import { UserAvatar } from "@/components/shared/user-avatar";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { fakefaceCuratedData } from "@/data/item-curated/fakeface";
+import { unsummaryCuratedData } from "@/data/item-curated/unsummary";
 import { urlForIcon, urlForImage } from "@/lib/image";
 import { constructMetadata } from "@/lib/metadata";
 import { cn, getItemTargetLinkInWebsite, getLocaleDate } from "@/lib/utils";
@@ -53,12 +54,19 @@ export async function generateMetadata({
 
   const imageProps = item?.image ? urlForImage(item?.image) : null;
   const isFakeFace = params.slug.toLowerCase() === "fakeface";
+  const isUnsummary = params.slug.toLowerCase() === "unsummary";
+
   const title = isFakeFace
     ? "FakeFace: AI Face Swap & Portrait Generator Review, Free Limits & Pricing (2026)"
-    : `${item.name}`;
+    : isUnsummary
+      ? "Unsummary: AI Book, Podcast & Media Summarizer Review, Free Limits & Official Link (2026)"
+      : `${item.name}`;
+
   const description = isFakeFace
     ? "Comprehensive review of FakeFace (fakeface.io). Compare free starter limits, avatar generation, photo blending accuracy, and how it compares to top face swap alternatives."
-    : item.description;
+    : isUnsummary
+      ? "Official review and features of Unsummary (unsummary.com). Discover how it condenses long books, podcasts, and movies into structured key takeaways and chapter insights."
+      : item.description;
 
   return constructMetadata({
     title,
@@ -177,6 +185,22 @@ export default async function ItemPage({ params }: ItemPageProps) {
             "@context": "https://schema.org",
             "@type": "FAQPage",
             mainEntity: fakefaceCuratedData.faqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          },
+        ]
+      : []),
+    ...(params.slug.toLowerCase() === "unsummary"
+      ? [
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: unsummaryCuratedData.faqs.map((faq) => ({
               "@type": "Question",
               name: faq.question,
               acceptedAnswer: {
@@ -416,9 +440,12 @@ export default async function ItemPage({ params }: ItemPageProps) {
         </div>
       </div>
 
-      {/* Curated In-Depth Dossier for Priority High-Intent Items (FakeFace, etc.) */}
+      {/* Curated In-Depth Dossier for Priority High-Intent Items (FakeFace, Unsummary, etc.) */}
       {params.slug.toLowerCase() === "fakeface" && (
         <ItemCuratedDossier data={fakefaceCuratedData} />
+      )}
+      {params.slug.toLowerCase() === "unsummary" && (
+        <ItemCuratedDossier data={unsummaryCuratedData} />
       )}
 
       {/* Footer section shows related items */}

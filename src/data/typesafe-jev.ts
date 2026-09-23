@@ -89,9 +89,9 @@ export const corePrimitives: {
     name: "Noul",
     nameEn: "Boolean Probability",
     typeDesc: "Returns calibrated probability p(yes) ∈ [0, 1] for a statement",
-    outputShape: "{ noul: boolean, probability: number, confidence: number }",
+    outputShape: "ans.noul ∈ [0.0, 1.0] (Calibrated probability float)",
     description:
-      "Evaluates whether a statement is true (Yes/No). Trained with RLCD so probabilities reflect genuine mathematical confidence, making it ideal for strict confidence-gated branching and automated safety guardrails.",
+      "Evaluates whether a statement is true (Yes/No). The return float IS both the decision and the statistical certainty without a detached confidence field. Trained with RLCD so probabilities reflect empirical ground-truth likelihood for strict threshold-gated branching.",
     exampleCode: `is_urgent: noul("Does the user request convey time-sensitive urgency?")`,
   },
   {
@@ -103,7 +103,7 @@ export const corePrimitives: {
     outputShape:
       "{ choice: string, probabilities: Record<string, number>, confidence: number }",
     description:
-      "Evaluates a full categorical probability distribution in parallel across all candidate labels. Each choice can define semantic criteria, returning both the winning label, full option probabilities, and an overall confidence score.",
+      "Evaluates categorical probabilities in parallel across candidate labels. Returns the selected choice, full probabilities dictionary, and overall confidence score.",
     exampleCode: `department: choice("Which team should handle this?", {
   billing: "Payments, invoices, refunds, charges",
   technical: "Bugs, outages, integrations, API errors",
@@ -115,11 +115,11 @@ export const corePrimitives: {
     name: "Score",
     nameEn: "Ordinal Level Rating",
     typeDesc:
-      "Rates inputs against ordered levels (2–10 discrete levels or scalar values)",
+      "Rates inputs against ordered levels (2–10 discrete descriptive situations)",
     outputShape:
-      "{ score: number, distribution: number[], confidence: number }",
+      "{ score: number, probabilities: number[], confidence: number }",
     description:
-      "Used for risk scoring, sentiment grading, evidence strength, and SLA assessment. Returns an expected numerical score alongside the full discrete distribution across levels and an overall certainty metric.",
+      "Used for severity grading, sentiment scoring, and defect triage. Returns the expected value mean alongside the discrete probabilities array across levels and a confidence metric.",
     exampleCode: `risk_level: score("Assess account security risk level", [
   "Low: Normal activity matching history",
   "Moderate: Unusual login location or new device",
@@ -237,7 +237,7 @@ export const designPatterns: {
     scenario:
       "In support triage or moderation, traditional architectures make 5 sequential LLM calls to check urgency, category, sentiment, policy compliance, and spam, taking over 10 seconds.",
     solution:
-      "Attach 15+ Noul/Choice/Score questions to a single Jev request. The 50KB state is sent once, evaluated in parallel, and returned in ~100ms for just $0.0004.",
+      "Attach 15+ Noul/Choice/Score questions to a single Jev request. The 50KB state (~12,500 tokens) is sent once, evaluated in parallel, and returned in ~100ms for just ~$0.0005 (or ~$0.00004 for standard 800-token queries).",
   },
   {
     icon: Network,

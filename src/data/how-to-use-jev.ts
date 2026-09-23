@@ -82,13 +82,13 @@ export const accessRoutes: AccessRoute[] = [
     categoryLabel: "Managed Cloud Gateway",
     authRequirement: "Vercel AI Gateway Key (model: typesafe-ai/jev)",
     pricingTerms:
-      "Standard Vercel AI Gateway token billing (promotional free tier on early release)",
+      "Free until Sep 25; standard Vercel token billing applies afterward",
     bestFor:
       "Next.js & Edge applications deployed on Vercel wanting unified observability and edge caching.",
     consoleUrl: "https://vercel.com/ai-gateway/models/jev",
     verifiedDate: "2026-09-24",
     notes:
-      "Requires Vercel project configuration; simplifies deployment with zero server setup.",
+      "Promotional zero-cost trial closes September 25; ideal for immediate zero-friction evaluation.",
   },
   {
     id: "lovable-ai-gateway",
@@ -96,12 +96,14 @@ export const accessRoutes: AccessRoute[] = [
     category: "gateway_aggregator",
     categoryLabel: "Managed Cloud Gateway",
     authRequirement: "Lovable Platform Gateway Token",
-    pricingTerms: "Platform bundled tier (promotional trial window available)",
+    pricingTerms:
+      "Free until Sep 27, 23:59 UTC; standard platform tier thereafter",
     bestFor:
       "Rapid prototyping and teams already building within Lovable visual harnesses.",
     consoleUrl: "https://lovable.dev",
     verifiedDate: "2026-09-24",
-    notes: "Convenient zero-friction trial for early prototyping.",
+    notes:
+      "Free window active until Sep 27, 23:59 UTC. Best for quick no-config trial runs.",
   },
   {
     id: "openrouter",
