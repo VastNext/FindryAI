@@ -125,8 +125,12 @@ export function ItemCuratedDossier({ data }: ItemCuratedDossierProps) {
               <tr className="border-b border-border/70 bg-muted/40 text-muted-foreground">
                 <th className="p-3 font-semibold text-foreground">Feature</th>
                 <th className="p-3 font-semibold text-primary">{data.name}</th>
-                <th className="p-3 font-semibold">Remaker AI</th>
-                <th className="p-3 font-semibold">DeepSwap</th>
+                <th className="p-3 font-semibold">
+                  {data.competitorNames?.competitor1 || "Competitor A"}
+                </th>
+                <th className="p-3 font-semibold">
+                  {data.competitorNames?.competitor2 || "Competitor B"}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
@@ -136,10 +140,14 @@ export function ItemCuratedDossier({ data }: ItemCuratedDossierProps) {
                     {row.feature}
                   </td>
                   <td className="p-3 font-semibold text-foreground">
-                    {row.fakeface}
+                    {row.targetValue}
                   </td>
-                  <td className="p-3 text-muted-foreground">{row.remaker}</td>
-                  <td className="p-3 text-muted-foreground">{row.deepswap}</td>
+                  <td className="p-3 text-muted-foreground">
+                    {row.competitor1Value}
+                  </td>
+                  <td className="p-3 text-muted-foreground">
+                    {row.competitor2Value}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -173,13 +181,13 @@ export function ItemCuratedDossier({ data }: ItemCuratedDossierProps) {
       {/* Cross-linking to Cluster Guides */}
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-6">
         <h4 className="font-bold text-sm text-foreground mb-1">
-          Explore Related Face Swap Formats &amp; In-Depth Guides
+          {data.recommendedGuidesTitle || "Explore Related Guides & Deep Dives"}
         </h4>
         <p className="text-xs text-muted-foreground mb-4">
-          Compare broader categories and discover dedicated playbooks for
-          animated GIFs and motion video face tracking:
+          {data.recommendedGuidesDescription ||
+            "Discover curated resources and technical benchmarks:"}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {data.recommendedGuides.map((guide) => (
             <Link
               key={guide.href}

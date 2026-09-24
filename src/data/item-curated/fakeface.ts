@@ -16,10 +16,16 @@ export interface CuratedItemData {
   }>;
   comparisonWithCompetitors: Array<{
     feature: string;
-    fakeface: string;
-    remaker: string;
-    deepswap: string;
+    targetValue: string;
+    competitor1Value: string;
+    competitor2Value: string;
   }>;
+  competitorNames?: {
+    competitor1: string;
+    competitor2: string;
+  };
+  recommendedGuidesTitle?: string;
+  recommendedGuidesDescription?: string;
   faqs: Array<{
     question: string;
     answer: string;
@@ -70,30 +76,37 @@ export const fakefaceCuratedData: CuratedItemData = {
       highlight: "Optimized for short-form TikTok and Instagram reels",
     },
   ],
+  competitorNames: {
+    competitor1: "Remaker AI",
+    competitor2: "DeepSwap",
+  },
+  recommendedGuidesTitle: "Explore Related Face Swap Formats & In-Depth Guides",
+  recommendedGuidesDescription:
+    "Compare broader categories and discover dedicated playbooks for animated GIFs and motion video face tracking:",
   comparisonWithCompetitors: [
     {
       feature: "Portrait Quality",
-      fakeface: "High (Specialized in skin tone match)",
-      remaker: "Very High (Cinema grade)",
-      deepswap: "High (3D angle robust)",
+      targetValue: "High (Specialized in skin tone match)",
+      competitor1Value: "Very High (Cinema grade)",
+      competitor2Value: "High (3D angle robust)",
     },
     {
       feature: "Free Allowance",
-      fakeface: "Daily starter credits upon registration",
-      remaker: "30 free welcome credits",
-      deepswap: "Paid-first preview model",
+      targetValue: "Daily starter credits upon registration",
+      competitor1Value: "30 free welcome credits",
+      competitor2Value: "Paid-first preview model",
     },
     {
       feature: "Watermark Removal",
-      fakeface: "Clean output on credit use",
-      remaker: "Clean output on credit use",
-      deepswap: "Requires pro subscription",
+      targetValue: "Clean output on credit use",
+      competitor1Value: "Clean output on credit use",
+      competitor2Value: "Requires pro subscription",
     },
     {
       feature: "GIF Meme Support",
-      fakeface: "Basic static/video export",
-      remaker: "Video and image focus",
-      deepswap: "Video focus",
+      targetValue: "Basic static/video export",
+      competitor1Value: "Video and image focus",
+      competitor2Value: "Video focus",
     },
   ],
   faqs: [
