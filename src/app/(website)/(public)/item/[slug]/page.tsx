@@ -219,7 +219,12 @@ export default async function ItemPage({ params }: ItemPageProps) {
       {/* Header section */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         {/* Left column */}
-        <div className="lg:col-span-3 gap-8 flex flex-col">
+        <div
+          className={cn(
+            "gap-8 flex flex-col",
+            imageProps ? "lg:col-span-3" : "lg:col-span-5 max-w-4xl",
+          )}
+        >
           {/* Basic information */}
           <ItemBreadCrumb item={item} />
 
@@ -285,17 +290,17 @@ export default async function ItemPage({ params }: ItemPageProps) {
         </div>
 
         {/* Right column */}
-        <div className="lg:col-span-2">
-          {/* image */}
-          <div className="relative group overflow-hidden rounded-lg aspect-[16/9]">
-            <Link
-              href={`${itemLink}`}
-              target="_blank"
-              rel={externalRel}
-              prefetch={false}
-              className="relative block w-full h-full"
-            >
-              {imageProps && (
+        {imageProps && (
+          <div className="lg:col-span-2">
+            {/* image */}
+            <div className="relative group overflow-hidden rounded-lg aspect-[16/9]">
+              <Link
+                href={`${itemLink}`}
+                target="_blank"
+                rel={externalRel}
+                prefetch={false}
+                className="relative block w-full h-full"
+              >
                 <Image
                   src={imageProps.src}
                   alt={item.image?.alt || `image for ${item.name}`}
@@ -308,21 +313,21 @@ export default async function ItemPage({ params }: ItemPageProps) {
                     blurDataURL: imageBlurDataURL,
                   })}
                 />
-              )}
-              <div
-                className="absolute inset-0 flex items-center justify-center bg-black 
-                  bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300"
-              >
-                <span
-                  className="text-white text-lg font-semibold 
-                    opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                <div
+                  className="absolute inset-0 flex items-center justify-center bg-black 
+                    bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300"
                 >
-                  Visit Website
-                </span>
-              </div>
-            </Link>
+                  <span
+                    className="text-white text-lg font-semibold 
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  >
+                    Visit Website
+                  </span>
+                </div>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Content section */}
