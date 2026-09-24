@@ -59,13 +59,13 @@ export async function generateMetadata({
   const title = isFakeFace
     ? "FakeFace: AI Face Swap & Portrait Generator Review, Free Limits & Pricing (2026)"
     : isUnsummary
-      ? "Unsummary: AI Book, Podcast & Media Summarizer Review, Free Limits & Official Link (2026)"
+      ? "Unsummary Review 2026: Discontinued? Status & Best Alternatives"
       : `${item.name}`;
 
   const description = isFakeFace
     ? "Comprehensive review of FakeFace (fakeface.io). Compare free starter limits, avatar generation, photo blending accuracy, and how it compares to top face swap alternatives."
     : isUnsummary
-      ? "Official review and features of Unsummary (unsummary.com). Discover how it condenses long books, podcasts, and movies into structured key takeaways and chapter insights."
+      ? "Unsummary (unsummary.com) service status: origin server offline in 2026. Explore historical features, 40M+ book catalog, and compare working alternatives like Blinkist & StoryShots."
       : item.description;
 
   return constructMetadata({
