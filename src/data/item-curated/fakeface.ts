@@ -26,6 +26,13 @@ export interface CuratedItemData {
   };
   recommendedGuidesTitle?: string;
   recommendedGuidesDescription?: string;
+  serviceStatusNotice?: {
+    isInactive: boolean;
+    badgeText: string;
+    headline: string;
+    description: string;
+    alternativesCtaText: string;
+  };
   faqs: Array<{
     question: string;
     answer: string;

@@ -12,6 +12,14 @@ export const unsummaryCuratedData: CuratedItemData = {
     creditsSystem: "Pay-as-you-go credit deductions (historical)",
     watermarkPolicy: "Clean structured markdown/text format",
   },
+  serviceStatusNotice: {
+    isInactive: true,
+    badgeText: "Service Offline / Discontinued",
+    headline: "Unsummary is currently offline & inactive",
+    description:
+      "As of September 2026, the origin servers for unsummary.com are no longer responding (HTTP 522/offline). Direct registration and generation are unavailable. We strongly recommend switching to active alternatives.",
+    alternativesCtaText: "Find Active Alternatives",
+  },
   keyCapabilities: [
     {
       title: "Extensive Media Catalog (Historical)",

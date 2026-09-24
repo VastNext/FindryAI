@@ -7,6 +7,7 @@ import ItemGrid from "@/components/item/item-grid";
 import BackButton from "@/components/shared/back-button";
 import { JsonLd } from "@/components/shared/json-ld";
 import { UserAvatar } from "@/components/shared/user-avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { fakefaceCuratedData } from "@/data/item-curated/fakeface";
@@ -26,6 +27,7 @@ import {
 } from "@/sanity/lib/queries";
 import type { ItemFullInfo } from "@/types";
 import {
+  AlertTriangleIcon,
   GlobeIcon,
   HashIcon,
   LayoutGridIcon,
@@ -119,6 +121,16 @@ export default async function ItemPage({ params }: ItemPageProps) {
     primaryCategory?.name && primaryCategory.slug?.current
       ? { name: primaryCategory.name, slug: primaryCategory.slug.current }
       : null;
+  const curatedData =
+    params.slug.toLowerCase() === "fakeface"
+      ? fakefaceCuratedData
+      : params.slug.toLowerCase() === "unsummary"
+        ? unsummaryCuratedData
+        : null;
+
+  const isInactiveService = Boolean(
+    curatedData?.serviceStatusNotice?.isInactive,
+  );
   const isSponsor = item.sponsor || item.pricePlan === "sponsor";
   const isFreePlan =
     item.pricePlan === "free" && item.freePlanStatus !== "approved";
@@ -262,9 +274,52 @@ export default async function ItemPage({ params }: ItemPageProps) {
             </div>
           </div>
 
+          {/* Service Discontinued / Inactive Notice in Hero */}
+          {curatedData?.serviceStatusNotice?.isInactive && (
+            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 sm:p-5 shadow-xs">
+              <div className="flex flex-col gap-2.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge
+                    variant="outline"
+                    className="border-amber-500/60 bg-amber-500/20 text-amber-700 dark:text-amber-300 font-semibold gap-1.5 px-2.5 py-0.5"
+                  >
+                    <AlertTriangleIcon className="size-3.5 text-amber-600 dark:text-amber-400" />
+                    <span>{curatedData.serviceStatusNotice.badgeText}</span>
+                  </Badge>
+                  <span className="font-semibold text-sm text-foreground">
+                    {curatedData.serviceStatusNotice.headline}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {curatedData.serviceStatusNotice.description}
+                </p>
+                <div className="pt-1">
+                  <Button
+                    size="sm"
+                    variant="default"
+                    asChild
+                    className="h-8 gap-1.5 bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs shadow-xs"
+                  >
+                    <Link href={`/item/${params.slug}/alternatives`}>
+                      <SparklesIcon className="size-3.5" />
+                      <span>
+                        {curatedData.serviceStatusNotice.alternativesCtaText}
+                      </span>
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* action buttons */}
-          <div className="flex flex-wrap gap-4">
-            <Button size="lg" variant="default" asChild className="group">
+          <div className="flex flex-wrap items-center gap-4">
+            <Button
+              size="lg"
+              variant={isInactiveService ? "outline" : "default"}
+              asChild
+              className="group"
+            >
               <Link
                 href={itemLink}
                 target="_blank"
@@ -273,17 +328,33 @@ export default async function ItemPage({ params }: ItemPageProps) {
                 className="flex items-center justify-center space-x-2"
               >
                 <GlobeIcon className="w-4 h-4 icon-scale" />
-                <span>Visit Website</span>
+                <span>
+                  {isInactiveService
+                    ? "Official Domain (Inactive)"
+                    : "Visit Website"}
+                </span>
               </Link>
             </Button>
 
-            <Button size="lg" variant="outline" asChild>
+            <Button
+              size="lg"
+              variant={isInactiveService ? "default" : "outline"}
+              asChild
+              className={cn(
+                isInactiveService &&
+                  "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-md font-semibold",
+              )}
+            >
               <Link
                 href={`/item/${params.slug}/alternatives`}
                 className="flex items-center justify-center space-x-2"
               >
-                <SparklesIcon className="w-4 h-4 text-indigo-500" />
-                <span>Alternatives</span>
+                <SparklesIcon className="w-4 h-4" />
+                <span>
+                  {isInactiveService
+                    ? "Browse Active Alternatives →"
+                    : "Alternatives"}
+                </span>
               </Link>
             </Button>
           </div>
