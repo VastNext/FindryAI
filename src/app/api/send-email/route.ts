@@ -53,7 +53,12 @@ export async function POST(request: Request) {
         await sendApprovalEmail(item.submitter.name, item.submitter.email, itemLink);
       } else if (item.freePlanStatus === "rejected") {
         const dashboardLink = getDashboardLink();
-        await sendRejectionEmail(item.submitter.name, item.submitter.email, dashboardLink);
+        await sendRejectionEmail(
+          item.submitter.name,
+          item.submitter.email,
+          dashboardLink,
+          item.rejectionReason ?? undefined,
+        );
       } else {
         console.warn(`SendEmail, item ${item.name} is not approved or rejected`);
         return NextResponse.json({ message: 'No email sent' }, { status: 200 });

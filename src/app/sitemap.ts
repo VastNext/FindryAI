@@ -102,6 +102,10 @@ export default async function sitemap({
           lastModified: new Date(),
         },
         {
+          url: "submission-guidelines",
+          lastModified: new Date(),
+        },
+        {
           url: "translator",
           lastModified: new Date(),
         },

@@ -20,6 +20,7 @@ export const footerConfig: FooterConfig = {
         { title: "Face Swap Video", href: "/ai-face-swap-video" },
         { title: "Pricing", href: "/pricing" },
         { title: "Submit", href: "/submit" },
+        { title: "Submission Guidelines", href: "/submission-guidelines" },
         { title: "Studio", href: "/studio", external: true },
       ],
     },

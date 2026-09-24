@@ -105,11 +105,12 @@ export const sendRejectionEmail = async (
   userName: string,
   email: string,
   dashboardLink: string,
+  rejectionReason?: string,
 ) => {
   await resend.emails.send({
     from: process.env.RESEND_EMAIL_FROM,
     to: email,
     subject: "Please check your submission",
-    react: RejectionEmail({ userName, dashboardLink }),
+    react: RejectionEmail({ userName, dashboardLink, rejectionReason }),
   });
 };
