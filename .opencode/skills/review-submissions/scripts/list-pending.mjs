@@ -29,6 +29,7 @@ const query = `*[_type == "item" && defined(submitter) && (freePlanStatus == "pe
   tags[]->{ name, "slug": slug.current },
   "submitterName": submitter->name,
   "submitterEmail": submitter->email,
+  note,
   _createdAt
 } | order(_createdAt desc)`;
 
@@ -67,6 +68,11 @@ for (const item of items) {
     `Categories: ${item.categories?.map((c) => c.name).join(", ") || "无"}`,
   );
   console.log(`Tags: ${item.tags?.map((t) => t.name).join(", ") || "无"}`);
+  if (item.note) {
+    console.log(
+      `Note (内部备注):${item.note.includes("[HOLD]") ? " ⚠️ 含 [HOLD] 挂起标记" : ""} ${item.note}`,
+    );
+  }
   console.log(
     `Icon: ${item.hasIcon ? `有 (${item.iconWidth ?? "?"}x${item.iconHeight ?? "?"})` : "缺失"}`,
   );

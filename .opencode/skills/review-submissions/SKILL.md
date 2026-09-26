@@ -30,7 +30,7 @@ description: Review user-submitted websites for the Findry AI directory with fiv
 node .opencode/skills/review-submissions/scripts/list-pending.mjs
 ```
 
-输出每条提交的：ID、名称、链接、提交者、分类标签、icon/截图尺寸、description 及长度、introduction 及长度、introduction 是否与 description 雷同。
+输出每条提交的：ID、名称、链接、提交者、分类标签、icon/截图尺寸、description 及长度、introduction 及长度、introduction 是否与 description 雷同、**note 内部备注（若含 `[HOLD]` 标记会特别提示——说明该条目已挂起等待管理员分类决策，按裁决规则只标注不重复通知）**。
 
 无待审提交时告知用户并结束。
 
@@ -56,7 +56,9 @@ node .opencode/skills/review-submissions/scripts/check-site.mjs <url1> <url2> ..
 
 **裁决规则**：
 - 五项全部达标 → **approve**（批准并发布）
-- **仅门禁 5 不达标、门禁 1–4 全部达标 → 不打回**：先运行 `list-categories.mjs` 查看站内分类清单，把 categories 修正为与产品功能对应的已有分类，再 approve（auto 模式用 `--categories` 一步完成；报告模式在报告中写明拟修正为「原分类 → 新分类」）。若站内**没有**合适分类、或产品与本站相关性本身存疑（门禁 2 也不过）→ 仍 reject。
+- **仅门禁 5 不达标、门禁 1–4 全部达标 → 不打回**，分三种处理：
+  1. **站内有合适分类** → 先运行 `list-categories.mjs` 查看站内分类清单，把 categories 修正为与产品功能对应的已有分类，再 approve（auto 模式用 `--categories` 一步完成；报告模式在报告中写明拟修正为「原分类 → 新分类」）。
+  2. **站内无合适分类** → **挂起（hold），不 reject**：执行 `hold <id> --note "缺哪类分类、为何其他门禁都过"`——条目保持 `pending`，note 字段追加 `[HOLD]` 内部标记，并发管理员邮件请示是否新增分类（不发提交者邮件、不刷缓存）。复审时若 note 已含 `[HOLD]` → 报告标注「已挂起，等待管理员分类决策」，**不重复 hold、不重复通知**；管理员新增分类后按路径 1 approve。产品与本站相关性本身存疑（门禁 2 也不过）→ 仍 reject。
 - 其余任一项不达标 → **reject**（打回），`rejectionReason` 以站内标准原因开头 + 具体整改指引：
   - 内容问题 → `The information of the item is not clear. ` + 具体要求（如 "Please provide a detailed overview, key features, and use cases."）
   - 图片问题 → `The image of the item is not in good quality.` / `The icon of the item is not in good quality.`
@@ -84,9 +86,13 @@ node .opencode/skills/review-submissions/scripts/execute-decision.mjs approve <i
 
 # 打回下架（置 rejected + 理由 + 发打回邮件 + 刷缓存）
 node .opencode/skills/review-submissions/scripts/execute-decision.mjs reject <id1> --reason "The information of the item is not clear. Please provide..."
+
+# 挂起请示（站内无合适分类时：保持 pending + note 写 [HOLD] 标记 + 发管理员邮件；
+# 不发提交者邮件、不刷缓存；note 已含 [HOLD] 时自动跳过、不重复通知）
+node .opencode/skills/review-submissions/scripts/execute-decision.mjs hold <id> --note "产品为 XX 类工具，站内无对应分类，请示是否新增"
 ```
 
-脚本内部顺序固定：（可选）解析并校验分类 → 写库（含分类修正）→ 发邮件（必须先写库，邮件路由按 DB 状态决定信件类型）→ 刷 `/` 与 `/item/<slug>` 缓存 → **等待 90 秒后二次刷新缓存**（规避 Sanity CDN 陈旧窗口竞态）。单次运行总耗时因此约多 90 秒，属预期。
+脚本内部顺序固定：（approve 时）解析并校验分类 → 写库（含分类修正；hold 只追加 note 不改状态）→ 发邮件（approve/reject 发提交者信，hold 发管理员请示信；必须先写库）→ 刷 `/` 与 `/item/<slug>` 缓存（hold 跳过）→ **等待 90 秒后二次刷新缓存**（规避 Sanity CDN 陈旧窗口竞态）。单次运行总耗时因此约多 90 秒，属预期。
 
 ## Step 6: 线上验收（仅 auto 模式，执行后必做）
 
@@ -96,6 +102,7 @@ curl -s "https://findryai.com/" | grep -o 'href="/item/[^"]*"' | head -n 10
 
 - approve 的条目应出现在首页前列；reject 的条目应从首页消失。
 - 单条页面探测：`curl -I -s "https://findryai.com/item/<slug>" | head -n 5` 返回 200 即上线成功（reject 后应为 404 或不可见）。
+- **hold 不涉及前台验收**：条目本就未发布，前台无任何变化；验收点是脚本输出中 `📌 [DB]` 与 `📧 [MAIL-ADMIN] status=200`。
 - 若 approve 后首页仍未收录（竞态残余），手动补刷后再查：
   ```bash
   curl -X POST "https://findryai.com/api/revalidate?secret=<SECRET>&path=/"
@@ -113,3 +120,4 @@ curl -s "https://findryai.com/" | grep -o 'href="/item/[^"]*"' | head -n 10
 5. **批量发布已 Approved 但未发布的条目**可用现成命令：`pnpm item:publish-approved`（等价于对 `defined(submitter) && freePlanStatus=="approved" && !defined(publishDate)` 批量 approve）。
 6. 凭据从项目根 `.env` 读取；revalidate secret 回退链：`REVALIDATE_SECRET → AUTH_SECRET → SANITY_API_TOKEN`。
 7. **分类修正**：`list-categories.mjs`（只读）列出站内分类与各分类已发布条目数；`execute-decision.mjs approve <id> --categories "名称A,名称B"`（name 或 slug 均可、不区分大小写、逗号分隔）。修正前必须选站内已有分类；匹配失败脚本在写库前中止。
+8. **无合适分类走 hold 不走 reject**：`execute-decision.mjs hold <id> --note "原因"`——保持 pending、note 追加 `[HOLD]` 标记、管理员请示邮件经 Resend 直发 `RESEND_EMAIL_ADMIN`（需 `RESEND_API_KEY`/`RESEND_EMAIL_FROM`/`RESEND_EMAIL_ADMIN` 齐备），不碰提交者、不刷缓存。`[HOLD]` 标记同时是幂等去重键：重复 hold 自动跳过。

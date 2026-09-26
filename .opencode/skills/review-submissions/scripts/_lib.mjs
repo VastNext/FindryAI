@@ -24,6 +24,9 @@ export const config = {
   token: process.env.SANITY_API_TOKEN,
   siteUrl: process.env.NEXT_PUBLIC_APP_URL || "https://findryai.com",
   apiVersion: "2024-08-01",
+  resendApiKey: process.env.RESEND_API_KEY,
+  emailFrom: process.env.RESEND_EMAIL_FROM,
+  emailAdmin: process.env.RESEND_EMAIL_ADMIN,
 };
 
 export function assertConfig() {
@@ -110,6 +113,37 @@ export function revalidateSecret() {
     process.env.AUTH_SECRET ||
     process.env.SANITY_API_TOKEN
   );
+}
+
+/**
+ * 发送管理员通知邮件（Resend 直发，不经站内 /api/send-email 路由）。
+ * 用于审核内部通知，如 hold 挂起请示"是否新增分类"。
+ */
+export async function sendAdminEmail({ subject, html }) {
+  if (!config.resendApiKey || !config.emailFrom || !config.emailAdmin) {
+    return {
+      status: 0,
+      data: {
+        message:
+          "缺少 RESEND_API_KEY / RESEND_EMAIL_FROM / RESEND_EMAIL_ADMIN 环境变量",
+      },
+    };
+  }
+  const res = await proxyFetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${config.resendApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: config.emailFrom,
+      to: config.emailAdmin,
+      subject,
+      html,
+    }),
+  });
+  const data = await res.json().catch(() => ({}));
+  return { status: res.status, data };
 }
 
 /** 刷新线上指定路径的 ISR/边缘缓存 */
