@@ -3,6 +3,7 @@
 import { getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
+import { PricePlans } from "@/lib/submission";
 import { absoluteUrl } from "@/lib/utils";
 import { sanityClient } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -89,27 +90,37 @@ export async function createCheckoutSession(
       }
 
       // 4. create stripe checkout session
-      console.log(
-        "Creating Stripe checkout session:",
-        {
-          customerId: stripeCustomerId,
-          priceId,
-          userId: user.id,
-          itemId,
-        }
-      );
+      console.log("Creating Stripe checkout session:", {
+        customerId: stripeCustomerId,
+        priceId,
+        userId: user.id,
+        itemId,
+      });
       // TODO: optimize the success and cancel urls with sessionId!!!
       const successUrl = absoluteUrl(`/publish/${itemId}?pay=success`);
       const cancelUrl = absoluteUrl(`/payment/${itemId}?pay=failed`);
       const stripeSession = await stripe.checkout.sessions.create({
         customer: stripeCustomerId,
-        mode: "payment",
+        // Sponsor is billed as a monthly subscription (recurring Stripe price); Pro stays one-time.
+        mode: pricePlan === PricePlans.SPONSOR ? "subscription" : "payment",
         line_items: [
           {
             price: priceId,
             quantity: 1,
           },
         ],
+        ...(pricePlan === PricePlans.SPONSOR
+          ? {
+              // carried onto the subscription object so renewal/cancellation webhooks can map back to this item
+              subscription_data: {
+                metadata: {
+                  userId: user.id,
+                  itemId: itemId,
+                  pricePlan: pricePlan,
+                },
+              },
+            }
+          : {}),
         metadata: {
           userId: user.id,
           itemId: itemId,

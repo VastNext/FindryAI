@@ -51,9 +51,8 @@ export function ProPlanButton({
       item?.proPlanStatus,
     );
     if (!item) {
-      // 在 Pricing 页面且未上线 Stripe 时，引导至邮件咨询或直接前往免费提交
-      window.location.href =
-        "mailto:support@findryai.com?subject=Findry%20AI%20Pro%20Featured%20Placement%20Inquiry";
+      // Pricing page: payments attach to a submitted item, so start at the submission flow
+      window.location.href = "/submit";
     } else if (
       item.proPlanStatus === null ||
       item.proPlanStatus === ProPlanStatus.SUBMITTING ||
@@ -101,7 +100,7 @@ export function ProPlanButton({
     >
       {!item ? (
         <div className="flex items-center justify-center gap-2 font-medium">
-          <span>Coming Soon (Inquire)</span>
+          <span>Get Started — Submit Your Tool</span>
           <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />
         </div>
       ) : isPending ? (
