@@ -34,6 +34,8 @@
 
 ## 已提交（5 站）后续动作
 
+> **邮箱补救记录（2026-09-28）**：提交当轮 support@findryai.com 尚未配置完成，dang.ai / whattheai 的首封 magic link 视为丢失；邮箱配好后已**重新触发两站 magic link**（dang.ai 回执「Check your inbox」、whattheai 回执「Resend in 112s」）。5 个已提交站的确认/审核邮件若在该窗口内退信，以 Gmail 收到的退信（Mail Delivery Subsystem）为准，对确认被退的站重新提交一遍即可——其余站提交走的是站内表单，不受影响。
+
 - 留意 **support@findryai.com**：各站审核通过/上架通知会发到该邮箱；ai-hunter 类站点若收到重复提交提示请忽略（其 500 应未落库）。
 - 收录核查（1~2 周后逐站搜 site 域名）：
   - listedai.co、lachief.io、insidr.ai、reviewai.net、ai-nav.net
@@ -41,7 +43,7 @@
 
 ## 待用户处理队列
 
-1. **点击两封 magic link**（发件后 15–60 分钟内有效）：dang.ai、whattheai.tech → 登录后按「产品事实」提交。
+1. **点击两封 magic link**（已重发，发件后 15–60 分钟内有效）：dang.ai、whattheai.tech → 登录后按「产品事实」提交。
 2. **邮件推荐**（therundown.ai，表单损坏）：发 support@therundown.ai，主题 `Tool recommendation: Findry AI`，正文：
    > Tool name: Findry AI — https://findryai.com
    > Tagline: Discover curated AI tools for every task
