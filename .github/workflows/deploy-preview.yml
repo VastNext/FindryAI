@@ -1,0 +1,55 @@
+name: Deploy Preview to Vercel
+
+# 手动触发的 Preview 部署：与生产工作流共用同一组 secrets，
+# 走普通 vercel deploy（不带 --prod），不影响生产环境。
+# 生产部署仍由 deploy.yml（v* tag 触发）负责。
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-preview-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      - name: Deploy Preview
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel deploy --token="$VERCEL_TOKEN" --yes 2>&1 | tee deploy-output.txt
+
+      - name: Write Preview URL to Summary
+        if: always()
+        run: |
+          URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' deploy-output.txt | tail -1 || true)
+          if [ -n "$URL" ]; then
+            echo "Preview URL: $URL" >> "$GITHUB_STEP_SUMMARY"
+            echo "preview-url=$URL" >> "$GITHUB_OUTPUT"
+          else
+            echo "未从部署输出中解析到 Preview URL，请查看上一步日志" >> "$GITHUB_STEP_SUMMARY"
+          fi
