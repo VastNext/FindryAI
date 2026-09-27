@@ -7,12 +7,12 @@
 
 | # | 站点 | 月访问 | 状态 | 证据/备注 |
 |---:|---|---:|---|---|
-| 1 | dang.ai | 337,046 | waiting-verification | 「Submit a tool」需 magic-link 登录；已向 support@findryai.com 触发登录邮件（页面回执「Check your inbox」） |
+| 1 | dang.ai | 337,046 | excluded | magic-link 已登录（经用户转发链接）；点「Select Free」后现出真身：①提交须勾选「This is an AI tool/product, **not a generic directory**…」——Findry AI 本身就是通用 AI 目录，按其准入规则不符，勾选即虚假声明；②Free 档要求先在己站挂 dofollow 徽章、提供反链页 URL 且永久存活（互链红线）。Basic $49 / Pro $30+$19月 同样要求非目录类产品，不追 |
 | 2 | ai-hunter.io | 22,479 | failed | 免费表单已填全（Aggregators/Free），POST admin-ajax 两次 **500**，判定其端点故障，勿盲目重试 |
 | 3 | aitoolsarena.com | 20,483 | outcome-unknown | 悬浮联系表单已填提交；admin-ajax 混合 200/500、无回执、表单未清空；需查 support 邮箱确认 |
 | 4 | supertools.therundown.ai | 16,500 | waiting-user | 页面写「complete the form below」但表单不渲染（懒加载失败）；官方渠道为邮件推荐 **support@therundown.ai**（文案已备好，见下） |
 | 5 | stork.ai | 11,000 | excluded | 站点已转型「quality backlinks on autopilot」卖链接服务，按红线排除 |
-| 6 | whattheai.tech | 8,900 | waiting-verification | 提交需 magic-link 登录；已触发登录邮件（按钮回执「Resend in 29s」） |
+| 6 | whattheai.tech | 8,900 | blocked-mail | magic-link 登录必需，但**连续 3 次触发均无邮件**（收件箱/垃圾箱/全邮箱搜索均无，2026-09-28）——其发件链路对 Cloudflare 转发地址不投递；备选：向用户自有的直收 Gmail 发送 magic link（需用户同意换账号邮箱），或改走其 Google 登录 |
 | 7 | thataicollection.com | 7,400 | waiting-user-decision | 四步向导已走通、资料完整入草稿，但发布按钮为 **Publish now — $19 一次性付费**；是否付费由用户定 |
 | 8 | ai-nav.net | 4,932 | submitted ✓ | 中文投稿表单（分类：AI学习网站）；提交后表单清空 + admin-ajax 200，进入人工审核 |
 | 9 | aidirectory.org | 4,782 | blocked | /user-submit/ 必填公司地址、电话——无此已核实事实，按红线不编造 |
@@ -43,7 +43,7 @@
 
 ## 待用户处理队列
 
-1. **点击两封 magic link**（已重发，发件后 15–60 分钟内有效）：dang.ai、whattheai.tech → 登录后按「产品事实」提交。
+1. ~~点击两封 magic link~~（已了结）：dang.ai 经用户转发登录链接后查明其准入规则排除目录类产品、Free 档强制互链——**已排除**；whattheai 三次触发均未投递，**blocked-mail**，见上表第 6 行的备选方案。
 2. **邮件推荐**（therundown.ai，表单损坏）：发 support@therundown.ai，主题 `Tool recommendation: Findry AI`，正文：
    > Tool name: Findry AI — https://findryai.com
    > Tagline: Discover curated AI tools for every task
