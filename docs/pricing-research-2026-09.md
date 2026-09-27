@@ -64,15 +64,26 @@ chatgptdemo 广告 $250+ ｜ AI Tools Club（newsletter）广告 $250+ ｜ ToolP
 3. **Sponsor 修计费而非改价格**：$99/月在广告位市场属于低位（头部 $250+），对未验证流量是新站合理价；问题是显示与计费错配。上线前必须二选一：真订阅，或改成「$99/周」一次性投放。
 4. **可选增值 SKU**：Newsletter 单发或首页 7 天 Spotlight，$49-$79 一次性——承接 TAAFT $437 与中部 $99 之间的需求。
 
-## 五、假设与验证（上线前后可做）
+## 五、决策记录（2026-09-28，用户已确认）
 
-- **假设：月展示 100K+**（Sponsor 文案）→ 用 Search Console/GA 核实；若实际 <1 万，Sponsor 转纯议价制或砍半。
+1. **100K+ 月展示表述必须移除**：新站做不到这个量级，Sponsor 文案不得出现任何流量数字承诺（改为不含数字的权益描述）。
+2. 三档方案获原则性批准并开始实施：
+   - Free $0 永久保留，审核口径改为标准队列 3-7 天，dofollow 减为 1 条；
+   - Featured（Pro）$19.9 限量早鸟 + 原价 $29 划线锚定（上线期代码维持 $19.9 收款，早鸟结束改回 `price: 29` 即可）；
+   - Sponsor $99/月改为真 Stripe 订阅（`mode: "subscription"`）。
+3. 遗留事项：
+   - **Stripe 后台需新建 $99/月 recurring price**，并更新 Vercel 生产环境变量 `NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID`（旧值是一次性 price，订阅模式会报错）；
+   - 订阅续费/取消的后续处理（如订阅取消后自动撤下 banner）暂未实现，`checkout.session.completed` 已通过 `subscription_data.metadata` 预留 itemId，后续可在 webhook 中处理 `customer.subscription.deleted`；
+   - 早鸟结束后把 `src/config/price.ts` 中 Pro 的 `price` 改回 29、删掉 `originalPrice`。
+
+## 六、假设与验证（上线前后可做）
+
 - **假设：开发者愿为「快审 + featured」付 $29** → 早鸟期 A/B：$19.9 与 $29 各跑两周，比较转化率 × 客单价。
 - **假设：dofollow 是付费主因** → 投稿表单加一题「升级 Pro 的原因」。
 - **风险：免费档太慷慨 → Pro 零转化** → 用队列时长差制造急迫感（3-7 天 vs 12h）。
 - **风险：Sponsor 计费错配上线** → 已知代码点：`src/actions/create-checkout-session.ts` 的 `mode: "payment"`。
 
-## 六、数据可信度说明
+## 七、数据可信度说明
 
 - TAAFT 定价来自官方提交页核实（2026-09-28 抓取）。
 - 93 站价格清单来自 enumhq.com/directory-list（第三方维护，2026 年仍更新）。
