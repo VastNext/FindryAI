@@ -1,11 +1,20 @@
 name: Deploy Preview to Vercel
 
-# 手动触发的 Preview 部署：与生产工作流共用同一组 secrets，
-# 走普通 vercel deploy（不带 --prod），不影响生产环境。
-# 生产部署仍由 deploy.yml（v* tag 触发）负责。
-
 on:
   workflow_dispatch:
+    inputs:
+      stripe_api_key:
+        description: 'Stripe API Key (sk_test_...)'
+        required: false
+        type: string
+      stripe_pro_price_id:
+        description: 'Stripe Pro Price ID'
+        required: false
+        type: string
+      stripe_sponsor_price_id:
+        description: 'Stripe Sponsor Price ID'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -34,6 +43,88 @@ jobs:
 
       - name: Install Vercel CLI
         run: pnpm add -g vercel@latest
+
+      - name: Sync Stripe Environment Variables to Vercel Project
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          INPUT_STRIPE_KEY: ${{ inputs.stripe_api_key }}
+          INPUT_PRO_PRICE: ${{ inputs.stripe_pro_price_id }}
+          INPUT_SPONSOR_PRICE: ${{ inputs.stripe_sponsor_price_id }}
+        run: |
+          node -e "
+          const https = require('https');
+
+          const token = process.env.VERCEL_TOKEN;
+          const orgId = process.env.VERCEL_ORG_ID;
+          const projectId = process.env.VERCEL_PROJECT_ID;
+
+          const envs = [];
+          if (process.env.INPUT_STRIPE_KEY) {
+            envs.push({ key: 'STRIPE_API_KEY', value: process.env.INPUT_STRIPE_KEY, type: 'secret', target: ['preview', 'production', 'development'] });
+          }
+          if (process.env.INPUT_PRO_PRICE) {
+            envs.push({ key: 'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID', value: process.env.INPUT_PRO_PRICE, type: 'plain', target: ['preview', 'production', 'development'] });
+          }
+          if (process.env.INPUT_SPONSOR_PRICE) {
+            envs.push({ key: 'NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID', value: process.env.INPUT_SPONSOR_PRICE, type: 'plain', target: ['preview', 'production', 'development'] });
+          }
+
+          if (envs.length === 0) {
+            console.log('No extra envs passed to sync.');
+            process.exit(0);
+          }
+
+          async function req(method, path, body) {
+            return new Promise((resolve, reject) => {
+              const url = new URL(path, 'https://api.vercel.com');
+              if (orgId) url.searchParams.set('teamId', orgId);
+              const r = https.request(url, {
+                method,
+                headers: {
+                  'Authorization': 'Bearer ' + token,
+                  'Content-Type': 'application/json',
+                }
+              }, res => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => resolve({ status: res.statusCode, data: data ? JSON.parse(data) : {} }));
+              });
+              r.on('error', reject);
+              if (body) r.write(JSON.stringify(body));
+              r.end();
+            });
+          }
+
+          async function main() {
+            // Get existing envs
+            const listRes = await req('GET', '/v10/projects/' + projectId + '/env');
+            const existing = (listRes.data && listRes.data.envs) || [];
+            console.log('Existing Vercel env count:', existing.length);
+
+            for (const item of envs) {
+              const matched = existing.find(e => e.key === item.key);
+              if (matched) {
+                console.log('Updating Vercel env:', item.key);
+                const patchRes = await req('PATCH', '/v10/projects/' + projectId + '/env/' + matched.id, {
+                  value: item.value,
+                  target: item.target
+                });
+                console.log('Patch result status:', patchRes.status);
+              } else {
+                console.log('Creating Vercel env:', item.key);
+                const postRes = await req('POST', '/v10/projects/' + projectId + '/env', item);
+                console.log('Create result status:', postRes.status);
+              }
+            }
+          }
+
+          main().catch(err => {
+            console.error('Failed to sync envs to Vercel:', err);
+            process.exit(1);
+          });
+          "
 
       - name: Deploy Preview
         env:
