@@ -62,7 +62,7 @@ jobs:
 
           const envs = [];
           if (process.env.INPUT_STRIPE_KEY) {
-            envs.push({ key: 'STRIPE_API_KEY', value: process.env.INPUT_STRIPE_KEY, type: 'secret', target: ['preview', 'production', 'development'] });
+            envs.push({ key: 'STRIPE_API_KEY', value: process.env.INPUT_STRIPE_KEY, type: 'encrypted', target: ['preview', 'production', 'development'] });
           }
           if (process.env.INPUT_PRO_PRICE) {
             envs.push({ key: 'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID', value: process.env.INPUT_PRO_PRICE, type: 'plain', target: ['preview', 'production', 'development'] });
