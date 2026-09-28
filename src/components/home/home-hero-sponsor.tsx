@@ -1,4 +1,3 @@
-import { Icons } from "@/components/icons/icons";
 import { heroConfig } from "@/config/hero";
 import type { SponsorItemListQueryResult } from "@/sanity.types";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -9,8 +8,6 @@ import HomeQuickTools from "./home-quick-tools";
 import HomeSearchBox from "./home-search-box";
 
 export default async function HomeHeroSponsor() {
-  const LabelIcon = Icons[heroConfig.label.icon];
-
   const sponsorItems =
     (await sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
@@ -20,18 +17,18 @@ export default async function HomeHeroSponsor() {
     : null;
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="w-full flex flex-col lg:flex-row items-stretch lg:items-start justify-between gap-8 lg:gap-12">
-        {/* Left Column: Headline + Value Prop + Search Box + Quick Tags */}
-        <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left justify-center gap-5">
+    <section className="w-full">
+      <div className="flex flex-col lg:flex-row items-stretch justify-between gap-8 lg:gap-10">
+        {/* Left Column: Headline + Value Prop + Search Box + Trending/Categories + Trust Metrics */}
+        <div className="flex-1 flex flex-col justify-between items-start text-left gap-4">
           {/* Top Pill: Value badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
             <SparklesIcon className="size-3.5" />
-            <span>Curated AI Directory & Daily Picks</span>
+            <span>Discover Curated AI Tools & Agent Skills</span>
           </div>
 
           {/* Headline */}
-          <h1 className="font-bold text-balance text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
+          <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight text-foreground">
             {heroConfig.title.first}{" "}
             <span className="text-gradient_indigo-purple font-extrabold">
               {heroConfig.title.second}
@@ -39,18 +36,19 @@ export default async function HomeHeroSponsor() {
           </h1>
 
           {/* Subtitle */}
-          <p className="max-w-2xl text-balance text-muted-foreground text-base sm:text-lg leading-relaxed">
-            {heroConfig.subtitle}
+          <p className="max-w-2xl text-muted-foreground text-sm sm:text-base leading-relaxed">
+            {heroConfig.subtitle}. Compare features, discover trending
+            workflows, and supercharge your productivity.
           </p>
 
-          {/* Search Box + Trending Guides */}
-          <div className="w-full mt-1">
+          {/* Search Box + Trending Guides + Popular Categories + Stats */}
+          <div className="w-full pt-1">
             <HomeSearchBox urlPrefix="/" />
           </div>
         </div>
 
-        {/* Right Column: Quick Tools Header + Sponsor Card */}
-        <div className="flex w-full flex-col gap-3 lg:w-[380px] lg:shrink-0">
+        {/* Right Column: Featured Sponsor Showcase Card */}
+        <div className="flex w-full flex-col justify-between gap-3 lg:w-[380px] lg:shrink-0">
           {/* Header Row: Featured Sponsor Label & Quick Access Tools inline */}
           <div className="flex items-center justify-between px-1">
             <span className="text-xs font-semibold text-muted-foreground tracking-wider uppercase flex items-center gap-1.5">
@@ -62,14 +60,18 @@ export default async function HomeHeroSponsor() {
             </div>
           </div>
 
-          {/* Sponsor Card (Full size & clean) */}
-          {sponsorItem && (
-            <div className="w-full">
+          {/* Sponsor Card (Full 16:9 Cover & Balanced Height) */}
+          {sponsorItem ? (
+            <div className="w-full h-full flex flex-col justify-end">
               <SponsorItemCard item={sponsorItem} />
+            </div>
+          ) : (
+            <div className="w-full h-full rounded-lg border border-dashed border-border/80 flex items-center justify-center p-8 text-center text-muted-foreground text-sm">
+              <span>Sponsor Slot Available</span>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

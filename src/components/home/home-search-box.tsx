@@ -2,14 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { createUrl } from "@/lib/utils";
-import { Flame, SearchIcon } from "lucide-react";
+import { cn, createUrl } from "@/lib/utils";
+import {
+  CompassIcon,
+  FlameIcon,
+  SearchIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+} from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 interface SearchBoxProps {
@@ -19,9 +22,16 @@ interface SearchBoxProps {
 interface TrendingGuideItem {
   label: string;
   href: string;
-  badge?: string;
+  badge?: "Hot" | "New" | "Featured";
 }
 
+interface PopularCategoryItem {
+  label: string;
+  slug: string;
+  icon: string;
+}
+
+// 爆款热搜词 / 专题指南
 const trendingGuides: TrendingGuideItem[] = [
   {
     label: "TypeSafe Jev",
@@ -47,11 +57,21 @@ const trendingGuides: TrendingGuideItem[] = [
   },
 ];
 
+// 高频热门分类快捷直达
+const popularCategories: PopularCategoryItem[] = [
+  { label: "AI Chat", slug: "ai-chat", icon: "🤖" },
+  { label: "Image Gen", slug: "image-generation", icon: "🎨" },
+  { label: "Dev Tools", slug: "developer-tools", icon: "💻" },
+  { label: "Writing", slug: "writing-tools", icon: "✍️" },
+  { label: "Video AI", slug: "video-generation", icon: "🎬" },
+  { label: "Office & Productivity", slug: "office-tools", icon: "⚡" },
+];
+
 export default function HomeSearchBox({ urlPrefix }: SearchBoxProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams?.get("q") || "");
-  const [debouncedQuery] = useDebounce(searchQuery, 300); // 300ms debounce
+  const [debouncedQuery] = useDebounce(searchQuery, 300);
   const lastExecutedQuery = useRef(searchParams?.get("q") || "");
   const previousQueryRef = useRef("");
   const isUserTypingRef = useRef(false);
@@ -74,7 +94,6 @@ export default function HomeSearchBox({ urlPrefix }: SearchBoxProps) {
       }
       newParams.delete("page");
       const newUrl = createUrl(`${urlPrefix}`, newParams);
-      console.log(`useEffect, newUrl: ${newUrl}`);
       lastExecutedQuery.current = debouncedQuery;
       router.push(newUrl, { scroll: false });
     }
@@ -83,53 +102,99 @@ export default function HomeSearchBox({ urlPrefix }: SearchBoxProps) {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     isUserTypingRef.current = true;
     setSearchQuery(e.target.value);
-
-    // Reset the flag to allow updates after URL changes (but give enough time to complete the current input)
     setTimeout(() => {
       isUserTypingRef.current = false;
     }, 500);
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-center lg:items-start">
-      <div className="flex items-center justify-center">
+    <div className="flex w-full flex-col gap-4">
+      {/* Search Input Bar */}
+      <div className="relative flex w-full max-w-2xl items-center">
         <Input
           type="text"
-          placeholder="Search any products you need"
+          placeholder="Search 1,000+ AI tools, agent skills, models & workflows..."
           autoComplete="off"
           value={searchQuery}
           onChange={handleSearch}
           className={cn(
-            "w-[320px] sm:w-[480px] md:w-[640px] h-12 rounded-r-none",
-            "focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary focus:border-2 focus:border-r-0",
+            "h-12 w-full rounded-r-none border-r-0 bg-background text-base shadow-xs",
+            "focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary focus:border-2",
           )}
         />
-        <Button type="submit" className="rounded-l-none size-12">
-          <SearchIcon className="size-6" aria-hidden="true" />
+        <Button
+          type="submit"
+          className="size-12 rounded-l-none shrink-0 px-4 bg-primary text-primary-foreground hover:bg-primary/90"
+        >
+          <SearchIcon className="size-5" aria-hidden="true" />
           <span className="sr-only">Search</span>
         </Button>
       </div>
 
-      {/* Trending / Featured Guides Hook */}
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 text-xs text-muted-foreground lg:justify-start">
-        <span className="flex items-center gap-1 font-semibold text-foreground/80">
-          <Flame className="size-3.5 text-amber-500" />
+      {/* Row 1: Trending & Hot Topics (爆款关键词 / 专题直达) */}
+      <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1 font-semibold text-foreground/90 shrink-0">
+          <FlameIcon className="size-3.5 text-amber-500 fill-amber-500/20" />
           <span>Trending:</span>
         </span>
-        {trendingGuides.map((guide) => (
-          <Link
-            key={guide.href}
-            href={guide.href}
-            className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-card/60 px-2.5 py-0.5 font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
-          >
-            <span>{guide.label}</span>
-            {guide.badge ? (
-              <span className="rounded-full bg-amber-500/10 px-1.5 py-0.2 text-[10px] font-bold text-amber-600 dark:text-amber-400">
-                {guide.badge}
-              </span>
-            ) : null}
-          </Link>
-        ))}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {trendingGuides.map((guide) => (
+            <Link
+              key={guide.href}
+              href={guide.href}
+              className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-card/60 px-2.5 py-0.5 font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+            >
+              <span>{guide.label}</span>
+              {guide.badge ? (
+                <span
+                  className={cn(
+                    "rounded-full px-1.5 py-0.2 text-[10px] font-bold",
+                    guide.badge === "Hot"
+                      ? "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                      : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+                  )}
+                >
+                  {guide.badge}
+                </span>
+              ) : null}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Row 2: Popular Category Quick Pills (热门分类快速直达) */}
+      <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1 font-semibold text-foreground/90 shrink-0">
+          <CompassIcon className="size-3.5 text-indigo-500" />
+          <span>Explore:</span>
+        </span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {popularCategories.map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/category/${cat.slug}`}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-xs font-medium text-foreground/80 transition-all hover:bg-muted hover:text-foreground hover:border-primary/30"
+            >
+              <span className="text-xs">{cat.icon}</span>
+              <span>{cat.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Row 3: Trust & Ecosystem Micro-bar (收录与更新背书) */}
+      <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1.5">
+          <ShieldCheckIcon className="size-3.5 text-emerald-500" />
+          <span>1,000+ Curated Tools</span>
+        </div>
+        <span className="text-border">•</span>
+        <div className="flex items-center gap-1.5">
+          <SparklesIcon className="size-3.5 text-indigo-500" />
+          <span>Editorial Tested</span>
+        </div>
+        <span className="text-border">•</span>
+        <span>Updated Daily</span>
       </div>
     </div>
   );
