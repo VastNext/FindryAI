@@ -113,8 +113,10 @@ export async function createCheckoutSession(
         managed_payments?: { enabled: boolean };
       };
 
-      const sessionParams: CheckoutSessionParams = {
-        customer: stripeCustomerId,
+      const buildSessionParams = (
+        customerId?: string,
+      ): CheckoutSessionParams => ({
+        ...(customerId ? { customer: customerId } : {}),
         // Sponsor is billed as a monthly subscription (recurring Stripe price); Pro stays one-time.
         mode: pricePlan === PricePlans.SPONSOR ? "subscription" : "payment",
         line_items: [
@@ -149,11 +151,43 @@ export async function createCheckoutSession(
         // allow promotion codes if you need
         allow_promotion_codes: true,
         managed_payments: { enabled: false },
-      };
+      });
 
-      const stripeSession = await stripe.checkout.sessions.create(
-        sessionParams as Stripe.Checkout.SessionCreateParams,
-      );
+      let stripeSession: Stripe.Response<Stripe.Checkout.Session>;
+      try {
+        stripeSession = await stripe.checkout.sessions.create(
+          buildSessionParams(stripeCustomerId ?? undefined),
+        );
+      } catch (err) {
+        // Sanity 里可能残留测试模式时期创建的 customer id，切到 LIVE key 后
+        // Stripe 会报 "No such customer" —— 此时清掉旧 id、重建 LIVE 客户并重试一次
+        const isStaleCustomer =
+          err instanceof Error && /No such customer/i.test(err.message ?? "");
+        if (!isStaleCustomer) throw err;
+
+        console.warn(
+          "stale stripeCustomerId detected, recreating LIVE customer:",
+          stripeCustomerId,
+        );
+        await sanityClient.patch(user.id).unset(["stripeCustomerId"]).commit();
+        const freshCustomer = await stripe.customers.create({
+          email: user.email,
+        });
+        if (!freshCustomer) {
+          return {
+            status: "error",
+            message: "Failed to create customer in Stripe",
+          };
+        }
+        await sanityClient
+          .patch(user.id)
+          .set({ stripeCustomerId: freshCustomer.id })
+          .commit();
+        stripeCustomerId = freshCustomer.id;
+        stripeSession = await stripe.checkout.sessions.create(
+          buildSessionParams(freshCustomer.id),
+        );
+      }
 
       redirectUrl = stripeSession.url as string;
       console.log("stripe checkout session created, url:", redirectUrl);
