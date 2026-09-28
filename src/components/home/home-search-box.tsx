@@ -17,6 +17,7 @@ import { useDebounce } from "use-debounce";
 
 interface SearchBoxProps {
   urlPrefix: string;
+  hasSponsor?: boolean;
 }
 
 interface TrendingGuideItem {
@@ -67,7 +68,10 @@ const popularCategories: PopularCategoryItem[] = [
   { label: "Office & Productivity", slug: "office-tools", icon: "⚡" },
 ];
 
-export default function HomeSearchBox({ urlPrefix }: SearchBoxProps) {
+export default function HomeSearchBox({
+  urlPrefix,
+  hasSponsor = false,
+}: SearchBoxProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams?.get("q") || "");
@@ -182,8 +186,13 @@ export default function HomeSearchBox({ urlPrefix }: SearchBoxProps) {
         </div>
       </div>
 
-      {/* Row 3: Trust & Ecosystem Micro-bar (收录与更新背书) */}
-      <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground">
+      {/* Row 3: Trust & Ecosystem Micro-bar (只有当有 Sponsor 时才显示，无 Sponsor 时隐藏以保证呼吸感) */}
+      <div
+        className={cn(
+          "flex items-center gap-4 pt-1 text-xs text-muted-foreground",
+          !hasSponsor && "hidden",
+        )}
+      >
         <div className="flex items-center gap-1.5">
           <ShieldCheckIcon className="size-3.5 text-emerald-500" />
           <span>1,000+ Curated Tools</span>
