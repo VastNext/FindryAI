@@ -101,6 +101,9 @@ export async function POST(req: Request) {
             pricePlan === PricePlans.SPONSOR
               ? SponsorPlanStatus.SUCCESS
               : SponsorPlanStatus.SUBMITTING,
+          ...(pricePlan === PricePlans.SPONSOR
+            ? { sponsorStartDate: new Date().toISOString() }
+            : {}),
           order: {
             _type: "reference",
             _ref: result._id,

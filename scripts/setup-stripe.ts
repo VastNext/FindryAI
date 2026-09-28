@@ -66,6 +66,7 @@ async function main() {
     const product = await stripe.products.create({
       name: spec.name,
       description: spec.description,
+      tax_code: "txcd_10501000", // Advertising / Digital Marketing Services
     });
 
     const price = await stripe.prices.create({

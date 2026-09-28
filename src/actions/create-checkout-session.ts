@@ -143,6 +143,8 @@ export async function createCheckoutSession(
         billing_address_collection: "auto",
         // allow promotion codes if you need
         allow_promotion_codes: true,
+        // @ts-ignore compatibility with accounts having Managed Payments enabled
+        managed_payments: { enabled: false },
       });
 
       redirectUrl = stripeSession.url as string;
