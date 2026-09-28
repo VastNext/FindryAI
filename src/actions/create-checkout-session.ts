@@ -10,6 +10,7 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { itemByIdQuery } from "@/sanity/lib/queries";
 import type { ItemInfo } from "@/types";
 import { redirect } from "next/navigation";
+import type Stripe from "stripe";
 
 export type ServerActionResponse = {
   status: "success" | "error";
@@ -108,7 +109,11 @@ export async function createCheckoutSession(
       // TODO: optimize the success and cancel urls with sessionId!!!
       const successUrl = absoluteUrl(`/publish/${itemId}?pay=success`);
       const cancelUrl = absoluteUrl(`/payment/${itemId}?pay=failed`);
-      const stripeSession = await stripe.checkout.sessions.create({
+      type CheckoutSessionParams = Stripe.Checkout.SessionCreateParams & {
+        managed_payments?: { enabled: boolean };
+      };
+
+      const sessionParams: CheckoutSessionParams = {
         customer: stripeCustomerId,
         // Sponsor is billed as a monthly subscription (recurring Stripe price); Pro stays one-time.
         mode: pricePlan === PricePlans.SPONSOR ? "subscription" : "payment",
@@ -143,9 +148,12 @@ export async function createCheckoutSession(
         billing_address_collection: "auto",
         // allow promotion codes if you need
         allow_promotion_codes: true,
-        // @ts-ignore compatibility with accounts having Managed Payments enabled
         managed_payments: { enabled: false },
-      });
+      };
+
+      const stripeSession = await stripe.checkout.sessions.create(
+        sessionParams as Stripe.Checkout.SessionCreateParams,
+      );
 
       redirectUrl = stripeSession.url as string;
       console.log("stripe checkout session created, url:", redirectUrl);
