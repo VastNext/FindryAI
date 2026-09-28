@@ -33,6 +33,15 @@ export async function createCheckoutSession(
       return { status: "error", message: "Unauthorized" };
     }
 
+    if (!priceId) {
+      console.error("Missing Stripe priceId for plan:", pricePlan);
+      return {
+        status: "error",
+        message:
+          "Payment configuration error: missing priceId. Please check environment variables.",
+      };
+    }
+
     const item = await sanityFetch<ItemInfo>({
       query: itemByIdQuery,
       params: { id: itemId },
@@ -140,9 +149,13 @@ export async function createCheckoutSession(
       console.log("stripe checkout session created, url:", redirectUrl);
     }
   } catch (error) {
+    console.error("createCheckoutSession error:", error);
     return {
       status: "error",
-      message: "Failed to generate stripe checkout session",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to generate stripe checkout session",
     };
   }
 
