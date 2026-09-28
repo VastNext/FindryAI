@@ -28,12 +28,16 @@ export default async function ItemGrid({
     return <ItemGridClient items={items} />;
   }
 
-  // show sponsor items strictly at the top (1st place)
+  // show sponsor item in the 3rd slot (end of 1st row in 3-column grid)
   const validSponsors = Array.isArray(sponsorItems) ? sponsorItems : [];
   const sponsorIds = new Set(validSponsors.map((s) => s._id));
   const filteredItems = items.filter((item) => !sponsorIds.has(item._id));
 
-  const allItems = [...validSponsors, ...filteredItems];
+  const allItems = [
+    ...filteredItems.slice(0, 2),
+    ...(validSponsors.length > 0 ? [validSponsors[0]] : []),
+    ...filteredItems.slice(2),
+  ];
 
   return <ItemGridClient items={allItems} />;
 }
