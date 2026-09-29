@@ -1,5 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return {
+      // Serve the sitemap index at /sitemap.xml (the URL declared in robots.ts
+      // and submitted to GSC). The handler lives at src/app/sitemap-index.xml/
+      // because a route file at src/app/sitemap.xml/ conflicts with the dev
+      // routes that generateSitemaps (src/app/sitemap.ts) registers.
+      beforeFiles: [
+        { source: "/sitemap.xml", destination: "/sitemap-index.xml" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
+
   async redirects() {
     return [
       {
