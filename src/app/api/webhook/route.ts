@@ -9,6 +9,7 @@ import { stripe } from "@/lib/stripe";
 import { PricePlans, ProPlanStatus, SponsorPlanStatus } from "@/lib/submission";
 import { getItemLinkInWebsite } from "@/lib/utils";
 import { sanityClient } from "@/sanity/lib/client";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import type Stripe from "stripe";
 
@@ -118,6 +119,10 @@ export async function POST(req: Request) {
         console.log("checkout.session.completed, update item failed");
         return new Response(null, { status: 500 });
       }
+
+      // 已发布条目付费升级为 Pro/Sponsor 时不会再次走 Publish 流程，
+      // 必须在 webhook 里失效全站 ISR，否则首页/分类最长 48h 看不到升级效果
+      revalidatePath("/", "layout");
 
       // send thank you email to user
       console.log(`checkout.session.completed, item: ${JSON.stringify(res)}`);
