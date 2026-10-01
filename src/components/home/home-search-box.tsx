@@ -35,6 +35,11 @@ interface PopularCategoryItem {
 // 爆款热搜词 / 专题指南
 const trendingGuides: TrendingGuideItem[] = [
   {
+    label: "Gemini 4 Argon",
+    href: "/gemini-4-argon",
+    badge: "Hot",
+  },
+  {
     label: "TypeSafe Jev",
     href: "/typesafe-jev",
     badge: "Hot",

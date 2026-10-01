@@ -128,6 +128,10 @@ export default async function sitemap({
           lastModified: new Date(),
         },
         {
+          url: "gemini-4-argon",
+          lastModified: new Date(),
+        },
+        {
           url: "typesafe-jev",
           lastModified: new Date("2026-09-24T00:00:00.000Z"),
         },
