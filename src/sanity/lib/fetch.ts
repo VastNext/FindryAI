@@ -1,7 +1,6 @@
 import { sanityClient } from "@/sanity/lib/client";
 import { token } from "@/sanity/lib/token";
 import type { ClientPerspective, QueryParams } from "next-sanity";
-import { draftMode } from "next/headers";
 
 /**
  * https://www.sanity.io/plugins/next-sanity
@@ -9,14 +8,20 @@ import { draftMode } from "next/headers";
  * Used to fetch data in Server Components, it has built in support for handling Draft Mode and perspectives.
  * When using the "published" perspective then time-based revalidation is used,
  * set to match the time-to-live on Sanity's API CDN (60 seconds)
- * and will also fetch from the CDN.
+ * and will also fetch from the API CDN.
  * When using the "previewDrafts" perspective then the data is fetched from the live API and isn't cached,
  * it will also fetch draft content that isn't published yet.
+ *
+ * Do not call draftMode() here: it is a dynamic API, so calling it
+ * unconditionally opts every route that fetches through sanityFetch into
+ * dynamic rendering and defeats their ISR caches. Draft preview therefore
+ * only stays enabled in development; published content in production is
+ * refreshed via the /api/revalidate webhook or the revalidate window.
  */
 export async function sanityFetch<QueryResponse>({
   query,
   params = {},
-  perspective = process.env.NODE_ENV === "development" || draftMode().isEnabled
+  perspective = process.env.NODE_ENV === "development"
     ? "previewDrafts"
     : "published",
   disableCache,

@@ -6,7 +6,6 @@ import {
   fontSourceSerif,
   fontWorkSans,
 } from "@/assets/fonts";
-import { auth } from "@/auth";
 import { Analytics } from "@/components/analytics/analytics";
 import { JsonLd } from "@/components/shared/json-ld";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
@@ -57,10 +56,10 @@ const websiteJsonLd = [
   },
 ];
 
-export default async function RootLayout({ children }: RootLayoutProps) {
-  // https://youtu.be/1MTyCvS05V4?t=21464
-  const session = await auth();
-
+export default function RootLayout({ children }: RootLayoutProps) {
+  // Do not read the session here (auth() consumes cookies(), which opts every
+  // route in this group into dynamic rendering and defeats the ISR caches on
+  // public pages). Client components get the session via useSession instead.
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -78,7 +77,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <JsonLd data={websiteJsonLd} />
-        <SessionProvider session={session}>
+        <SessionProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
