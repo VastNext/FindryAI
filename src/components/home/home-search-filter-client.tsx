@@ -7,6 +7,7 @@ import {
   type QueryFilterItem,
   type SortFilterItem,
 } from "@/lib/constants";
+import { createUrl } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DEFAULT_FILTER_VALUE, ResponsiveComboBox } from "../shared/combobox";
@@ -76,6 +77,36 @@ export function HomeSearchFilterClient({
   });
 
   const handleFilterChange = (type: string, value: string) => {
+    setSelected((prev) => ({
+      ...prev,
+      [type]: value === DEFAULT_FILTER_VALUE ? "" : value,
+    }));
+
+    if (urlPrefix === "/") {
+      // The homepage is statically prerendered and no longer reads query
+      // params, so route each filter to its dedicated listing route instead
+      // of pushing ?category=/?sort= style params onto /.
+      if (type === "category" && value !== DEFAULT_FILTER_VALUE) {
+        router.push(`/category/${value}`);
+        return;
+      }
+      if (type === "tag" && value) {
+        router.push(`/tag/${value.split(",")[0]}`);
+        return;
+      }
+      // sort / f (and cleared filters) land on /search, which renders the
+      // full item list with server-side filtering.
+      const newParams = new URLSearchParams(window.location.search);
+      if (value === null || value === DEFAULT_FILTER_VALUE) {
+        newParams.delete(type);
+      } else {
+        newParams.set(type, value);
+      }
+      newParams.delete("page");
+      router.push(createUrl("/search", newParams));
+      return;
+    }
+
     const newParams = new URLSearchParams(window.location.search);
     if (value === null || value === DEFAULT_FILTER_VALUE) {
       newParams.delete(type);
@@ -83,10 +114,6 @@ export function HomeSearchFilterClient({
       newParams.set(type, value);
     }
     newParams.delete("page");
-    setSelected((prev) => ({
-      ...prev,
-      [type]: value === DEFAULT_FILTER_VALUE ? "" : value,
-    }));
     router.push(`${urlPrefix}?${newParams.toString()}`);
   };
 

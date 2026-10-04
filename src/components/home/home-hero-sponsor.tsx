@@ -44,7 +44,9 @@ export default async function HomeHeroSponsor() {
 
           {/* Search Box + Trending Guides + Popular Categories */}
           <div className="w-full pt-1">
-            <HomeSearchBox urlPrefix="/" hasSponsor={!!sponsorItem} />
+            {/* /search owns the q param: the homepage is statically
+                prerendered and no longer reads query params */}
+            <HomeSearchBox urlPrefix="/search" hasSponsor={!!sponsorItem} />
           </div>
         </div>
 
