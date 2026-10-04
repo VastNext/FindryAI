@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { DEFAULT_SORT, type SortFilterItem } from "@/lib/constants";
 import { createUrl } from "@/lib/utils";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export type SortListProps = {
@@ -18,22 +18,26 @@ export type SortListProps = {
 
 export function SortListDesktop({ sortList }: SortListProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [active, setActive] = useState("");
 
+  // Read sort/q from window.location client-side only: useSearchParams() in
+  // the category/tag/blog layouts opts those routes into the CSR bailout and
+  // breaks static prerendering. Re-runs after every render so client
+  // navigations stay in sync (setState with equal values is a no-op).
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
     const activeItem = sortList.find(
-      (item) => searchParams.get("sort") === item.slug,
+      (item) => params.get("sort") === item.slug,
     );
     if (activeItem) {
       setActive(activeItem.slug);
     }
-  }, [pathname, sortList, searchParams]);
+  });
 
   const generateUrl = (slug: string) => {
-    const q = searchParams.get("q");
+    const q = new URLSearchParams(window.location.search).get("q");
     return createUrl(
       pathname,
       new URLSearchParams({

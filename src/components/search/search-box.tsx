@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { SearchIcon } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface SearchBoxProps {
   urlPrefix: string;
@@ -13,13 +13,26 @@ interface SearchBoxProps {
 
 export default function SearchBox({ urlPrefix }: SearchBoxProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Read the q param from window.location client-side only: useSearchParams()
+  // opts routes rendering this search box into the CSR bailout and breaks
+  // static prerendering. Re-runs after every render so client navigations
+  // stay in sync.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    const currentQuery =
+      new URLSearchParams(window.location.search).get("q") || "";
+    setSearchTerm((prev) => {
+      const incoming = currentQuery.trim();
+      return incoming && incoming !== prev ? incoming : prev;
+    });
+  });
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     const query = searchTerm.trim();
 
     if (query) {

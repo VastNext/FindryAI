@@ -7,7 +7,8 @@ import {
   type QueryFilterItem,
   type SortFilterItem,
 } from "@/lib/constants";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DEFAULT_FILTER_VALUE, ResponsiveComboBox } from "../shared/combobox";
 import { MultiSelect } from "../shared/multi-select";
 
@@ -52,19 +53,43 @@ export function SearchFilterClient({
   urlPrefix,
 }: SearchFilterProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get("category");
-  const selectedTag = searchParams.get("tag");
-  const selectedSort = searchParams.get("sort");
-  const selectedFilter = searchParams.get("f");
+  const [selected, setSelected] = useState({
+    category: "",
+    tag: "",
+    sort: "",
+    filter: "",
+  });
+  const selectedCategory = selected.category;
+  const selectedTag = selected.tag;
+  const selectedSort = selected.sort;
+  const selectedFilter = selected.filter;
+
+  // Read selected filters from the URL client-side only: useSearchParams()
+  // opts routes rendering this filter bar into the CSR bailout and breaks
+  // static prerendering. Re-runs after every render so client navigations
+  // stay in sync (setState with equal values is a no-op).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setSelected({
+      category: params.get("category") || "",
+      tag: params.get("tag") || "",
+      sort: params.get("sort") || "",
+      filter: params.get("f") || "",
+    });
+  });
+
   const handleFilterChange = (type: string, value: string) => {
-    console.log(`Filter changed: ${type} -> ${value}`);
     const newParams = new URLSearchParams(window.location.search);
     if (value === null || value === DEFAULT_FILTER_VALUE) {
       newParams.delete(type);
     } else {
       newParams.set(type, value);
     }
+    setSelected((prev) => ({
+      ...prev,
+      [type]: value === DEFAULT_FILTER_VALUE ? "" : value,
+    }));
     router.push(`${urlPrefix}?${newParams.toString()}`);
   };
 

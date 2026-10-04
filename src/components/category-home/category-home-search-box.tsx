@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn, createUrl } from "@/lib/utils";
 import { SearchIcon } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 
@@ -16,24 +16,29 @@ export default function CategoryHomeSearchBox({
   urlPrefix,
 }: CategoryHomeSearchBoxProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+  const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery] = useDebounce(searchQuery, 300);
-  const lastExecutedQuery = useRef(searchParams.get("q") || "");
+  const lastExecutedQuery = useRef("");
   const previousQueryRef = useRef("");
   const isUserTypingRef = useRef(false);
 
+  // Read the q param from window.location client-side only: useSearchParams()
+  // opts routes rendering this search box into the CSR bailout and breaks
+  // static prerendering. Re-runs after every render so client navigations
+  // stay in sync (guarded by previousQueryRef).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    const currentQuery = searchParams.get("q") || "";
+    const currentQuery =
+      new URLSearchParams(window.location.search).get("q") || "";
     if (currentQuery !== previousQueryRef.current && !isUserTypingRef.current) {
       setSearchQuery(currentQuery);
       previousQueryRef.current = currentQuery;
     }
-  }, [searchParams]);
+  });
 
   useEffect(() => {
     if (debouncedQuery !== lastExecutedQuery.current) {
-      const newParams = new URLSearchParams(searchParams.toString());
+      const newParams = new URLSearchParams(window.location.search);
       if (debouncedQuery) {
         newParams.set("q", debouncedQuery);
       } else {
@@ -43,7 +48,7 @@ export default function CategoryHomeSearchBox({
       lastExecutedQuery.current = debouncedQuery;
       router.push(createUrl(urlPrefix, newParams), { scroll: false });
     }
-  }, [debouncedQuery, router, searchParams, urlPrefix]);
+  }, [debouncedQuery, router, urlPrefix]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     isUserTypingRef.current = true;

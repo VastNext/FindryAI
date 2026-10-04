@@ -7,7 +7,8 @@ import {
   type QueryFilterItem,
   type SortFilterItem,
 } from "@/lib/constants";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DEFAULT_FILTER_VALUE, ResponsiveComboBox } from "../shared/combobox";
 import { MultiSelect } from "../shared/multi-select";
 
@@ -52,14 +53,29 @@ export function HomeSearchFilterClient({
   urlPrefix,
 }: SearchFilterProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get("category");
-  const selectedTag = searchParams.get("tag");
-  const selectedSort = searchParams.get("sort");
-  const selectedFilter = searchParams.get("f");
+  const [selected, setSelected] = useState({
+    category: "",
+    tag: "",
+    sort: "",
+    filter: "",
+  });
+
+  // Read selected filters from the URL client-side only: useSearchParams()
+  // here opts the homepage into the CSR bailout and breaks static
+  // prerendering. Re-runs after every render so client navigations stay in
+  // sync (setState with equal values is a no-op).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setSelected({
+      category: params.get("category") || "",
+      tag: params.get("tag") || "",
+      sort: params.get("sort") || "",
+      filter: params.get("f") || "",
+    });
+  });
 
   const handleFilterChange = (type: string, value: string) => {
-    console.log(`Filter changed: ${type} -> ${value}`);
     const newParams = new URLSearchParams(window.location.search);
     if (value === null || value === DEFAULT_FILTER_VALUE) {
       newParams.delete(type);
@@ -67,6 +83,10 @@ export function HomeSearchFilterClient({
       newParams.set(type, value);
     }
     newParams.delete("page");
+    setSelected((prev) => ({
+      ...prev,
+      [type]: value === DEFAULT_FILTER_VALUE ? "" : value,
+    }));
     router.push(`${urlPrefix}?${newParams.toString()}`);
   };
 
@@ -113,7 +133,7 @@ export function HomeSearchFilterClient({
         filterItemList={categoryFilterItemList}
         placeholder="All Categories"
         labelPrefix="Category: "
-        selectedValue={selectedCategory || DEFAULT_FILTER_VALUE}
+        selectedValue={selected.category || DEFAULT_FILTER_VALUE}
         onValueChange={(value) => handleFilterChange("category", value)}
       />
 
@@ -139,7 +159,7 @@ export function HomeSearchFilterClient({
             selected.length > 0 ? selected.join(",") : null,
           )
         }
-        value={selectedTag ? selectedTag.split(",") : []}
+        value={selected.tag ? selected.tag.split(",") : []}
         placeholder="Select tags"
         variant="default"
         maxCount={1}
@@ -148,14 +168,14 @@ export function HomeSearchFilterClient({
       <ResponsiveComboBox
         filterItemList={queryFilterItemList}
         placeholder={DEFAULT_QUERY.label}
-        selectedValue={selectedFilter || DEFAULT_FILTER_VALUE}
+        selectedValue={selected.filter || DEFAULT_FILTER_VALUE}
         onValueChange={(value) => handleFilterChange("f", value)}
       />
 
       <ResponsiveComboBox
         filterItemList={sortFilterItemList}
         placeholder={DEFAULT_SORT.label}
-        selectedValue={selectedSort || DEFAULT_FILTER_VALUE}
+        selectedValue={selected.sort || DEFAULT_FILTER_VALUE}
         onValueChange={(value) => handleFilterChange("sort", value)}
       />
 
