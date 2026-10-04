@@ -1,5 +1,6 @@
 "use client";
 
+import { LoginForm } from "@/components/auth/login-form";
 import {
   Dialog,
   DialogContent,
@@ -7,10 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { LoginForm } from "@/components/auth/login-form";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { authRoutes } from "@/routes";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface LoginWrapperProps {
@@ -26,7 +26,6 @@ export const LoginWrapper = ({
 }: LoginWrapperProps) => {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isTablet, isDesktop } = useMediaQuery();
 
@@ -34,11 +33,13 @@ export const LoginWrapper = ({
     router.push("/auth/login");
   };
 
-  // Close the modal on route change
+  // Close the modal on route change. Deliberately keyed on pathname only:
+  // useSearchParams() here would opt every route that renders the navbar
+  // into the CSR bailout and break static prerendering.
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    useEffect(() => {
+  useEffect(() => {
     setIsModalOpen(false);
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   // don't open the modal if the user is already in the auth pages
   // keep isTablet or isDesktop open, if user resizes the window

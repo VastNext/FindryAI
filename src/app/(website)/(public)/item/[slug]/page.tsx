@@ -90,7 +90,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
   // });
 
   // if you support sponsor item, you can use this code
-  const [item, sponsorItems] = await Promise.all([
+  let [item, sponsorItems] = await Promise.all([
     sanityFetch<ItemFullInfo>({
       query: itemFullInfoBySlugQuery,
       params: { slug: params.slug },
@@ -99,6 +99,16 @@ export default async function ItemPage({ params }: ItemPageProps) {
       query: sponsorItemListQuery,
     }),
   ]);
+
+  // Retry once: a transient Sanity fetch failure here would notFound() and
+  // the 404 gets cached by ISR for the full revalidate window, hiding a real
+  // page from crawlers for 48 hours.
+  if (!item) {
+    item = await sanityFetch<ItemFullInfo>({
+      query: itemFullInfoBySlugQuery,
+      params: { slug: params.slug },
+    });
+  }
 
   if (!item) {
     console.error("ItemPage, item not found");

@@ -1,6 +1,8 @@
 import Container from "@/components/container";
 import HomeHeroSponsor from "@/components/home/home-hero-sponsor";
 import { HomeSearchFilter } from "@/components/home/home-search-filter";
+import { Loader2Icon } from "lucide-react";
+import { Suspense } from "react";
 
 export default function HomeLayout({
   children,
@@ -10,7 +12,15 @@ export default function HomeLayout({
       <HomeHeroSponsor />
 
       <div className="flex flex-col gap-6">
-        <HomeSearchFilter urlPrefix="/" />
+        {/* HomeSearchFilterClient reads useSearchParams; the boundary confines
+            the CSR bailout so the homepage prerenders its full DOM. */}
+        <Suspense
+          fallback={
+            <Loader2Icon className="my-24 mx-auto size-6 animate-spin" />
+          }
+        >
+          <HomeSearchFilter urlPrefix="/" />
+        </Suspense>
 
         {children}
       </div>

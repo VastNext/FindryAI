@@ -9,7 +9,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type CustomPaginationProps = {
   totalPages: number;
@@ -20,14 +20,26 @@ export default function CustomPagination({
   totalPages,
   routePrefix,
 }: CustomPaginationProps) {
-  const searchParams = useSearchParams();
-  const currentPage = Number(searchParams.get("page")) || 1;
+  // Read page/other params from window.location client-side only:
+  // useSearchParams() opts routes rendering this component into the CSR
+  // bailout and breaks static prerendering. Re-runs after every render so
+  // client navigations stay in sync (setState with equal values is a no-op).
+  // Before hydration the links render with page numbers only.
+  const [currentPage, setCurrentPage] = useState(1);
+  const [queryString, setQueryString] = useState("");
   const lastPage = Math.max(1, totalPages);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setCurrentPage(Number(params.get("page")) || 1);
+    params.delete("page");
+    setQueryString(params.toString());
+  });
+
   const getPageHref = (page: number | string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", page.toString());
-    return `${routePrefix}?${params.toString()}`;
+    const suffix = queryString ? `${queryString}&` : "";
+    return `${routePrefix}?${suffix}page=${page}`;
   };
 
   const allPages = generatePagination(currentPage, lastPage);

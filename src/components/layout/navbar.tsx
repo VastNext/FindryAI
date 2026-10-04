@@ -22,7 +22,7 @@ import type { DashboardConfig, MarketingConfig } from "@/types";
 import { ArrowRightIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import React from "react";
 import { Logo } from "../logo";
 
@@ -114,16 +114,33 @@ export function Navbar({ scroll = false, config }: NavBarProps) {
                 <UserButton />
               </div>
             ) : (
-              <LoginWrapper mode="modal" asChild>
-                <Button
-                  className="flex gap-2 px-5 rounded-full"
-                  variant="default"
-                  size="default"
-                >
-                  <span>Sign In</span>
-                  <ArrowRightIcon className="size-4" />
-                </Button>
-              </LoginWrapper>
+              // LoginWrapper reads useSearchParams (callbackUrl), which opts every
+              // route into the CSR bailout; the Suspense boundary confines it so
+              // static pages still prerender their full DOM.
+              <Suspense
+                fallback={
+                  <Button
+                    className="flex gap-2 px-5 rounded-full"
+                    variant="default"
+                    size="default"
+                    disabled
+                  >
+                    <span>Sign In</span>
+                    <ArrowRightIcon className="size-4" />
+                  </Button>
+                }
+              >
+                <LoginWrapper mode="modal" asChild>
+                  <Button
+                    className="flex gap-2 px-5 rounded-full"
+                    variant="default"
+                    size="default"
+                  >
+                    <span>Sign In</span>
+                    <ArrowRightIcon className="size-4" />
+                  </Button>
+                </LoginWrapper>
+              </Suspense>
             )}
           </div>
         </Container>
@@ -209,16 +226,31 @@ export function Navbar({ scroll = false, config }: NavBarProps) {
                 <UserButton />
               </div>
             ) : (
-              <LoginWrapper mode="redirect" asChild>
-                <Button
-                  className="flex gap-2 px-5 rounded-full"
-                  variant="default"
-                  size="default"
-                >
-                  <span>Sign In</span>
-                  <ArrowRightIcon className="size-4" />
-                </Button>
-              </LoginWrapper>
+              // Same CSR-bailout containment as the desktop branch above.
+              <Suspense
+                fallback={
+                  <Button
+                    className="flex gap-2 px-5 rounded-full"
+                    variant="default"
+                    size="default"
+                    disabled
+                  >
+                    <span>Sign In</span>
+                    <ArrowRightIcon className="size-4" />
+                  </Button>
+                }
+              >
+                <LoginWrapper mode="redirect" asChild>
+                  <Button
+                    className="flex gap-2 px-5 rounded-full"
+                    variant="default"
+                    size="default"
+                  >
+                    <span>Sign In</span>
+                    <ArrowRightIcon className="size-4" />
+                  </Button>
+                </LoginWrapper>
+              </Suspense>
             )}
           </div>
         </div>
