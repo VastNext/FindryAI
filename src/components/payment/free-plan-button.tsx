@@ -3,7 +3,6 @@
 import { submitToReview } from "@/actions/submit-to-review";
 import { verifyBadge } from "@/actions/verify-badge";
 import { Icons } from "@/components/icons/icons";
-import ItemEmbedBadge from "@/components/item/item-embed-badge";
 import { Button } from "@/components/ui/button";
 import { FreePlanStatus } from "@/lib/submission";
 import { cn } from "@/lib/utils";
@@ -202,9 +201,6 @@ export function FreePlanButton({ item, className }: FreePlanButtonProps) {
   if (item.freePlanStatus === FreePlanStatus.SUBMITTING) {
     return (
       <div className={cn("flex flex-col gap-2.5 w-full", className)}>
-        {item.slug?.current && (
-          <ItemEmbedBadge itemName={item.name} itemSlug={item.slug.current} />
-        )}
         {/* 优先队列：检测徽章并提交 */}
         <Button
           size="lg"

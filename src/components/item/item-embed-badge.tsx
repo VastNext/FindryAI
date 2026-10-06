@@ -9,7 +9,7 @@ import { useState } from "react";
 
 interface ItemEmbedBadgeProps {
   itemName: string;
-  itemSlug: string;
+  itemSlug?: string;
 }
 
 // 徽章支持的三种主题类型
@@ -32,8 +32,11 @@ export default function ItemEmbedBadge({
   // 复制状态提示
   const [copied, setCopied] = useState(false);
 
-  const itemUrl = `${siteConfig.url}/item/${itemSlug}`;
+  const itemUrl = itemSlug
+    ? `${siteConfig.url}/item/${itemSlug}`
+    : siteConfig.url;
   const badgeUrl = `${siteConfig.url}/badge-${selectedTheme}.svg`;
+  const previewUrl = `/badge-${selectedTheme}.svg`;
 
   // 生成 HTML 与 Markdown 嵌入代码
   const htmlCode = `<a href="${itemUrl}" target="_blank" rel="noopener noreferrer"><img src="${badgeUrl}" alt="Featured on Findry AI" width="220" height="54" /></a>`;
@@ -49,12 +52,12 @@ export default function ItemEmbedBadge({
   };
 
   return (
-    <div className="bg-muted/50 border border-border/60 rounded-xl p-5 flex flex-col gap-4">
+    <div className="min-w-0 w-full rounded-xl border border-border bg-background p-4 sm:p-5 flex flex-col gap-4">
       {/* 头部标题与标识 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <SparklesIcon className="size-4 text-indigo-500" />
-          <h3 className="font-semibold text-sm">Featured Badge</h3>
+          <h3 className="font-semibold text-sm">Findry AI badge</h3>
         </div>
         <Badge variant="outline" className="text-xs text-muted-foreground">
           Embed Code
@@ -62,9 +65,8 @@ export default function ItemEmbedBadge({
       </div>
 
       <p className="text-xs text-muted-foreground leading-relaxed">
-        Add this badge to the public website for {itemName} to qualify for
-        priority review. Keep it there after publication. The badge must appear
-        in the HTML of the submitted URL (such as a shared footer).
+        Add this badge to the HTML of your submitted website, then verify it to
+        enter the priority review queue. Keep it there after publication.
       </p>
 
       {/* 主题选择器（亮色 / 暗色 / 中性色） */}
@@ -123,12 +125,12 @@ export default function ItemEmbedBadge({
         }`}
       >
         <Image
-          src={badgeUrl}
+          src={previewUrl}
           alt={`${itemName} featured on Findry AI`}
           width={220}
           height={54}
           unoptimized
-          className="h-[46px] w-auto object-contain drop-shadow-sm"
+          className="h-[46px] max-w-full w-auto object-contain"
         />
       </div>
 
@@ -181,7 +183,7 @@ export default function ItemEmbedBadge({
         </div>
 
         <div className="relative">
-          <pre className="text-[11px] font-mono bg-zinc-950 text-zinc-300 p-2.5 rounded-md overflow-x-auto whitespace-pre-wrap break-all border border-zinc-800 select-all">
+          <pre className="text-[11px] font-mono bg-zinc-950 text-zinc-300 p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-all border border-zinc-800 select-all">
             {currentCode}
           </pre>
         </div>

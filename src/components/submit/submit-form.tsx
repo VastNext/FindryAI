@@ -2,7 +2,10 @@
 
 import { fetchWebsite } from "@/actions/fetch-website";
 import { type SubmitFormData, submit } from "@/actions/submit";
+import { submitToReview } from "@/actions/submit-to-review";
+import { verifyBadge } from "@/actions/verify-badge";
 import { Icons } from "@/components/icons/icons";
+import ItemEmbedBadge from "@/components/item/item-embed-badge";
 import CustomMde from "@/components/shared/custom-mde";
 import ImageUpload from "@/components/shared/image-upload";
 import { MultiSelect } from "@/components/shared/multi-select";
@@ -62,6 +65,9 @@ export function SubmitForm({ tagList, categoryList }: SubmitFormProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [iconUrl, setIconUrl] = useState("");
+  const [submissionChoice, setSubmissionChoice] = useState<
+    "priority" | "standard" | "plans"
+  >("priority");
 
   // set default values for form fields and validation schema
   const form = useForm<SubmitFormData>({
@@ -82,23 +88,46 @@ export function SubmitForm({ tagList, categoryList }: SubmitFormProps) {
   const onSubmit = form.handleSubmit((data: SubmitFormData) => {
     // console.log('SubmitForm, onSubmit, data:', data);
     startTransition(async () => {
-      submit(data)
-        .then((data) => {
-          if (data.status === "success") {
-            console.log("SubmitForm, success:", data.message);
-            form.reset();
-            router.push(`/payment/${data.id}`);
-            toast.success(data.message);
+      try {
+        const created = await submit(data);
+        if (created.status !== "success" || !created.id) {
+          toast.error(created.message || "Failed to create submission");
+          return;
+        }
+        if (submissionChoice === "plans") {
+          router.push(`/payment/${created.id}`);
+          return;
+        }
+        if (submissionChoice === "priority") {
+          const verification = await verifyBadge(created.id);
+          if (verification.status !== "verified") {
+            toast.error(
+              `${verification.message}. Your draft was saved; retry from the plan page.`,
+            );
+            router.push(`/payment/${created.id}`);
+            return;
           }
-          if (data.status === "error") {
-            console.error("SubmitForm, error:", data.message);
-            toast.error(data.message);
-          }
-        })
-        .catch((error) => {
-          console.error("SubmitForm, error:", error);
-          toast.error("Something went wrong");
-        });
+        }
+        const result = await submitToReview(
+          created.id,
+          submissionChoice === "priority",
+        );
+        if (result.status !== "success") {
+          toast.error(
+            `${result.message || "Unable to submit for review"}. Your draft was saved; retry from the plan page.`,
+          );
+          router.push(`/payment/${created.id}`);
+          return;
+        }
+        toast.success(
+          submissionChoice === "priority"
+            ? "Badge verified. Added to priority review."
+            : "Added to standard review.",
+        );
+        router.push("/dashboard");
+      } catch {
+        toast.error("Submission failed. Please try again.");
+      }
     });
   });
 
@@ -443,16 +472,68 @@ export function SubmitForm({ tagList, categoryList }: SubmitFormProps) {
                 />
               </div>
             </CardContent>
-            <div className="border-t px-6 py-4 text-sm text-muted-foreground">
-              <p className="font-medium text-foreground">
-                Choose your free review queue next
-              </p>
-              <p className="mt-1">
-                After saving your product, copy a Findry AI badge to your public
-                website and verify it for review within 24–72 hours. Or submit
-                without a badge to the standard queue with no guaranteed review
-                time. A badge is optional and does not guarantee approval.
-              </p>
+            <div className="border-t px-4 py-6 sm:px-6 space-y-5">
+              <div>
+                <p className="text-base font-semibold text-foreground">
+                  Choose how to submit
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  A badge is optional. Verified badges receive editorial review
+                  within 24-72 hours; approval is not guaranteed.
+                </p>
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                {(
+                  [
+                    [
+                      "priority",
+                      "Free · priority",
+                      "Verify a badge on your website",
+                    ],
+                    [
+                      "standard",
+                      "Free · standard",
+                      "Submit without a badge; no review deadline",
+                    ],
+                    [
+                      "plans",
+                      "Explore paid plans",
+                      "Continue to the pricing options",
+                    ],
+                  ] as const
+                ).map(([value, label, description]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={submissionChoice === value}
+                    onClick={() => setSubmissionChoice(value)}
+                    className={cn(
+                      "rounded-lg border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      submissionChoice === value
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50",
+                    )}
+                  >
+                    <span className="block font-semibold text-sm text-foreground">
+                      {label}
+                    </span>
+                    <span className="mt-1 block text-xs text-muted-foreground">
+                      {description}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {submissionChoice === "priority" && (
+                <div className="max-w-xl">
+                  <ItemEmbedBadge
+                    itemName={form.watch("name") || "your product"}
+                  />
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Paste the code on the website URL entered above before
+                    submitting. Verification happens when you continue.
+                  </p>
+                </div>
+              )}
             </div>
             <CardFooter
               className={cn(
@@ -474,7 +555,11 @@ export function SubmitForm({ tagList, categoryList }: SubmitFormProps) {
                     ? "Submitting..."
                     : isUploading
                       ? "Uploading image..."
-                      : "Continue to review options"}
+                      : submissionChoice === "priority"
+                        ? "Verify badge & submit for review"
+                        : submissionChoice === "standard"
+                          ? "Submit for standard review"
+                          : "Continue to paid plans"}
                 </span>
               </Button>
               <div className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-2">

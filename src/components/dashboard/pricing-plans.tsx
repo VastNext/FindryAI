@@ -18,7 +18,7 @@ export function PricingPlans({ item }: PricingPlansProps) {
   // console.log('PricingPlans, item:', item);
   return (
     <section className="flex flex-col items-center text-center w-full mx-auto">
-      <div className="grid gap-8 w-full sm:grid-cols-1 lg:grid-cols-3 items-center">
+      <div className="grid gap-8 w-full sm:grid-cols-1 lg:grid-cols-3 items-start">
         {priceConfig.plans.map((pricePlan) => (
           <PricingPlanCard
             item={item}
@@ -91,11 +91,13 @@ const PricingPlanCard = ({ item, pricePlan }: PricingPlanCardProps) => {
           <div className="mt-12 px-6">
             {pricePlan.title.toUpperCase() === PricePlans.FREE.toUpperCase() ? (
               <FreePlanButton item={item} className="w-full" />
-            ) : pricePlan.title.toUpperCase() === PricePlans.SPONSOR.toUpperCase() ? (
-              <SponsorPlanButton 
+            ) : pricePlan.title.toUpperCase() ===
+              PricePlans.SPONSOR.toUpperCase() ? (
+              <SponsorPlanButton
                 item={item}
                 pricePlan={pricePlan}
-                className="w-full" />
+                className="w-full"
+              />
             ) : (
               <ProPlanButton
                 item={item}
