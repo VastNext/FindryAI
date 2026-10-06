@@ -1,11 +1,13 @@
 "use client";
 
+import { BadgeUpgradeButton } from "@/components/dashboard/badge-upgrade-button";
 import { PublishButton } from "@/components/dashboard/publish-button";
 import { UnpublishButton } from "@/components/dashboard/unpublish-button";
+import ItemEmbedBadge from "@/components/item/item-embed-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getPublishable } from "@/lib/submission";
+import { FreePlanStatus, PricePlans, getPublishable } from "@/lib/submission";
 import { getLocaleDate } from "@/lib/utils";
 import type { ItemInfo } from "@/types";
 import { EditIcon } from "lucide-react";
@@ -75,9 +77,33 @@ export default function SubmissionCard({ item }: SubmissionCardProps) {
           </div>
 
           <div className="flex flex-wrap gap-4 mt-6">
+            {item.pricePlan === PricePlans.FREE &&
+              item.freePlanStatus === FreePlanStatus.PENDING &&
+              !item.badgeReviewPriority &&
+              item.slug?.current && (
+                <div className="w-full space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Standard queue has no guaranteed review time. Add a badge
+                    and verify it to request review within 24-72 hours.
+                  </p>
+                  <ItemEmbedBadge
+                    itemName={item.name}
+                    itemSlug={item.slug.current}
+                  />
+                  <BadgeUpgradeButton itemId={item._id} />
+                </div>
+              )}
+            {item.pricePlan === PricePlans.FREE &&
+              item.freePlanStatus === FreePlanStatus.PENDING &&
+              item.badgeReviewPriority && (
+                <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                  Badge verified. Your submission is in the priority review
+                  queue.
+                </p>
+              )}
             {/* publish or unpublish button */}
             {publishable && item.publishDate && <UnpublishButton item={item} />}
-            {!item.publishDate && <PublishButton item={item} />}
+            {publishable && !item.publishDate && <PublishButton item={item} />}
 
             {/* edit button */}
             <Button asChild variant="outline" className="group overflow-hidden">

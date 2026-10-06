@@ -4,6 +4,8 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { constructMetadata } from "@/lib/metadata";
+import { SparklesIcon, ZapIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export const revalidate = 172800; // 48 hours ISR cache
@@ -82,22 +84,43 @@ const reviewSteps = [
   {
     title: "Submit",
     description:
-      "Fill in the submit form, upload icon and screenshot, and choose a plan. Free plans enter the editorial review queue.",
+      "Fill in the submit form, upload icon and screenshot, and choose a plan. Free plans enter the review process.",
   },
   {
-    title: "Review",
+    title: "Queue Selection",
     description:
-      "We check your site against the five criteria above, usually within 48 hours.",
+      "Verify a badge on your public website for editorial review within 24-72 hours and publication if approved. Without a badge, you can submit to the standard queue without a guaranteed review time.",
   },
   {
-    title: "Approved",
+    title: "Editorial Review",
     description:
-      "Your product goes live in the directory and you receive an approval email with a direct link to the listing.",
+      "Our editorial team checks your site against the five criteria above.",
   },
   {
-    title: "Rejected",
+    title: "Published / Revision",
     description:
-      "Your product is not published. You receive an email with the complete rejection reason, also visible in your dashboard. Fix the issues and click “Submit to Review” to re-enter the queue.",
+      "Once approved, your product goes live and you receive an approval email. If rejected, you receive the complete reason and can update your submission before trying again.",
+  },
+];
+
+const badgeThemes = [
+  {
+    name: "Dark Theme (Default)",
+    desc: "For dark background websites, developer portals, and dark mode landing pages.",
+    url: "/badge-dark.svg",
+    bgClass: "bg-zinc-950 border-zinc-800",
+  },
+  {
+    name: "Light Theme",
+    desc: "For clean, minimal light-mode websites and documentation pages.",
+    url: "/badge-light.svg",
+    bgClass: "bg-zinc-100 border-zinc-200",
+  },
+  {
+    name: "Neutral Theme",
+    desc: "Sophisticated neutral graphite theme that matches any modern UI palette.",
+    url: "/badge-neutral.svg",
+    bgClass: "bg-zinc-900 border-zinc-700",
   },
 ];
 
@@ -120,11 +143,6 @@ const commonRejectionReasons = [
   {
     reason: "The icon of the item is not in good quality.",
     detail: "Icon is tiny, blurry, distorted, or not a clean square.",
-  },
-  {
-    reason: "The backlink to our site is not provided.",
-    detail:
-      "A backlink or badge to Findry AI is optional but appreciated — it also helps prioritize your review.",
   },
   {
     reason: "Other reasons",
@@ -186,6 +204,63 @@ export default function SubmissionGuidelinesPage() {
               <li key={item}>{item}</li>
             ))}
           </ul>
+        </section>
+
+        {/* 官方徽章与优先审核队列说明 */}
+        <section className="w-full max-w-4xl mx-auto flex flex-col gap-6">
+          <div className="flex items-center gap-2">
+            <ZapIcon className="size-6 text-indigo-500" />
+            <h2 className="text-2xl font-semibold">
+              Fast-Track Review with Embed Badges
+            </h2>
+          </div>
+          <p className="text-muted-foreground leading-relaxed">
+            Builders can fast-track their free submission by embedding our
+            official Featured Badge on their public product website, homepage,
+            or footer, as long as it appears in the submitted URL&apos;s HTML.
+            We offer three crafted themes to match your design system:
+          </p>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            {badgeThemes.map((badge) => (
+              <div
+                key={badge.name}
+                className="rounded-xl border bg-card p-5 shadow-sm flex flex-col items-center text-center gap-3"
+              >
+                <div
+                  className={`w-full py-4 px-2 rounded-lg border flex items-center justify-center ${badge.bgClass}`}
+                >
+                  <Image
+                    src={badge.url}
+                    alt={badge.name}
+                    width={220}
+                    height={54}
+                    unoptimized
+                    className="h-9 w-auto object-contain"
+                  />
+                </div>
+                <h3 className="font-semibold text-sm">{badge.name}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {badge.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-lg border bg-muted/40 p-4 text-xs text-muted-foreground leading-relaxed flex items-start gap-2.5">
+            <SparklesIcon className="size-4 text-indigo-500 shrink-0 mt-0.5" />
+            <div>
+              <strong className="text-foreground">Badge Verification: </strong>
+              During the submission process, click &ldquo;Verify Badge &amp;
+              Fast Track&rdquo; to automatically verify your badge. If you do
+              not wish to embed a badge, you can freely submit directly to our
+              standard review queue at any time. Only a badge on the submitted
+              public website qualifies; a README alone does not. After approval,
+              removing the badge may unpublish your listing after repeat checks
+              and return it to the standard review queue. Temporary site outages
+              do not cause automatic removal.
+            </div>
+          </div>
         </section>
 
         <section className="w-full max-w-4xl mx-auto flex flex-col gap-6">

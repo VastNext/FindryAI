@@ -67,6 +67,8 @@ export const itemSimpleFields = /* groq */ `
   proPlanStatus,
   sponsorPlanStatus,
   rejectionReason,
+  badgeReviewPriority,
+  badgeUnavailableNotifiedAt,
   submitter->,
   collections[]->,
   categories[]->,
@@ -96,7 +98,7 @@ export const itemByIdQuery = defineQuery(`*[_type == "item" && _id == $id][0] {
   ${itemSimpleFields}
 }`);
 
-export const itemInfoBySlugQuery = defineQuery(`*[_type == "item" && slug.current == $slug][0] {
+export const itemInfoBySlugQuery = defineQuery(`*[_type == "item" && slug.current == $slug && defined(publishDate) && forceHidden != true][0] {
   ${itemSimpleFields}
 }`);
 
@@ -105,12 +107,12 @@ export const itemFullInfoByIdQuery = defineQuery(`*[_type == "item" && _id == $i
 }`);
 
 export const itemFullInfoBySlugQuery = defineQuery(`*[_type == "item" && slug.current == $slug 
-&& forceHidden != true] [0] {
+&& defined(publishDate) && forceHidden != true] [0] {
   ${itemFieldsWithRelated}
 }`);
 
 export const itemWithAlternativesBySlugQuery = defineQuery(`*[_type == "item" && slug.current == $slug 
-&& forceHidden != true] [0] {
+&& defined(publishDate) && forceHidden != true] [0] {
   ${itemSimpleFields}
   "categories": categories[]-> { _id, name, slug },
   "alternatives": *[_type == "item" && defined(slug.current) 
@@ -364,7 +366,7 @@ export const userWithAccountsQuery = defineQuery(`
  * Sitemap Queries
  */
 
-export const itemListQueryForSitemap = groq`*[_type == "item" && defined(slug.current) && defined(publishDate)] | order(_createdAt asc) {
+export const itemListQueryForSitemap = groq`*[_type == "item" && defined(slug.current) && defined(publishDate) && forceHidden != true] | order(_createdAt asc) {
   _id,
   _updatedAt,
   "slug": slug.current,

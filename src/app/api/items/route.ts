@@ -19,11 +19,6 @@ export async function GET(request: Request) {
     const { sortKey, reverse } =
       SORT_FILTER_LIST.find((item) => item.slug === sort) || DEFAULT_SORT;
 
-    const isNoCache =
-      searchParams.get("nocache") === "1" ||
-      searchParams.get("fresh") === "1" ||
-      request.headers.get("cache-control") === "no-cache";
-
     const { items, totalCount } = await getItems({
       category,
       tag,
@@ -33,13 +28,11 @@ export async function GET(request: Request) {
       filter,
       currentPage: page,
       hasSponsorItem: false,
-      disableCache: isNoCache,
+      disableCache: true,
     });
 
-    // 默认提供 24 小时 (86400秒) 边缘缓存，并允许 48 小时 (172800秒) 的 stale-while-revalidate 异步平滑更新
-    const cacheControl = isNoCache
-      ? "no-store, no-cache, must-revalidate"
-      : "public, s-maxage=86400, stale-while-revalidate=172800";
+    // 撤回条目后需即时从分页列表消失，避免边缘缓存展示旧结果。
+    const cacheControl = "no-store, no-cache, must-revalidate";
 
     return NextResponse.json(
       { items, totalCount },

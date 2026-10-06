@@ -42,8 +42,7 @@ export async function sanityFetch<QueryResponse>({
     perspective: "published",
     // The `published` perspective is available on the API CDN
     useCdn: !disableCache,
-    // When using the `published` perspective we use time-based revalidation
-    // to match the time-to-live on Sanity's API CDN (48 hours = 172800s)
-    next: { revalidate: disableCache ? 0 : 172800 },
+    // 公开列表缩短缓存周期，避免撤回后长时间展示旧条目。
+    next: { revalidate: disableCache ? 0 : 300 },
   });
 }

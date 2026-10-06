@@ -443,6 +443,17 @@ export function SubmitForm({ tagList, categoryList }: SubmitFormProps) {
                 />
               </div>
             </CardContent>
+            <div className="border-t px-6 py-4 text-sm text-muted-foreground">
+              <p className="font-medium text-foreground">
+                Choose your free review queue next
+              </p>
+              <p className="mt-1">
+                After saving your product, copy a Findry AI badge to your public
+                website and verify it for review within 24–72 hours. Or submit
+                without a badge to the standard queue with no guaranteed review
+                time. A badge is optional and does not guarantee approval.
+              </p>
+            </div>
             <CardFooter
               className={cn(
                 "flex flex-col items-stretch space-y-4 border-t bg-accent px-6 py-4",
@@ -463,7 +474,7 @@ export function SubmitForm({ tagList, categoryList }: SubmitFormProps) {
                     ? "Submitting..."
                     : isUploading
                       ? "Uploading image..."
-                      : "Submit"}
+                      : "Continue to review options"}
                 </span>
               </Button>
               <div className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-2">

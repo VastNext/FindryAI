@@ -1,18 +1,23 @@
 import { PricePlans } from "@/lib/submission";
 import type { PriceConfig } from "@/types";
 
+/**
+ * 网站价格方案配置
+ * 包含 Free（免费方案，支持徽章优先队列与标准队列）、Pro（付费推广）与 Sponsor（全站赞助）
+ */
 export const priceConfig: PriceConfig = {
   plans: [
     {
       title: PricePlans.FREE,
-      description: "Limited-Time Free Submission for Early Builders",
+      description: "Free Submission for AI Builders & Creators",
       benefits: [
         "Get 3 high-authority dofollow backlinks to boost SEO",
         "Permanent product directory listing",
-        "Editorial review and published within 24-72 hours",
+        "Badge-verified submissions: editorial review within 24-72 hours, then publish if approved",
+        "No badge required: standard queue without a guaranteed review time",
         "Full support for product updates and screenshots",
       ],
-      limitations: ["Standard review queue", "Community support"],
+      limitations: ["Community support"],
       price: 0,
       priceSuffix: "Free",
       stripePriceId: null,

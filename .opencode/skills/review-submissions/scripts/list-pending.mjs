@@ -4,13 +4,19 @@
  * 输出包含五道门禁审查所需的关键字段：
  * 内容深度（description/introduction 长度与是否雷同）、视觉资产尺寸、分类标签、提交者信息。
  *
- * 用法: node .opencode/skills/review-submissions/scripts/list-pending.mjs
+ * 用法: node .opencode/skills/review-submissions/scripts/list-pending.mjs [--without-badge]
  */
 import { assertConfig, config, sanityQuery } from "./_lib.mjs";
 
 assertConfig();
+const withoutBadge = process.argv.slice(2).includes("--without-badge");
+if (process.argv.slice(2).some((arg) => arg !== "--without-badge")) {
+  console.error("仅支持 --without-badge 参数");
+  process.exit(1);
+}
 
-const query = `*[_type == "item" && defined(submitter) && (freePlanStatus == "pending" || freePlanStatus == "submitting")] {
+const priority = "badgeReviewPriority == true && defined(badgeVerifiedAt)";
+const query = `*[_type == "item" && defined(submitter) && pricePlan == "free" && freePlanStatus == "pending" && !defined(publishDate) && ${withoutBadge ? `!(${priority})` : `(${priority})`}] {
   _id,
   name,
   "slug": slug.current,
@@ -18,6 +24,8 @@ const query = `*[_type == "item" && defined(submitter) && (freePlanStatus == "pe
   description,
   introduction,
   freePlanStatus,
+  badgeReviewPriority,
+  badgeVerifiedAt,
   pricePlan,
   "hasIcon": defined(icon.asset),
   "hasImage": defined(image.asset),
@@ -37,7 +45,7 @@ const items = await sanityQuery(query);
 
 console.log(`站点: ${config.siteUrl}`);
 console.log(
-  `=== 待审核提交清单（pending / submitting），共 ${items.length} 条 ===\n`,
+  `=== ${withoutBadge ? "普通队列（无已验证徽章）" : "优先队列（已验证徽章）"} pending 免费投稿，共 ${items.length} 条 ===\n`,
 );
 
 if (items.length === 0) {
@@ -58,6 +66,9 @@ for (const item of items) {
   console.log(`Name: ${item.name}`);
   console.log(`Slug: ${item.slug}`);
   console.log(`Link: ${item.link}`);
+  console.log(
+    `队列: ${withoutBadge ? "普通" : "优先"} | 徽章验证时间: ${item.badgeVerifiedAt || "无"}`,
+  );
   console.log(
     `Status: ${item.freePlanStatus} | Plan: ${item.pricePlan} | Created: ${item._createdAt}`,
   );

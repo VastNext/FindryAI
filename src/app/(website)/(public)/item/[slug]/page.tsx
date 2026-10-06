@@ -48,6 +48,7 @@ export async function generateMetadata({
   const item = await sanityFetch<ItemInfoBySlugQueryResult>({
     query: itemInfoBySlugQuery,
     params: { slug: params.slug },
+    disableCache: true,
   });
   if (!item?.name) {
     console.warn(`generateMetadata, item not found for slug: ${params.slug}`);
@@ -94,6 +95,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
     sanityFetch<ItemFullInfo>({
       query: itemFullInfoBySlugQuery,
       params: { slug: params.slug },
+      disableCache: true,
     }),
     sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
@@ -274,7 +276,14 @@ export default async function ItemPage({ params }: ItemPageProps) {
             </div>
           </div>
 
-          {/* Service Discontinued / Inactive Notice in Hero */}
+          {/* 站点连续不可用时提示访问风险，不等于确认服务停止。 */}
+          {item.badgeUnavailableNotifiedAt && (
+            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
+              We have been unable to reach this product website for 30 days. Its
+              service status is unconfirmed; please visit with caution.
+            </div>
+          )}
+
           {curatedData?.serviceStatusNotice?.isInactive && (
             <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 sm:p-5 shadow-xs">
               <div className="flex flex-col gap-2.5">

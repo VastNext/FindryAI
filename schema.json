@@ -1998,6 +1998,41 @@
         },
         "optional": true
       },
+      "badgeVerifiedAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "badgeReviewPriority": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "boolean"
+        },
+        "optional": true
+      },
+      "badgeSiteUnavailableSince": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "badgeMissingSince": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "badgeUnavailableNotifiedAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "proPlanStatus": {
         "type": "objectAttribute",
         "value": {
@@ -2043,10 +2078,6 @@
             {
               "type": "string",
               "value": "The information of the item is not clear"
-            },
-            {
-              "type": "string",
-              "value": "The backlink to our site is not provided"
             },
             {
               "type": "string",

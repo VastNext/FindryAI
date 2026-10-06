@@ -109,6 +109,11 @@ export async function edit(
       // remain submitted if the plan status is submitted, otherwise set to pending
       ...(pricePlan === PricePlans.FREE && {
         publishDate: null,
+        badgeReviewPriority: false,
+        badgeVerifiedAt: null,
+        badgeSiteUnavailableSince: null,
+        badgeUnavailableNotifiedAt: null,
+        badgeMissingSince: null,
         freePlanStatus:
           planStatus === FreePlanStatus.SUBMITTING
             ? FreePlanStatus.SUBMITTING

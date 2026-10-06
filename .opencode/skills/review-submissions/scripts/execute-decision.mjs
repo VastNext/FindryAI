@@ -1,3 +1,8 @@
+import { Resolver } from "node:dns/promises";
+import http from "node:http";
+import https from "node:https";
+import { isIP } from "node:net";
+import { DomUtils, parseDocument } from "htmlparser2";
 /**
  * 执行审核裁决（写操作！）
  *
@@ -40,6 +45,7 @@ const catIdx = args.indexOf("--categories");
 const categoriesArg = catIdx !== -1 ? args[catIdx + 1] : undefined;
 const noteIdx = args.indexOf("--note");
 const noteArg = noteIdx !== -1 ? args[noteIdx + 1] : undefined;
+const withoutBadge = args.includes("--without-badge");
 const itemIds = args
   .slice(1)
   .filter(
@@ -49,7 +55,8 @@ const itemIds = args
       a !== "--categories" &&
       a !== categoriesArg &&
       a !== "--note" &&
-      a !== noteArg,
+      a !== noteArg &&
+      a !== "--without-badge",
   );
 
 if (
@@ -60,19 +67,156 @@ if (
   (command !== "hold" && noteArg) ||
   (command === "hold" && (!noteArg || reason || categoriesArg)) ||
   (command === "hold" && noteIdx !== -1 && !noteArg) ||
+  (command === "reject" && reason?.toLowerCase().includes("backlink")) ||
   (catIdx !== -1 && !categoriesArg)
 ) {
   console.error(
-    '用法:\n  node execute-decision.mjs approve <itemId>... [--categories "分类A,分类B"]\n  node execute-decision.mjs reject <itemId>... --reason "具体原因"\n  node execute-decision.mjs hold <itemId>... --note "挂起原因"',
+    '用法:\n  node execute-decision.mjs approve <itemId>... [--categories "分类A,分类B"] [--without-badge]\n  node execute-decision.mjs reject <itemId>... --reason "具体原因" [--without-badge]\n  node execute-decision.mjs hold <itemId>... --note "挂起原因" [--without-badge]',
   );
   process.exit(1);
 }
 
 async function fetchItem(id) {
+  if (!/^[a-zA-Z0-9._-]+$/.test(id)) throw new Error("无效条目 ID");
   const items = await sanityQuery(
-    `*[_type == "item" && _id == "${id}"][0]{ _id, name, "slug": slug.current, freePlanStatus, publishDate, note, "categoryNames": categories[]->name, "tagNames": tags[]->name }`,
+    `*[_type == "item" && _id == "${id}"][0]{ _id, _rev, name, link, pricePlan, badgeReviewPriority, badgeVerifiedAt, "submitterId": submitter._ref, "slug": slug.current, freePlanStatus, publishDate, note, "categoryNames": categories[]->name, "tagNames": tags[]->name }`,
   );
   return items;
+}
+
+/** 批准优先条目前重新探测徽章；网络故障保持在队列，绝不擅自发布。 */
+async function hasLiveBadge(link) {
+  const url = new URL(link);
+  const host = url.hostname.toLowerCase();
+  if (
+    !["http:", "https:"].includes(url.protocol) ||
+    url.port ||
+    url.username ||
+    url.password ||
+    isIP(host) ||
+    host === "localhost" ||
+    host.endsWith(".local")
+  ) {
+    throw new Error("站点地址必须是公开 HTTP(S) 域名");
+  }
+  const resolver = new Resolver();
+  const addresses = await Promise.race([
+    resolver.resolve4(host),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("DNS 超时")), 8000),
+    ),
+  ]);
+  const privateAddress = (address) => {
+    const [a, b, c] = address.split(".").map(Number);
+    return (
+      a === 0 ||
+      a === 10 ||
+      a === 127 ||
+      a >= 224 ||
+      (a === 100 && b >= 64 && b <= 127) ||
+      (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 192 && b === 168) ||
+      (a === 192 && b === 0) ||
+      (a === 198 && b >= 18 && b <= 19) ||
+      (a === 198 && b === 51 && c === 100) ||
+      (a === 203 && b === 0 && c === 113)
+    );
+  };
+  if (!addresses.length || addresses.some(privateAddress))
+    throw new Error("站点解析到非公网地址");
+  const html = await new Promise((resolve, reject) => {
+    const request = (url.protocol === "https:" ? https : http).get(
+      url,
+      {
+        lookup: (_host, _options, callback) => callback(null, addresses[0], 4),
+        headers: { accept: "text/html", "accept-encoding": "identity" },
+      },
+      (response) => {
+        if (
+          response.statusCode !== 200 ||
+          !/text\/html/i.test(response.headers["content-type"] || "")
+        ) {
+          response.resume();
+          reject(new Error(`站点响应异常 (${response.statusCode})，保留待审`));
+          return;
+        }
+        const chunks = [];
+        let size = 0;
+        response.on("data", (chunk) => {
+          size += chunk.length;
+          if (size > 1024 * 1024) request.destroy(new Error("响应过大"));
+          else chunks.push(chunk);
+        });
+        response.on("end", () =>
+          resolve(Buffer.concat(chunks).toString("utf8")),
+        );
+        response.on("error", reject);
+      },
+    );
+    const timer = setTimeout(
+      () => request.destroy(new Error("站点请求超时")),
+      8000,
+    );
+    request.on("close", () => clearTimeout(timer));
+    request.on("error", reject);
+  });
+  if (
+    /<title[^>]*>[^<]*(?:captcha|just a moment|checking your browser|access denied)[^<]*<\/title>/i.test(
+      html,
+    )
+  ) {
+    throw new Error("站点返回访问验证页面，保留待审");
+  }
+  const document = parseDocument(html);
+  const hidden = (node) => {
+    for (let parent = node; parent; parent = parent.parent) {
+      const attrs = parent.attribs || {};
+      if (
+        ["template", "noscript"].includes(parent.name) ||
+        "hidden" in attrs ||
+        attrs["aria-hidden"] === "true" ||
+        /(?:display\s*:\s*none|visibility\s*:\s*hidden)/i.test(
+          attrs.style || "",
+        )
+      )
+        return true;
+    }
+    return false;
+  };
+  return DomUtils.findAll(
+    (node) => node.type === "tag" && node.name === "a",
+    document.children,
+  ).some((anchor) => {
+    try {
+      if (hidden(anchor)) return false;
+      const href = new URL(anchor.attribs.href, url.href);
+      return (
+        href.protocol === "https:" &&
+        href.hostname === "findryai.com" &&
+        (href.pathname === "/" || href.pathname.startsWith("/item/")) &&
+        DomUtils.findAll(
+          (node) => node.type === "tag" && node.name === "img",
+          anchor.children,
+        ).some((image) => {
+          if (hidden(image)) return false;
+          const src = new URL(image.attribs.src, url.href);
+          return (
+            src.protocol === "https:" &&
+            src.hostname === "findryai.com" &&
+            [
+              "/badge.svg",
+              "/badge-dark.svg",
+              "/badge-light.svg",
+              "/badge-neutral.svg",
+            ].includes(src.pathname)
+          );
+        })
+      );
+    } catch {
+      return false;
+    }
+  });
 }
 
 /** 将 --categories 的分类名解析为站内 category 文档（name 或 slug 匹配，不区分大小写） */
@@ -173,12 +317,44 @@ async function main() {
         results.push({ id, ok: false, error: "not found" });
         continue;
       }
+      const priority =
+        item.badgeReviewPriority === true && Boolean(item.badgeVerifiedAt);
+      if (
+        !item.submitterId ||
+        item.pricePlan !== "free" ||
+        item.freePlanStatus !== "pending" ||
+        item.publishDate ||
+        (withoutBadge ? priority : !priority)
+      ) {
+        throw new Error("该条目不属于所选待审队列");
+      }
+      if (command === "approve" && !withoutBadge) {
+        const found = await hasLiveBadge(item.link);
+        if (!found) {
+          await sanityMutate([
+            {
+              patch: {
+                id,
+                ifRevisionID: item._rev,
+                set: { badgeReviewPriority: false },
+                unset: ["badgeVerifiedAt"],
+              },
+            },
+          ]);
+          console.log(
+            `[QUEUE] ${item.name}: 徽章已移除，转入普通队列，不拒绝、不发布`,
+          );
+          results.push({ id, ok: true, skipped: true });
+          continue;
+        }
+      }
 
       // 1. 写库变更
       if (command === "approve") {
         const set = {
           freePlanStatus: "approved",
           publishDate: new Date().toISOString(),
+          badgeReviewPriority: !withoutBadge,
         };
         if (categoryRefs) {
           set.categories = categoryRefs;
@@ -187,7 +363,9 @@ async function main() {
           {
             patch: {
               id,
+              ifRevisionID: item._rev,
               set,
+              ...(withoutBadge ? { unset: ["badgeVerifiedAt"] } : {}),
             },
           },
         ]);
@@ -199,6 +377,7 @@ async function main() {
           {
             patch: {
               id,
+              ifRevisionID: item._rev,
               set: {
                 freePlanStatus: "rejected",
                 publishDate: null,

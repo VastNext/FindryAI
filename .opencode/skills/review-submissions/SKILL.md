@@ -1,6 +1,6 @@
 ---
 name: review-submissions
-description: Review user-submitted websites for the Findry AI directory with five quality gates, then approve+publish or reject them. Use when the user says 检查新提交、审核提交的网站、审查提交、review submissions、approve and publish、打回、reject，或运行 /review-submissions。默认仅输出裁决报告（report-only），需显式 auto 模式才真正执行写操作。
+description: 审核 Findry AI 免费投稿；默认仅处理已验证徽章的优先队列，--without-badge 处理无徽章的普通队列。默认只生成裁决报告，显式 auto 才写库发布。
 ---
 
 # Findry AI 提交审核与发布
@@ -9,14 +9,14 @@ description: Review user-submitted websites for the Findry AI directory with fiv
 
 ## 背景机制（执行前必读）
 
-1. **数据流**：用户前台提交 Free Plan 后，条目入 Sanity，`freePlanStatus = "pending"`，无 `publishDate`，带 `submitter` 关联。
+1. **数据流**：用户前台提交 Free Plan 后，条目入 Sanity，`freePlanStatus = "pending"`，无 `publishDate`，带 `submitter` 关联。仅 `badgeReviewPriority == true` 且 `badgeVerifiedAt` 有 ISO 时间的条目属于已验证徽章优先队列，承诺 24–72 小时内审核、通过后发布；其他条目属于普通队列，不承诺审核时间。徽章可选，不可因未放置反链拒绝投稿。`submitting` 和已发布条目不进入任一队列。
 2. **上线条件**：前台展示硬性条件是 `defined(publishDate) && forceHidden != true`。首页按 `publishDate desc` 排序，最新发布排最前。
-3. **缓存**：生产环境有 48h ISR + CDN 缓存。任何状态变更后必须调用 `/api/revalidate` 刷新，否则前台看不到变化。**已知竞态**：批准/打回后立即重渲染会撞上 Sanity CDN 对刚写入数据的陈旧窗口，把旧快照重新缓存进 48h fetch cache（实测首页数小时不更新）。`execute-decision.mjs` 已内置首轮刷新后等待 90 秒再二次刷新；若验收时首页仍无新条目，手动再刷一次 `/` 即可。
+3. **缓存**：公开数据默认每 60 秒重新验证，页面仍可能有 ISR 缓存。任何状态变更后调用 `/api/revalidate`；Sanity CDN 刚写入时可能短暂返回旧快照，`execute-decision.mjs` 已内置首轮刷新后等待 90 秒再二次刷新。
 4. **打回闭环**：`rejected` 状态 + `rejectionReason` 字段 + 通知邮件；用户在 `/dashboard` 看到红色 Rejected 标签和原因，修改后点 "Submit to Review" 重新入队。
 
 ## Step 0: 判定执行模式（必须最先做）
 
-模式优先级：**命令行参数 > 环境变量 > 默认报告模式**
+模式优先级：**命令行参数 > 环境变量 > 默认报告模式**。队列独立选择：默认优先队列；只有当前命令的 `$ARGUMENTS` 明确包含 `--without-badge` 才处理无已验证徽章的普通队列。`auto` 不改变队列。一次调用只审核选定的一个队列；每日徽章巡检由 Vercel Cron 独立执行，与本审核 skill 无关。普通队列 approve 须人工明确发起。
 
 1. 若用户指令或 `/review-submissions` 的 `$ARGUMENTS` 中包含 `auto`（如 "auto"、"全自动"、"执行"）→ **auto 模式**：裁决后自动执行全部写操作。
 2. 否则检查项目根 `.env` 中 `REVIEW_AUTO_EXECUTE`（可运行 `grep REVIEW_AUTO_EXECUTE .env`）：
@@ -27,12 +27,16 @@ description: Review user-submitted websites for the Findry AI directory with fiv
 ## Step 1: 拉取待审清单
 
 ```bash
+# $ARGUMENTS 不含 --without-badge 时，只运行：
 node .opencode/skills/review-submissions/scripts/list-pending.mjs
+
+# $ARGUMENTS 明确包含 --without-badge 时，只运行以下命令，不运行上面的默认查询：
+node .opencode/skills/review-submissions/scripts/list-pending.mjs --without-badge
 ```
 
-输出每条提交的：ID、名称、链接、提交者、分类标签、icon/截图尺寸、description 及长度、introduction 及长度、introduction 是否与 description 雷同、**note 内部备注（若含 `[HOLD]` 标记会特别提示——说明该条目已挂起等待管理员分类决策，按裁决规则只标注不重复通知）**。
+输出每条提交的：队列、`badgeVerifiedAt`、ID、名称、链接、提交者、分类标签、icon/截图尺寸、description 及长度、introduction 及长度、introduction 是否与 description 雷同、**note 内部备注（若含 `[HOLD]` 标记会特别提示——说明该条目已挂起等待管理员分类决策，按裁决规则只标注不重复通知）**。
 
-无待审提交时告知用户并结束。
+**停止门禁**：选定队列返回 0 条时，报告「选定队列无待审提交」并立即结束；不进入 Step 2–6，也不查询、探测、裁决另一队列。需要审核另一队列，必须由用户另行发起带相应参数的命令。
 
 ## Step 2: 逐条探测目标网站
 
@@ -63,22 +67,24 @@ node .opencode/skills/review-submissions/scripts/check-site.mjs <url1> <url2> ..
   - 内容问题 → `The information of the item is not clear. ` + 具体要求（如 "Please provide a detailed overview, key features, and use cases."）
   - 图片问题 → `The image of the item is not in good quality.` / `The icon of the item is not in good quality.`
   - 无关/不可用 → `The item is not good fit for our directory.`
-  - 无反链 → `The backlink to our site is not provided.`
+  - 未放置徽章不是拒绝原因。优先队列复核时发现徽章已移除，应转入普通队列，不打回。
 - **禁止平台代为润色提交内容**——不合格一律打回，由提交者自己完善（防止低质提交泛滥）。**唯一例外**：门禁 5 的分类修正，仅改 `categories` 字段，不动任何文案。
 
 ## Step 4: 输出裁决报告（两种模式都必做）
 
-以表格输出：条目名 / 链接 / 联通性 / 内容深度评估 / 视觉资产 / 分类 / **建议裁决（approve 或 reject + 理由）**。
+以表格输出：**队列（优先或普通）** / 条目名 / 链接 / 联通性 / 内容深度评估 / 视觉资产 / 分类 / **建议裁决（approve、reject 或 hold + 理由）**。
 
 - 仅分类需修正的条目，建议裁决写 `approve（分类修正：原分类 → 新分类）`，并列明所选新分类来自站内已有体系。
 - 报告模式：到此结束，明确告知用户"本次为报告模式，未做任何变更；确认后可运行 `/review-submissions auto` 执行"。
-- auto 模式：继续 Step 5。
+- auto 模式：继续 Step 5。优先队列批准前必须重新探测目标站 HTML 中的本站徽章；确认缺失时只撤销 `badgeReviewPriority`，保持 `pending`，转入普通队列，不拒绝、不发布。站点不可用或探测失败则保持原状，等待复查。
 
 ## Step 5: 执行裁决（仅 auto 模式）
 
 ```bash
 # 批准并发布（写 publishDate + 发批准邮件 + 刷缓存）
 node .opencode/skills/review-submissions/scripts/execute-decision.mjs approve <id1> <id2>
+# 普通队列批准必须人工明确发起并显式加参数；cron 不得运行此命令：
+node .opencode/skills/review-submissions/scripts/execute-decision.mjs approve <id> --without-badge
 
 # 批准并一并修正分类（仅门禁 5 不过、其他全过时；分类按 name 或 slug 匹配、不区分大小写，
 # 任一分类不存在则整体中止、不写库；先用 list-categories.mjs 查看可用分类）
