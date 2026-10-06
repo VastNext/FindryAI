@@ -66,7 +66,7 @@ export const sendNotifySubmissionEmail = async (
   await resend.emails.send({
     from: process.env.RESEND_EMAIL_FROM,
     to: process.env.RESEND_EMAIL_ADMIN,
-    subject: "New submission",
+    subject: `New submission with ${itemName}`,
     react: NotifySubmissionEmail({ itemName, reviewLink }),
   });
 };

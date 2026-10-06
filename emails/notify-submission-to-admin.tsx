@@ -42,7 +42,7 @@ export const NotifySubmissionEmail = ({
   return (
     <Html>
       <Head />
-      <Preview>New submission</Preview>
+      <Preview>New submission with {itemName}</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={box}>
