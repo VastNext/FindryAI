@@ -3,7 +3,7 @@
 import { DEFAULT_SORT, type SortFilterItem } from "@/lib/constants";
 import { createUrl } from "@/lib/utils";
 import { ListChecksIcon } from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Drawer } from "vaul";
 import FilterItemMobile from "./filter-item-mobile";
@@ -15,23 +15,29 @@ export type SortListMobileProps = {
 export function SortListMobile({ sortList }: SortListMobileProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [active, setActive] = useState("");
+  const [q, setQ] = useState("");
 
+  // Read sort/q from window.location client-side only: useSearchParams() in
+  // the category/tag/blog layouts opts those routes into the CSR bailout and
+  // breaks static prerendering. Re-runs after every render so client
+  // navigations stay in sync (setState with equal values is a no-op). q is
+  // state because generateUrl runs during render (map over items).
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setQ(params.get("q") || "");
     const activeItem = sortList.find(
-      (item) => searchParams.get("sort") === item.slug,
+      (item) => params.get("sort") === item.slug,
     );
     if (activeItem) {
       setActive(activeItem.slug);
     }
-  }, [pathname, sortList, searchParams]);
+  });
 
   const closeDrawer = () => setOpen(false);
 
   const generateUrl = (slug: string) => {
-    const q = searchParams.get("q");
     return createUrl(
       pathname,
       new URLSearchParams({

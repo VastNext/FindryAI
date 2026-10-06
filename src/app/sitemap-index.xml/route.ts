@@ -2,6 +2,14 @@ import { SITEMAP_SEGMENTS } from "@/app/sitemap";
 import { siteConfig } from "@/config/site";
 import { NextResponse } from "next/server";
 
+/**
+ * Sitemap index at /sitemap.xml.
+ *
+ * Lives at /sitemap-index.xml instead of src/app/sitemap.xml/route.ts because
+ * generateSitemaps in app/sitemap.ts registers dev routes under /sitemap.xml/*,
+ * and a route file at that path breaks next dev. next.config.mjs rewrites
+ * /sitemap.xml to this route in both dev and production.
+ */
 export const dynamic = "force-dynamic";
 
 export async function GET() {

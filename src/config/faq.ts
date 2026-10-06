@@ -11,9 +11,9 @@ export const faqConfig: FAQConfig = {
       id: "item-1",
       question: "Is it free to submit my AI tool or agent skill?",
       answer:
-        "Yes! We offer free submissions for all AI builders and creators. \nYou will get:\n" +
+        "Yes! Free submission is open to all AI builders and creators. \nYou will get:\n" +
         "- Permanent listing on our curated directory\n" +
-        "- 3 high-authority dofollow backlinks to boost your SEO\n" +
+        "- 1 high-authority dofollow backlink to boost your SEO\n" +
         "- Badge-verified submissions reviewed within 24-72 hours and published if approved; no-badge submissions have no guaranteed review time",
     },
     {
@@ -26,7 +26,7 @@ export const faqConfig: FAQConfig = {
       id: "item-3",
       question: "What is the Pro Featured plan?",
       answer:
-        "The Pro plan is designed for products seeking instant exposure. It includes expedited review within 12 hours, top-tier featured placement across category feeds, highlighted badges, and inclusion in our curated social updates.",
+        "The Pro plan is designed for products seeking instant exposure. It includes priority review within 12 hours, featured placement at the top of homepage and category feeds for 30 days, highlighted badges, 3 dedicated dofollow backlinks, and inclusion in our curated social updates. A launch-period early-bird price is available for a limited time.",
     },
     {
       id: "item-4",

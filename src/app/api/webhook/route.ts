@@ -1,11 +1,15 @@
 import { getOrderByUserIdAndItemId } from "@/data/order";
 import { getUserById } from "@/data/user";
 import { sendMessageToDiscord } from "@/lib/discord";
-import { sendPaymentSuccessEmail } from "@/lib/mail";
+import {
+  sendPaymentNotifyAdminEmail,
+  sendPaymentSuccessEmail,
+} from "@/lib/mail";
 import { stripe } from "@/lib/stripe";
 import { PricePlans, ProPlanStatus, SponsorPlanStatus } from "@/lib/submission";
 import { getItemLinkInWebsite } from "@/lib/utils";
 import { sanityClient } from "@/sanity/lib/client";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import type Stripe from "stripe";
 
@@ -101,6 +105,9 @@ export async function POST(req: Request) {
             pricePlan === PricePlans.SPONSOR
               ? SponsorPlanStatus.SUCCESS
               : SponsorPlanStatus.SUBMITTING,
+          ...(pricePlan === PricePlans.SPONSOR
+            ? { sponsorStartDate: new Date().toISOString() }
+            : {}),
           order: {
             _type: "reference",
             _ref: result._id,
@@ -113,16 +120,58 @@ export async function POST(req: Request) {
         return new Response(null, { status: 500 });
       }
 
+      // 已发布条目付费升级为 Pro/Sponsor 时不会再次走 Publish 流程，
+      // 必须在 webhook 里失效全站 ISR，否则首页/分类最长 48h 看不到升级效果
+      revalidatePath("/", "layout");
+      // Banner 走 sponsor-banner 标签缓存，付费升级后统一失效一次（事件驱动）
+      revalidateTag("sponsor-banner");
+
       // send thank you email to user
       console.log(`checkout.session.completed, item: ${JSON.stringify(res)}`);
       const itemLink = getItemLinkInWebsite(res.slug.current);
       console.log(`checkout.session.completed, userName: ${user.name}, 
         userEmail: ${user.email}, 
         itemLink: ${itemLink}`);
-      await sendPaymentSuccessEmail(user.name, user.email, itemLink);
+
+      // 付款已成功落库，通知类发送失败不应让 webhook 返回 500
+      //（否则 Stripe 重试时因订单已存在而提前返回，邮件永远不会补发）
+      try {
+        await sendPaymentSuccessEmail(user.name, user.email, itemLink);
+      } catch (emailErr) {
+        console.error(
+          "checkout.session.completed, sendPaymentSuccessEmail failed:",
+          emailErr,
+        );
+      }
+
+      // notify admin about the new payment
+      const planLabel =
+        pricePlan === PricePlans.SPONSOR ? "Sponsor" : "Pro Featured";
+      try {
+        await sendPaymentNotifyAdminEmail({
+          itemName: res.name,
+          planLabel,
+          amount,
+          payerName: user.name,
+          payerEmail: user.email,
+          itemLink,
+        });
+      } catch (adminEmailErr) {
+        console.error(
+          "checkout.session.completed, sendPaymentNotifyAdminEmail failed:",
+          adminEmailErr,
+        );
+      }
 
       // send message to discord
-      await sendMessageToDiscord(session.id, customerId, user.name, amount);
+      try {
+        await sendMessageToDiscord(session.id, customerId, user.name, amount);
+      } catch (discordErr) {
+        console.error(
+          "checkout.session.completed, sendMessageToDiscord failed:",
+          discordErr,
+        );
+      }
     } else {
       console.log("checkout.session.completed, user not found");
       return new Response(null, { status: 404 });

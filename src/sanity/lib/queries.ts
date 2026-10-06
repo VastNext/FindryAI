@@ -147,8 +147,8 @@ export const sponsorItemListQuery = defineQuery(`*[_type == "item" && defined(sl
   && defined(publishDate)
   && forceHidden != true
   && sponsor == true
-  && sponsorStartDate <= now()
-  && sponsorEndDate >= now()] 
+  && (!defined(sponsorStartDate) || sponsorStartDate <= now())
+  && (!defined(sponsorEndDate) || sponsorEndDate >= now())]
   | order(coalesce(featured, false) desc, publishDate desc) {
     ${itemSimpleFields}
 }`);

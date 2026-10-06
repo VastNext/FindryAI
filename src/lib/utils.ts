@@ -66,7 +66,8 @@ export function absoluteUrl(path: string) {
   return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL ??
+const baseUrl =
+  process.env.NEXT_PUBLIC_APP_URL ??
   `http://localhost:${process.env.PORT ?? 3000}`;
 
 export function getBaseUrl(): string {
@@ -77,11 +78,17 @@ export function getBaseUrl(): string {
  * check if the item is valid for sponsor plan
  */
 export function checkValidSponsor(item: ItemInfo) {
+  if (!item?.pricePlan) return false;
   const now = new Date();
-  return item.pricePlan.toUpperCase() === PricePlans.SPONSOR.toUpperCase() 
-    && item.sponsorPlanStatus === "success"
-    && new Date(item.sponsorStartDate) <= now
-    && new Date(item.sponsorEndDate) >= now;
+  const isSponsorPlan =
+    item.pricePlan.toUpperCase() === PricePlans.SPONSOR.toUpperCase() &&
+    item.sponsorPlanStatus === "success";
+  if (!isSponsorPlan) return false;
+
+  const validStart =
+    !item.sponsorStartDate || new Date(item.sponsorStartDate) <= now;
+  const validEnd = !item.sponsorEndDate || new Date(item.sponsorEndDate) >= now;
+  return validStart && validEnd;
 }
 
 /**

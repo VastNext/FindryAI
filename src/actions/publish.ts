@@ -10,6 +10,7 @@ import {
   SponsorPlanStatus,
 } from "@/lib/submission";
 import { sanityClient } from "@/sanity/lib/client";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export type ServerActionResponse = {
   status: "success" | "error";
@@ -95,6 +96,11 @@ export async function publish(itemId: string): Promise<ServerActionResponse> {
     if (!result) {
       return { status: "error", message: "Failed to publish item!" };
     }
+    // 条目带上 publishDate 后会进入首页/分类/搜索列表，全站页面多为 48h ISR，
+    // 这里按根布局整体失效，确保新发布立即可见；Banner 走 sponsor-banner 标签缓存，
+    // 在此统一失效一次（事件驱动，平时零轮询）
+    revalidatePath("/", "layout");
+    revalidateTag("sponsor-banner");
     return { status: "success", message: "Successfully published!" };
   } catch (error) {
     console.log("publish, error", error);

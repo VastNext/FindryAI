@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/collapsible";
 import type { GroupListQueryResult } from "@/sanity.types";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DEFAULT_FILTER_VALUE } from "../shared/combobox";
 
@@ -22,9 +22,21 @@ export function CategoryHomeGroupListClient({
   urlPrefix,
 }: CategoryHomeGroupListClientProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get("category") || DEFAULT_FILTER_VALUE;
+  const [selectedCategory, setSelectedCategory] =
+    useState(DEFAULT_FILTER_VALUE);
   const [openCategory, setOpenCategory] = useState<string>();
+
+  // Read the selected category from window.location client-side only:
+  // useSearchParams() opts routes rendering this list into the CSR bailout
+  // and breaks static prerendering. Re-runs after every render so client
+  // navigations stay in sync (setState with equal values is a no-op).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    const value =
+      new URLSearchParams(window.location.search).get("category") ||
+      DEFAULT_FILTER_VALUE;
+    setSelectedCategory(value);
+  });
 
   useEffect(() => {
     const parentGroup = groupList.find((group) =>

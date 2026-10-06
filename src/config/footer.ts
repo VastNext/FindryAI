@@ -13,6 +13,7 @@ export const footerConfig: FooterConfig = {
     {
       title: "Resources",
       items: [
+        { title: "Gemini 4 Argon", href: "/gemini-4-argon" },
         { title: "TypeSafe Jev", href: "/typesafe-jev" },
         { title: "Agent Skills", href: "/agent-skills" },
         { title: "AI Feed", href: "/ai-daily-feeds" },

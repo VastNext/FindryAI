@@ -1,6 +1,7 @@
 import { ApprovalEmail } from "@/emails/approval-email";
 import { NotifySubmissionEmail } from "@/emails/notify-submission-to-admin";
 import { NotifySubmissionToUserEmail } from "@/emails/notify-submission-to-user";
+import { PaymentNotifyAdminEmail } from "@/emails/payment-notify-admin";
 import { PaymentSuccessEmail } from "@/emails/payment-success";
 import RejectionEmail from "@/emails/rejection-email";
 import { ResetPasswordEmail } from "@/emails/reset-password";
@@ -85,6 +86,36 @@ export const sendPaymentSuccessEmail = async (
     to: email,
     subject: "Thank your for your submission",
     react: PaymentSuccessEmail({ userName, itemLink }),
+  });
+};
+
+export const sendPaymentNotifyAdminEmail = async ({
+  itemName,
+  planLabel,
+  amount,
+  payerName,
+  payerEmail,
+  itemLink,
+}: {
+  itemName: string;
+  planLabel: string;
+  amount: number;
+  payerName?: string;
+  payerEmail?: string;
+  itemLink: string;
+}) => {
+  await resend.emails.send({
+    from: process.env.RESEND_EMAIL_FROM,
+    to: process.env.RESEND_EMAIL_ADMIN,
+    subject: `New payment: ${planLabel} - ${itemName} ($${amount.toFixed(2)})`,
+    react: PaymentNotifyAdminEmail({
+      itemName,
+      planLabel,
+      amount,
+      payerName,
+      payerEmail,
+      itemLink,
+    }),
   });
 };
 

@@ -3,12 +3,14 @@
 import { getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
+import { PricePlans } from "@/lib/submission";
 import { absoluteUrl } from "@/lib/utils";
 import { sanityClient } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { itemByIdQuery } from "@/sanity/lib/queries";
 import type { ItemInfo } from "@/types";
 import { redirect } from "next/navigation";
+import type Stripe from "stripe";
 
 export type ServerActionResponse = {
   status: "success" | "error";
@@ -30,6 +32,15 @@ export async function createCheckoutSession(
     const user = await currentUser();
     if (!user || !user.email || !user.id) {
       return { status: "error", message: "Unauthorized" };
+    }
+
+    if (!priceId) {
+      console.error("Missing Stripe priceId for plan:", pricePlan);
+      return {
+        status: "error",
+        message:
+          "Payment configuration error: missing priceId. Please check environment variables.",
+      };
     }
 
     const item = await sanityFetch<ItemInfo>({
@@ -89,27 +100,43 @@ export async function createCheckoutSession(
       }
 
       // 4. create stripe checkout session
-      console.log(
-        "Creating Stripe checkout session:",
-        {
-          customerId: stripeCustomerId,
-          priceId,
-          userId: user.id,
-          itemId,
-        }
-      );
+      console.log("Creating Stripe checkout session:", {
+        customerId: stripeCustomerId,
+        priceId,
+        userId: user.id,
+        itemId,
+      });
       // TODO: optimize the success and cancel urls with sessionId!!!
       const successUrl = absoluteUrl(`/publish/${itemId}?pay=success`);
       const cancelUrl = absoluteUrl(`/payment/${itemId}?pay=failed`);
-      const stripeSession = await stripe.checkout.sessions.create({
-        customer: stripeCustomerId,
-        mode: "payment",
+      type CheckoutSessionParams = Stripe.Checkout.SessionCreateParams & {
+        managed_payments?: { enabled: boolean };
+      };
+
+      const buildSessionParams = (
+        customerId?: string,
+      ): CheckoutSessionParams => ({
+        ...(customerId ? { customer: customerId } : {}),
+        // Sponsor is billed as a monthly subscription (recurring Stripe price); Pro stays one-time.
+        mode: pricePlan === PricePlans.SPONSOR ? "subscription" : "payment",
         line_items: [
           {
             price: priceId,
             quantity: 1,
           },
         ],
+        ...(pricePlan === PricePlans.SPONSOR
+          ? {
+              // carried onto the subscription object so renewal/cancellation webhooks can map back to this item
+              subscription_data: {
+                metadata: {
+                  userId: user.id,
+                  itemId: itemId,
+                  pricePlan: pricePlan,
+                },
+              },
+            }
+          : {}),
         metadata: {
           userId: user.id,
           itemId: itemId,
@@ -123,15 +150,56 @@ export async function createCheckoutSession(
         billing_address_collection: "auto",
         // allow promotion codes if you need
         allow_promotion_codes: true,
+        managed_payments: { enabled: false },
       });
+
+      let stripeSession: Stripe.Response<Stripe.Checkout.Session>;
+      try {
+        stripeSession = await stripe.checkout.sessions.create(
+          buildSessionParams(stripeCustomerId ?? undefined),
+        );
+      } catch (err) {
+        // Sanity 里可能残留测试模式时期创建的 customer id，切到 LIVE key 后
+        // Stripe 会报 "No such customer" —— 此时清掉旧 id、重建 LIVE 客户并重试一次
+        const isStaleCustomer =
+          err instanceof Error && /No such customer/i.test(err.message ?? "");
+        if (!isStaleCustomer) throw err;
+
+        console.warn(
+          "stale stripeCustomerId detected, recreating LIVE customer:",
+          stripeCustomerId,
+        );
+        await sanityClient.patch(user.id).unset(["stripeCustomerId"]).commit();
+        const freshCustomer = await stripe.customers.create({
+          email: user.email,
+        });
+        if (!freshCustomer) {
+          return {
+            status: "error",
+            message: "Failed to create customer in Stripe",
+          };
+        }
+        await sanityClient
+          .patch(user.id)
+          .set({ stripeCustomerId: freshCustomer.id })
+          .commit();
+        stripeCustomerId = freshCustomer.id;
+        stripeSession = await stripe.checkout.sessions.create(
+          buildSessionParams(freshCustomer.id),
+        );
+      }
 
       redirectUrl = stripeSession.url as string;
       console.log("stripe checkout session created, url:", redirectUrl);
     }
   } catch (error) {
+    console.error("createCheckoutSession error:", error);
     return {
       status: "error",
-      message: "Failed to generate stripe checkout session",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to generate stripe checkout session",
     };
   }
 

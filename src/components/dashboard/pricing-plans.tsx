@@ -58,6 +58,11 @@ const PricingPlanCard = ({ item, pricePlan }: PricingPlanCardProps) => {
             {pricePlan.title}
           </span>
           <div className="flex items-baseline gap-2">
+            {typeof pricePlan.originalPrice === "number" && (
+              <div className="text-xl font-medium font-workSans text-muted-foreground line-through">
+                ${pricePlan.originalPrice}
+              </div>
+            )}
             <div className="text-4xl font-semibold font-workSans leading-relaxed text-primary">
               ${pricePlan.price}
             </div>

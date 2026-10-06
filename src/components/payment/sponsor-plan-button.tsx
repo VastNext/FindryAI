@@ -41,8 +41,11 @@ export function SponsorPlanButton({
         PricePlans.SPONSOR,
       )
         .then((data) => {
-          console.log("createCheckoutSession, data:", data);
-          // already redirected to stripe checkout page in server action
+          if (data?.status === "error") {
+            console.error("createCheckoutSession error:", data.message);
+            toast.error(data.message || "Failed to create checkout session");
+          }
+          // if success, server action redirects automatically
         })
         .catch((error) => {
           console.error("createCheckoutSession, error:", error);

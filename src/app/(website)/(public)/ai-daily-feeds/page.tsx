@@ -4,6 +4,8 @@ import { siteConfig } from "@/config/site";
 import { curatedTweetSummaries } from "@/data/tweet-feed-curated";
 import { constructMetadata } from "@/lib/metadata";
 import { getTweetFeedData } from "@/lib/tweet-feed";
+import { Loader2Icon } from "lucide-react";
+import { Suspense } from "react";
 
 const canonicalUrl = `${siteConfig.url}/ai-daily-feeds`;
 
@@ -101,7 +103,13 @@ export default async function AiDailyFeedsPage() {
         // biome-ignore lint/security/noDangerouslySetInnerHtml: Valid JSON-LD schema
         dangerouslySetInnerHTML={{ __html: JSON.stringify(tweetFeedJsonLd) }}
       />
-      <TweetFeedView initialData={feedData} />
+      {/* TweetFeedView reads useSearchParams; the boundary confines the CSR
+          bailout so the page prerenders its full DOM. */}
+      <Suspense
+        fallback={<Loader2Icon className="my-32 mx-auto size-6 animate-spin" />}
+      >
+        <TweetFeedView initialData={feedData} />
+      </Suspense>
 
       {/* Server-rendered internal link module for search engines and direct discovery */}
       <aside

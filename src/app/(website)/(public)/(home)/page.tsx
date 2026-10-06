@@ -2,74 +2,35 @@ import HomeInfiniteScroll from "@/components/home/home-infinite-scroll";
 import EmptyGrid from "@/components/shared/empty-grid";
 import { siteConfig } from "@/config/site";
 import { getItems } from "@/data/item";
-import {
-  DEFAULT_SORT,
-  ITEMS_PER_PAGE,
-  SORT_FILTER_LIST,
-} from "@/lib/constants";
-import {
-  constructMetadata,
-  getPaginatedCanonicalUrl,
-  parsePageParam,
-} from "@/lib/metadata";
+import { DEFAULT_SORT, ITEMS_PER_PAGE } from "@/lib/constants";
+import { constructMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 export const revalidate = 172800; // 48 hours ISR cache
 
-export function generateMetadata({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}): Metadata {
+export function generateMetadata(): Metadata {
   return constructMetadata({
     title: {
       absolute: "Findry AI - Curated AI Tools & Agent Skills Directory",
     },
-    canonicalUrl: getPaginatedCanonicalUrl(
-      `${siteConfig.url}/`,
-      searchParams?.page,
-    ),
+    canonicalUrl: `${siteConfig.url}/`,
   });
 }
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  console.log("HomePage, searchParams", searchParams);
-
+// No server-side searchParams here: reading them opts the homepage out of ISR.
+// /?page= is 308'd by middleware, category/tag/sort browsing lives on the
+// /category and /tag routes, and deeper pages load client-side through
+// HomeInfiniteScroll calling /api/items.
+export default async function HomePage() {
   const hasSponsorItem = false;
 
-  const {
-    category,
-    tag,
-    sort,
-    q: query,
-    f: filter,
-  } = searchParams as { [key: string]: string };
-  const { sortKey, reverse } =
-    SORT_FILTER_LIST.find((item) => item.slug === sort) || DEFAULT_SORT;
-  const currentPage = parsePageParam(searchParams?.page);
-  const isFresh = searchParams?.fresh === "1" || searchParams?.nocache === "1";
   const { items, totalCount } = await getItems({
-    category,
-    tag,
-    sortKey,
-    reverse,
-    query,
-    filter,
-    currentPage,
+    sortKey: DEFAULT_SORT.sortKey,
+    reverse: DEFAULT_SORT.reverse,
+    currentPage: 1,
     hasSponsorItem,
-    disableCache: isFresh,
   });
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-  const lastValidPage = Math.max(1, totalPages);
-  if (currentPage > lastValidPage) {
-    redirect(lastValidPage > 1 ? `/?page=${lastValidPage}` : "/");
-  }
-  console.log("HomePage, totalCount", totalCount, ", totalPages", totalPages);
 
   return (
     <div>
@@ -79,17 +40,10 @@ export default async function HomePage({
       {/* when items are found */}
       {items && items.length > 0 && (
         <section className="">
-          {/* key 保证搜索/筛选条件变化时重置分页加载状态 */}
           <HomeInfiniteScroll
-            key={`${category ?? ""}-${tag ?? ""}-${sort ?? ""}-${query ?? ""}-${filter ?? ""}-${currentPage}`}
             initialItems={items}
-            initialPage={currentPage}
+            initialPage={1}
             totalPages={totalPages}
-            category={category}
-            tag={tag}
-            sort={sort}
-            query={query}
-            filter={filter}
             trigger="button"
           />
         </section>

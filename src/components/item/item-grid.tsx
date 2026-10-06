@@ -1,6 +1,9 @@
 import { ItemCardSkeleton } from "@/components/item/item-card";
 import { ITEMS_PER_PAGE } from "@/lib/constants";
-import type { ItemListQueryResult, SponsorItemListQueryResult } from "@/sanity.types";
+import type {
+  ItemListQueryResult,
+  SponsorItemListQueryResult,
+} from "@/sanity.types";
 import ItemGridClient from "./item-grid-client";
 
 interface ItemGridProps {
@@ -16,19 +19,24 @@ interface ItemGridProps {
  * 2. show item card with icon when SUPPORT_ITEM_ICON is true
  * otherwise show item card with image
  */
-export default async function ItemGrid({ items, sponsorItems, showSponsor = true }: ItemGridProps) {
+export default async function ItemGrid({
+  items,
+  sponsorItems,
+  showSponsor = true,
+}: ItemGridProps) {
   if (!showSponsor) {
     return <ItemGridClient items={items} />;
   }
 
-  // show sponsor items at the top
-  // const allItems = [...(Array.isArray(sponsorItems) ? sponsorItems : []), ...items];
+  // show sponsor item in the 3rd slot (end of 1st row in 3-column grid)
+  const validSponsors = Array.isArray(sponsorItems) ? sponsorItems : [];
+  const sponsorIds = new Set(validSponsors.map((s) => s._id));
+  const filteredItems = items.filter((item) => !sponsorIds.has(item._id));
 
-  // show sponsor item in the 3rd item
   const allItems = [
-    ...items.slice(0, 2),
-    ...(Array.isArray(sponsorItems) && sponsorItems.length > 0 ? [sponsorItems[0]] : []),
-    ...items.slice(2)
+    ...filteredItems.slice(0, 2),
+    ...(validSponsors.length > 0 ? [validSponsors[0]] : []),
+    ...filteredItems.slice(2),
   ];
 
   return <ItemGridClient items={allItems} />;
@@ -39,12 +47,10 @@ export function ItemGridSkeleton({
 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[...Array(count)].map(
-        (_, index) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: ignore
-          <ItemCardSkeleton key={index} />
-        ),
-      )}
+      {[...Array(count)].map((_, index) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: ignore
+        <ItemCardSkeleton key={index} />
+      ))}
     </div>
   );
 }

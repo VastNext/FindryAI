@@ -38,7 +38,9 @@ export async function generateSitemaps() {
 /**
  * Next.js generateSitemaps provides segmented sitemaps accessible at:
  * /sitemap/[id].xml (e.g. /sitemap/pages.xml, /sitemap/categories.xml, /sitemap/items.xml, /sitemap/alternatives.xml)
- * Next.js automatically creates a Sitemap Index at /sitemap.xml pointing to all segments.
+ * in production. Next.js does NOT generate a sitemap index at /sitemap.xml —
+ * that index is served by src/app/sitemap-index.xml/route.ts via a rewrite
+ * configured in next.config.mjs. Do not remove it.
  */
 export default async function sitemap({
   id,
@@ -123,6 +125,10 @@ export default async function sitemap({
         },
         {
           url: "gpt-6-astra",
+          lastModified: new Date(),
+        },
+        {
+          url: "gemini-4-argon",
           lastModified: new Date(),
         },
         {

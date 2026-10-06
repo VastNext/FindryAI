@@ -94,6 +94,8 @@ export type PricePlan = {
   benefits: string[];
   limitations: string[];
   price: number;
+  /** Optional strike-through anchor price shown next to the current price (e.g. launch early-bird). */
+  originalPrice?: number;
   priceSuffix: string;
   stripePriceId: string | null;
 };

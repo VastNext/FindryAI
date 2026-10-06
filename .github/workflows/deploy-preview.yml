@@ -1,0 +1,170 @@
+name: Deploy Preview to Vercel
+
+on:
+  workflow_dispatch:
+    inputs:
+      stripe_api_key:
+        description: 'Stripe API Key'
+        required: false
+        type: string
+      stripe_webhook_secret:
+        description: 'Stripe Webhook Secret'
+        required: false
+        type: string
+      stripe_pro_price_id:
+        description: 'Stripe Pro Price ID'
+        required: false
+        type: string
+      stripe_sponsor_price_id:
+        description: 'Stripe Sponsor Price ID'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-preview-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      - name: Inspect and Sync Stripe Environment Variables to Vercel Project
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          INPUT_STRIPE_KEY: ${{ inputs.stripe_api_key }}
+          INPUT_WEBHOOK_SECRET: ${{ inputs.stripe_webhook_secret }}
+          INPUT_PRO_PRICE: ${{ inputs.stripe_pro_price_id }}
+          INPUT_SPONSOR_PRICE: ${{ inputs.stripe_sponsor_price_id }}
+        run: |
+          node -e "
+          const https = require('https');
+
+          const token = process.env.VERCEL_TOKEN;
+          const orgId = process.env.VERCEL_ORG_ID;
+          const projectId = process.env.VERCEL_PROJECT_ID;
+
+          const syncTargets = ['production', 'preview', 'development'];
+          const desiredEnvs = [];
+
+          if (process.env.INPUT_STRIPE_KEY) {
+            desiredEnvs.push({ key: 'STRIPE_API_KEY', value: process.env.INPUT_STRIPE_KEY, type: 'encrypted', target: syncTargets });
+          }
+          if (process.env.INPUT_WEBHOOK_SECRET) {
+            desiredEnvs.push({ key: 'STRIPE_WEBHOOK_SECRET', value: process.env.INPUT_WEBHOOK_SECRET, type: 'encrypted', target: syncTargets });
+          }
+          if (process.env.INPUT_PRO_PRICE) {
+            desiredEnvs.push({ key: 'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID', value: process.env.INPUT_PRO_PRICE, type: 'plain', target: syncTargets });
+          }
+          if (process.env.INPUT_SPONSOR_PRICE) {
+            desiredEnvs.push({ key: 'NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID', value: process.env.INPUT_SPONSOR_PRICE, type: 'plain', target: syncTargets });
+          }
+
+          async function req(method, path, body) {
+            return new Promise((resolve, reject) => {
+              const url = new URL(path, 'https://api.vercel.com');
+              if (orgId) url.searchParams.set('teamId', orgId);
+              const r = https.request(url, {
+                method,
+                headers: {
+                  'Authorization': 'Bearer ' + token,
+                  'Content-Type': 'application/json',
+                }
+              }, res => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                  try {
+                    resolve({ status: res.statusCode, data: data ? JSON.parse(data) : {} });
+                  } catch(e) {
+                    resolve({ status: res.statusCode, data });
+                  }
+                });
+              });
+              r.on('error', reject);
+              if (body) r.write(JSON.stringify(body));
+              r.end();
+            });
+          }
+
+          async function main() {
+            console.log('=== 正在检查 Vercel 现有环境变量列表 ===');
+            const listRes = await req('GET', '/v10/projects/' + projectId + '/env');
+            const existing = (listRes.data && listRes.data.envs) || [];
+            console.log('现有环境变量总数:', existing.length);
+            for (const e of existing) {
+              console.log(' - ' + e.key + ' | type: ' + e.type + ' | targets: ' + JSON.stringify(e.target));
+            }
+
+            console.log('\n=== 开始自动同步 / 补齐 / 修正 Stripe 环境变量 ===');
+            for (const item of desiredEnvs) {
+              const matched = existing.find(e => e.key === item.key);
+              if (matched) {
+                console.log('✔ 更新环境变量:', item.key, 'target:', item.target);
+                const patchRes = await req('PATCH', '/v10/projects/' + projectId + '/env/' + matched.id, {
+                  value: item.value,
+                  target: item.target
+                });
+                console.log('  PATCH 结果状态码:', patchRes.status);
+              } else {
+                console.log('✔ 创建环境变量:', item.key, 'target:', item.target);
+                const postRes = await req('POST', '/v10/projects/' + projectId + '/env', item);
+                console.log('  POST 结果状态码:', postRes.status);
+              }
+            }
+
+            console.log('\n=== 再次检查同步后的状态 ===');
+            const finalListRes = await req('GET', '/v10/projects/' + projectId + '/env');
+            const finalExisting = (finalListRes.data && finalListRes.data.envs) || [];
+            const stripeVars = finalExisting.filter(e => e.key.includes('STRIPE'));
+            console.log('Stripe 相关环境变量清单:');
+            for (const s of stripeVars) {
+              console.log('   ✅ ' + s.key + ' (targets: ' + (s.target || []).join(', ') + ')');
+            }
+          }
+
+          main().catch(err => {
+            console.error('环境变量检查与同步失败:', err);
+            process.exit(1);
+          });
+          "
+
+      - name: Deploy Preview
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel deploy --token="$VERCEL_TOKEN" --yes 2>&1 | tee deploy-output.txt
+
+      - name: Write Preview URL to Summary
+        if: always()
+        run: |
+          URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' deploy-output.txt | tail -1 || true)
+          if [ -n "$URL" ]; then
+            echo "Preview URL: $URL" >> "$GITHUB_STEP_SUMMARY"
+            echo "preview-url=$URL" >> "$GITHUB_OUTPUT"
+          else
+            echo "未从部署输出中解析到 Preview URL，请查看上一步日志" >> "$GITHUB_STEP_SUMMARY"
+          fi
