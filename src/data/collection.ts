@@ -20,6 +20,16 @@ export async function getCollections({
 }
 
 /**
+ * Count-only variant for cheap guards (e.g. generateMetadata must decide
+ * notFound() before the response stream starts).
+ */
+export async function getCollectionsTotalCount(): Promise<number> {
+  return sanityFetch<number>({
+    query: `count(*[_type == "collection" && defined(slug.current) ])`,
+  });
+}
+
+/**
  * build count and data query for get collections from sanity
  */
 const buildQuery = (currentPage = 1) => {
