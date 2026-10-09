@@ -18,6 +18,11 @@ export const marketingConfig: MarketingConfig = {
       icon: "tag",
     },
     {
+      title: "Blog",
+      href: "/blog",
+      icon: "blog",
+    },
+    {
       title: "Agent Skills",
       href: "/agent-skills",
       icon: "sparkles",

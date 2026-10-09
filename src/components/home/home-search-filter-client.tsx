@@ -8,7 +8,7 @@ import {
   type SortFilterItem,
 } from "@/lib/constants";
 import { createUrl } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DEFAULT_FILTER_VALUE, ResponsiveComboBox } from "../shared/combobox";
 import { MultiSelect } from "../shared/multi-select";
@@ -54,6 +54,7 @@ export function HomeSearchFilterClient({
   urlPrefix,
 }: SearchFilterProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [selected, setSelected] = useState({
     category: "",
     tag: "",
@@ -63,9 +64,11 @@ export function HomeSearchFilterClient({
 
   // Read selected filters from the URL client-side only: useSearchParams()
   // here opts the homepage into the CSR bailout and breaks static
-  // prerendering. Re-runs after every render so client navigations stay in
-  // sync (setState with equal values is a no-op).
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // prerendering. Re-run only when the path actually changes — a dependency-
+  // free effect would setState a fresh object after every render and, once a
+  // navigation starts, interleave with Radix popper measurements into a
+  // "Maximum update depth exceeded" loop that silently kills the navigation.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger, the URL is read from window
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setSelected({
@@ -74,7 +77,7 @@ export function HomeSearchFilterClient({
       sort: params.get("sort") || "",
       filter: params.get("f") || "",
     });
-  });
+  }, [pathname]);
 
   const handleFilterChange = (type: string, value: string) => {
     setSelected((prev) => ({
