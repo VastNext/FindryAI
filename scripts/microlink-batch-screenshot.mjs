@@ -62,14 +62,12 @@ async function shoot(name, url) {
 
 async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  const only = process.argv.slice(2);
   let failed = 0;
   for (const t of TARGETS) {
-    if (only.length && !only.includes(t.name)) continue;
     const ok = await shoot(t.name, t.url);
     if (!ok) failed++;
   }
-  console.log(failed ? `DONE with ${failed} failures` : "DONE all ok");
+  console.log(failed ? `DONE with ${failed} failures` : `DONE all ok (${TARGETS.length} targets)`);
   process.exit(failed ? 1 : 0);
 }
 
