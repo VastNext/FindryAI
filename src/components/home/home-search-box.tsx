@@ -176,8 +176,11 @@ export default function HomeSearchBox({
         </div>
       </div>
 
-      {/* Row 2: Popular Category Quick Pills (热门分类快速直达) */}
-      <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+      {/* Row 2: Popular Category Quick Pills (热门分类快速直达)
+          TEMP hidden via display:none to reduce hero density — the navbar
+          Category menu covers the same destinations. Restore visibility by
+          removing the `hidden` class; data stays in popularCategories. */}
+      <div className="hidden flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
         <span className="flex items-center gap-1 font-semibold text-foreground/90 shrink-0">
           <CompassIcon className="size-3.5 text-indigo-500" />
           <span>Explore:</span>

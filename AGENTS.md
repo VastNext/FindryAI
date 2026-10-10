@@ -54,6 +54,7 @@ Findry AI 者，以 Next.js 十四（App Router）所造之 AI 工具目录网�
 - **邮件预览**：`pnpm email`（React Email 开发服务，居三千三百三十三端口）
 - **条目批处理**：`pnpm item:import`、`pnpm item:fetch`、`pnpm item:update`、`pnpm item:remove`、`pnpm item:publish-approved`（审核通过条目一键发布并刷新首页缓存）
 - **诸实体批处理**（类目、标签、分组、条目）：`pnpm batch`（或 `pnpm batch:import`、`pnpm batch:update`、`pnpm batch:remove`）
+- **GSC 请求索引**：`pnpm gsc:index <url>...`（`scripts/gsc-request-indexing.sh`，经 opencli 驱动 GSC 界面提交；配置 `GSC_RESOURCE_ID`，详见 `docs/gsc-request-indexing.md`）
 
 ### 测试
 
