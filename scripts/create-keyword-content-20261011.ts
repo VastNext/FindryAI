@@ -325,7 +325,7 @@ interface PostSpec {
   slug: string;
   title: string;
   excerpt: string;
-  body: Block[];
+  body: () => Block[];
   relatedSlug?: string;
 }
 
