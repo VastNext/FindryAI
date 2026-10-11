@@ -74,6 +74,7 @@ export async function generateMetadata({
     description,
     canonicalUrl,
     image: ogImageUrl.toString(),
+    noIndex: true,
   });
 }
 

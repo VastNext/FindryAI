@@ -49,6 +49,7 @@ export async function generateMetadata({
       searchParams?.page,
     ),
     image: ogImageUrl.toString(),
+    noIndex: true,
   });
 }
 

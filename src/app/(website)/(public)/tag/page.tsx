@@ -28,6 +28,7 @@ export function generateMetadata({
       `${siteConfig.url}/tag`,
       searchParams?.page,
     ),
+    noIndex: true,
   });
 }
 
