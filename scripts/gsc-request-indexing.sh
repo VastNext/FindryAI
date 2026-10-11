@@ -70,14 +70,16 @@ for url in "$@"; do
 done
 
 # --- helpers -----------------------------------------------------------------
+# GSC renders the Request-indexing button TWICE (desktop + narrow-layout copies).
+# The hidden duplicate "eats" clicks, so always click the VISIBLE ref.
 get_ref() {
-  # print the ref of the "Request indexing" div[role=button] (empty if absent)
-  opencli browser "$SESSION" find --text "Request indexing" --limit 6 2>/dev/null \
+  opencli browser "$SESSION" find --role button --text "Request indexing" --limit 6 2>/dev/null \
    | node -e "
 let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
   try{const j=JSON.parse(d);
     const c=(j.entries||[]).filter(e=>e.tag==='div'&&e.role==='button'&&/request/i.test(e.text||''));
-    console.log(c.length?c[c.length-1].ref:'');
+    const vis=c.filter(e=>e.visible===true);
+    console.log(vis.length?vis[0].ref:(c.length?c[c.length-1].ref:''));
   }catch(e){console.log('');}
 });"
 }
@@ -88,6 +90,32 @@ toast_ok() {
 let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
   try{const j=JSON.parse(d);console.log((j.matches_n||0)>0?'YES':'NO');}catch(e){console.log('NO');}
 });"
+}
+
+slug_visible() {
+  # YES when the inspection panel header shows this URL's slug
+  opencli browser "$SESSION" find --text "$1" --limit 3 2>/dev/null \
+   | node -e "
+let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
+  try{const j=JSON.parse(d);console.log((j.matches_n||0)>0?'YES':'NO');}catch(e){console.log('NO');}
+});"
+}
+
+# Type the URL and trigger the inspection. On a cold session the first Search
+# click sometimes does not fire; retry once (with an explicit focus click).
+trigger_inspection() {
+  local url="$1"
+  opencli browser "$SESSION" type "$BAR" "$url" 2>/dev/null | grep -q '"typed": true' || return 1
+  opencli browser "$SESSION" click "$SEARCH_BTN" 2>/dev/null | grep -q '"clicked": true' || return 1
+  sleep 12
+  [ "$(slug_visible "${url##*/}")" = "YES" ] && return 0
+  say "panel did not switch — retrying with explicit focus click"
+  opencli browser "$SESSION" click "$BAR" >/dev/null 2>&1
+  opencli browser "$SESSION" type "$BAR" "$url" 2>/dev/null | grep -q '"typed": true' || return 1
+  sleep 2
+  opencli browser "$SESSION" click "$SEARCH_BTN" 2>/dev/null | grep -q '"clicked": true' || return 1
+  sleep 12
+  [ "$(slug_visible "${url##*/}")" = "YES" ]
 }
 
 # --- init: open GSC property, confirm session works ---------------------------
@@ -105,22 +133,20 @@ if [ "$CHECK_ONLY" = "yes" ]; then
   exit 0
 fi
 
-# --- per-URL submission (recipe proven 2026-10-10, 7/7) ------------------------
+# --- per-URL submission (proven 2026-10-10 7/7; hardened 2026-10-12) ----------
 # The top-bar combobox ignores synthetic Enter/ArrowDown; the reliable trigger
 # is clicking the Search button next to it after typing the URL.
+# Hard-won rules: click only the VISIBLE request button; do NOT proceed unless
+# the panel actually switched to this URL (else you re-request the previous one);
+# after requesting, wait QUIETLY — clicks during the live test can cancel it.
 FAILS=0
 for url in "$@"; do
   slug="${url##*/}"
   say "=== START $url"
 
-  opencli browser "$SESSION" type "$BAR" "$url" 2>/dev/null | grep -q '"typed": true' \
-    || { say "FAIL type failed for $url"; FAILS=$((FAILS+1)); continue; }
-  opencli browser "$SESSION" click "$SEARCH_BTN" 2>/dev/null | grep -q '"clicked": true' \
-    || { say "FAIL search-click failed for $url"; FAILS=$((FAILS+1)); continue; }
-  sleep 8
-
-  if ! opencli browser "$SESSION" wait text "$slug" --timeout 90 >/dev/null 2>&1; then
-    say "WARN inspection panel switch not confirmed for $slug (continuing)"
+  if ! trigger_inspection "$url"; then
+    say "FAIL could not trigger inspection for $url"
+    FAILS=$((FAILS+1)); continue
   fi
   if ! opencli browser "$SESSION" wait text "$TEXT_REQUEST" --timeout 90 >/dev/null 2>&1; then
     say "WARN no $TEXT_REQUEST button appeared for $slug"
@@ -130,17 +156,20 @@ for url in "$@"; do
   ref="$(get_ref)"
   [ -n "$ref" ] || { say "FAIL request-button not found for $slug"; FAILS=$((FAILS+1)); continue; }
   opencli browser "$SESSION" click "$ref" >/dev/null 2>&1 || { say "FAIL click failed for $slug"; FAILS=$((FAILS+1)); continue; }
-  say "request clicked (ref=$ref), waiting for live test + success toast..."
+  say "request clicked (visible ref=$ref), waiting quietly for live test + toast..."
 
+  # quiet polling: no clicks for the first 3 checks (~2min) — mid-test clicks
+  # can cancel the live test. Only then allow a single confirm click per round.
   ok="NO"
   for i in 1 2 3 4 5 6; do
     sleep 40
     ok="$(toast_ok)"
     [ "$ok" = "YES" ] && break
-    ref2="$(get_ref)"
-    if [ -n "$ref2" ]; then
-      # some runs show a confirm button after the live test; click it once more
-      opencli browser "$SESSION" click "$ref2" >/dev/null 2>&1 && say "confirm click sent (ref=$ref2)"
+    if [ "$i" -ge 3 ] && [ "$i" -le 4 ]; then
+      ref2="$(get_ref)"
+      if [ -n "$ref2" ]; then
+        opencli browser "$SESSION" click "$ref2" >/dev/null 2>&1 && say "confirm click sent (visible ref=$ref2)"
+      fi
     fi
   done
 
