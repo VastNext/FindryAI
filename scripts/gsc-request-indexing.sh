@@ -92,30 +92,23 @@ let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
 });"
 }
 
-slug_visible() {
-  # YES when the inspection panel header shows this URL's slug
-  opencli browser "$SESSION" find --text "$1" --limit 3 2>/dev/null \
-   | node -e "
-let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
-  try{const j=JSON.parse(d);console.log((j.matches_n||0)>0?'YES':'NO');}catch(e){console.log('NO');}
-});"
-}
-
-# Type the URL and trigger the inspection. On a cold session the first Search
-# click sometimes does not fire; retry once (with an explicit focus click).
+# Type the URL and trigger the inspection.
+# 2026-10-12 lesson: text-based panel-switch detection (find/wait text on the
+# slug) is UNRELIABLE — GSC sometimes serves the inspection panel where text
+# find cannot see it, and after ~5 inspections in one session the SPA stops
+# switching panels entirely. The reliable pattern is: RELOAD the property page
+# fresh before EACH url, type + Search click, then blind-wait — no detection.
 trigger_inspection() {
   local url="$1"
-  opencli browser "$SESSION" type "$BAR" "$url" 2>/dev/null | grep -q '"typed": true' || return 1
-  opencli browser "$SESSION" click "$SEARCH_BTN" 2>/dev/null | grep -q '"clicked": true' || return 1
+  opencli browser "$SESSION" open "https://search.google.com/search-console?resource_id=$ENC_RESOURCE" >/dev/null 2>&1
   sleep 12
-  [ "$(slug_visible "${url##*/}")" = "YES" ] && return 0
-  say "panel did not switch — retrying with explicit focus click"
-  opencli browser "$SESSION" click "$BAR" >/dev/null 2>&1
+  opencli browser "$SESSION" wait selector "$BAR" --timeout 60 >/dev/null 2>&1 || return 1
   opencli browser "$SESSION" type "$BAR" "$url" 2>/dev/null | grep -q '"typed": true' || return 1
   sleep 2
   opencli browser "$SESSION" click "$SEARCH_BTN" 2>/dev/null | grep -q '"clicked": true' || return 1
-  sleep 12
-  [ "$(slug_visible "${url##*/}")" = "YES" ]
+  # blind wait: the panel switch cannot be detected reliably; give it time
+  sleep 55
+  return 0
 }
 
 # --- init: open GSC property, confirm session works ---------------------------
