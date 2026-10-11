@@ -42,6 +42,7 @@ const markdownComponents = {
       : "nofollow noopener noreferrer";
     return (
       <a
+        href={href}
         rel={rel}
         className={cn("font-medium underline underline-offset-4", className)}
         {...props}
