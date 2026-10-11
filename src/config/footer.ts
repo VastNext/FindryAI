@@ -13,11 +13,20 @@ export const footerConfig: FooterConfig = {
     {
       title: "Resources",
       items: [
-        { title: "Gemini 4 Argon", href: "/gemini-4-argon" },
+        { title: "Face Swap GIF", href: "/face-swap-gif" },
         { title: "TypeSafe Jev", href: "/typesafe-jev" },
+        { title: "GPT-6 Astra", href: "/gpt-6-astra" },
+        { title: "AutoDraw AI", href: "/item/autodraw" },
+        {
+          title: "ArtCraft Suite",
+          href: "/blog/artcraft-open-source-adobe-alternatives",
+        },
+        { title: "PhotoCraft", href: "/item/photocraft" },
+        { title: "VectorCraft", href: "/item/vectorcraft" },
+        { title: "FilmCraft", href: "/item/filmcraft" },
+        { title: "Gemini 4 Argon", href: "/gemini-4-argon" },
         { title: "Agent Skills", href: "/agent-skills" },
         { title: "AI Feed", href: "/ai-daily-feeds" },
-        { title: "Face Swap GIF", href: "/face-swap-gif" },
         { title: "Face Swap Video", href: "/ai-face-swap-video" },
         { title: "Pricing", href: "/pricing" },
         { title: "Submit", href: "/submit" },

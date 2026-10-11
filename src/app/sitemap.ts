@@ -6,7 +6,6 @@ import type {
   CollectionListQueryForSitemapResult,
   ItemListQueryForSitemapResult,
   PageListQueryForSitemapResult,
-  TagListQueryForSitemapResult,
 } from "@/sanity.types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
@@ -16,18 +15,12 @@ import {
   collectionListQueryForSitemap,
   itemListQueryForSitemap,
   pageListQueryForSitemap,
-  tagListQueryForSitemap,
 } from "@/sanity/lib/queries";
 import type { MetadataRoute } from "next";
 
 const site_url = process.env.NEXT_PUBLIC_APP_URL || siteConfig.url;
 
-export const SITEMAP_SEGMENTS = [
-  "pages",
-  "categories",
-  "items",
-  "alternatives",
-] as const;
+export const SITEMAP_SEGMENTS = ["pages", "categories", "items"] as const;
 
 export type SitemapSegment = (typeof SITEMAP_SEGMENTS)[number];
 
@@ -75,10 +68,6 @@ export default async function sitemap({
         },
         {
           url: "category",
-          lastModified: new Date(),
-        },
-        {
-          url: "tag",
           lastModified: new Date(),
         },
         // Only include collection index if collections exist to prevent Soft 404
@@ -189,36 +178,21 @@ export default async function sitemap({
     }
 
     case "categories": {
-      const [
-        categoryListQueryResult,
-        tagListQueryResult,
-        blogCategoryListQueryResult,
-      ] = await Promise.all([
-        sanityFetch<CategoryListQueryForSitemapResult>({
-          query: categoryListQueryForSitemap,
-        }),
-        sanityFetch<TagListQueryForSitemapResult>({
-          query: tagListQueryForSitemap,
-        }),
-        sanityFetch<BlogCategoryListQueryForSitemapResult>({
-          query: blogCategoryListQueryForSitemap,
-        }),
-      ]);
+      const [categoryListQueryResult, blogCategoryListQueryResult] =
+        await Promise.all([
+          sanityFetch<CategoryListQueryForSitemapResult>({
+            query: categoryListQueryForSitemap,
+          }),
+          sanityFetch<BlogCategoryListQueryForSitemapResult>({
+            query: blogCategoryListQueryForSitemap,
+          }),
+        ]);
 
       for (const category of categoryListQueryResult) {
         if (category.slug && (category.count ?? 0) > 0) {
           sitemapList.push({
             url: `${site_url}/category/${category.slug}`,
             lastModified: new Date(category._updatedAt).toISOString(),
-          });
-        }
-      }
-
-      for (const tag of tagListQueryResult) {
-        if (tag.slug && (tag.count ?? 0) > 0) {
-          sitemapList.push({
-            url: `${site_url}/tag/${tag.slug}`,
-            lastModified: new Date(tag._updatedAt).toISOString(),
           });
         }
       }
@@ -244,23 +218,6 @@ export default async function sitemap({
         if (item.slug) {
           sitemapList.push({
             url: `${site_url}/item/${item.slug}`,
-            lastModified: new Date(item._updatedAt).toISOString(),
-          });
-        }
-      }
-      break;
-    }
-
-    case "alternatives": {
-      const itemListQueryResult =
-        await sanityFetch<ItemListQueryForSitemapResult>({
-          query: itemListQueryForSitemap,
-        });
-
-      for (const item of itemListQueryResult) {
-        if (item.slug) {
-          sitemapList.push({
-            url: `${site_url}/item/${item.slug}/alternatives`,
             lastModified: new Date(item._updatedAt).toISOString(),
           });
         }
