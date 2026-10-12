@@ -11,6 +11,7 @@ export const priceConfig: PriceConfig = {
       title: PricePlans.FREE,
       description: "Free Submission for AI Builders",
       benefits: [
+        "Up to 2 submissions per account",
         "Get 1 high-authority dofollow backlink to boost SEO",
         "Permanent product directory listing",
         "Badge-verified submissions: editorial review within 24-72 hours, then publish if approved",
@@ -19,6 +20,7 @@ export const priceConfig: PriceConfig = {
       ],
       limitations: [
         "Standard review queue, no featured placement",
+        "More than 2 submissions requires a verified badge or Pro",
         "Community support",
       ],
       price: 0,

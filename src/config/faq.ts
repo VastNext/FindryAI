@@ -14,7 +14,9 @@ export const faqConfig: FAQConfig = {
         "Yes! Free submission is open to all AI builders and creators. \nYou will get:\n" +
         "- Permanent listing on our curated directory\n" +
         "- 1 high-authority dofollow backlink to boost your SEO\n" +
-        "- Badge-verified submissions reviewed within 24-72 hours and published if approved; no-badge submissions have no guaranteed review time",
+        "- Up to 2 submissions per account on the free plan\n" +
+        "- Badge-verified submissions reviewed within 24-72 hours and published if approved; no-badge submissions have no guaranteed review time\n" +
+        "- More than 2 submissions requires a verified badge or the Pro plan",
     },
     {
       id: "item-2",

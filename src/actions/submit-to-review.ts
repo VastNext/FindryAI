@@ -4,7 +4,11 @@ import { getItemById } from "@/data/item";
 import { currentUser } from "@/lib/auth";
 import { checkBadge } from "@/lib/badge-verification";
 import { sendNotifySubmissionEmail } from "@/lib/mail";
-import { FreePlanStatus, PricePlans } from "@/lib/submission";
+import {
+  FREE_SUBMISSION_LIMIT,
+  FreePlanStatus,
+  PricePlans,
+} from "@/lib/submission";
 import { getItemLinkInStudio, getItemStatusLinkInWebsite } from "@/lib/utils";
 import { sanityClient } from "@/sanity/lib/client";
 
@@ -37,6 +41,22 @@ export const submitToReview = async (
       item.freePlanStatus !== FreePlanStatus.SUBMITTING
     ) {
       return { status: "error", message: "Item is not in right plan status!" };
+    }
+
+    // 免费套餐每账号终身 2 条（徽章快速通道不受此限）。
+    if (!withBadge) {
+      const usedSlots = await sanityClient.fetch(
+        `count(*[_type == "item" && submitter._ref == $userId && pricePlan == $plan && freePlanStatus in ["pending", "approved"] && _id != $id])`,
+        { userId: user.id, plan: PricePlans.FREE, id: itemId },
+        { useCdn: false },
+      );
+      if (usedSlots >= FREE_SUBMISSION_LIMIT) {
+        return {
+          status: "error",
+          message:
+            "Free plan includes up to 2 submissions per account. To submit more, verify our badge on your site (fast-track review included) or upgrade to Pro.",
+        };
+      }
     }
 
     // 优先入队时重新核验，避免先验证、撤掉徽章后仍占用优先审核资格。

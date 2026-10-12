@@ -1,5 +1,8 @@
 import type { ItemInfo } from "@/types";
 
+/** Free plan lifetime submission cap per account (badge/Pro bypass it). */
+export const FREE_SUBMISSION_LIMIT = 2;
+
 export enum PricePlans {
   FREE = "free",
   PRO = "pro",

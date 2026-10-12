@@ -3,7 +3,11 @@
 import { currentUser } from "@/lib/auth";
 import type { SUPPORT_ITEM_ICON } from "@/lib/constants";
 import { SubmitSchema } from "@/lib/schemas";
-import { FreePlanStatus, PricePlans } from "@/lib/submission";
+import {
+  FREE_SUBMISSION_LIMIT,
+  FreePlanStatus,
+  PricePlans,
+} from "@/lib/submission";
 import { slugify } from "@/lib/utils";
 import { sanityClient } from "@/sanity/lib/client";
 import { revalidatePath } from "next/cache";
@@ -38,6 +42,20 @@ export async function submit(
     const user = await currentUser();
     if (!user) {
       return { status: "error", message: "Unauthorized" };
+    }
+
+    // 免费套餐每账号终身 2 条（草稿不计，pending/approved 计）。
+    const usedSlots = await sanityClient.fetch(
+      `count(*[_type == "item" && submitter._ref == $userId && pricePlan == $plan && freePlanStatus in ["pending", "approved"]])`,
+      { userId: user.id, plan: PricePlans.FREE },
+      { useCdn: false },
+    );
+    if (usedSlots >= FREE_SUBMISSION_LIMIT) {
+      return {
+        status: "error",
+        message:
+          "Free plan includes up to 2 submissions per account. To submit more, verify our badge on your site (fast-track review included) or upgrade to Pro.",
+      };
     }
 
     // console.log("submit, data:", formData);

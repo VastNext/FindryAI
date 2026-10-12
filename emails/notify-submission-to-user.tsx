@@ -63,7 +63,7 @@ export const NotifySubmissionToUserEmail = ({
               Your product named <b>{itemName}</b>{" "}
               {priority
                 ? "has joined the badge fast-track queue: editorial review within 24-72 hours, and it will be listed if approved."
-                : "has entered our standard review queue. Review timing is not guaranteed and depends on queue capacity - it will be listed if approved."}
+                : "has entered our standard review queue. Review timing is not guaranteed and depends on queue capacity - it will be listed if approved. The free plan includes up to 2 submissions per account; for more, verify our badge or upgrade to Pro."}
             </Text>
             <Text style={paragraph}>
               You can view your submission status by clicking the button below:

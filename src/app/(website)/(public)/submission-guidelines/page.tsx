@@ -24,6 +24,7 @@ const eligibility = [
   "The website is publicly accessible and loads normally for any visitor.",
   "The listing accurately represents the product — name, link, description, and screenshots all match the real site.",
   "You submit each product only once and update existing submissions instead of creating duplicates.",
+  "The free plan covers up to 2 submissions per account; additional submissions require a verified badge or the Pro plan.",
 ];
 
 const reviewCriteria = [

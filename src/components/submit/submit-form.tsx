@@ -493,7 +493,7 @@ export function SubmitForm({ tagList, categoryList }: SubmitFormProps) {
                     [
                       "standard",
                       "Free · standard",
-                      "Submit without a badge; no review deadline",
+                      "Submit without a badge; no review deadline · up to 2 per account",
                     ],
                     [
                       "plans",
