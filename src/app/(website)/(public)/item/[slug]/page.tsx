@@ -9,6 +9,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { isAlternativesEnabled } from "@/config/alternatives-whitelist";
 import { siteConfig } from "@/config/site";
 import { fakefaceCuratedData } from "@/data/item-curated/fakeface";
 import { unsummaryCuratedData } from "@/data/item-curated/unsummary";
@@ -143,6 +144,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
   const isInactiveService = Boolean(
     curatedData?.serviceStatusNotice?.isInactive,
   );
+  const hasAlternatives = isAlternativesEnabled(params.slug);
   const isSponsor = item.sponsor || item.pricePlan === "sponsor";
   const isFreePlan =
     item.pricePlan === "free" && item.freePlanStatus !== "approved";
@@ -355,27 +357,29 @@ export default async function ItemPage({ params }: ItemPageProps) {
               </Link>
             </Button>
 
-            <Button
-              size="lg"
-              variant={isInactiveService ? "default" : "outline"}
-              asChild
-              className={cn(
-                isInactiveService &&
-                  "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-md font-semibold",
-              )}
-            >
-              <Link
-                href={`/item/${params.slug}/alternatives`}
-                className="flex items-center justify-center space-x-2"
+            {hasAlternatives && (
+              <Button
+                size="lg"
+                variant={isInactiveService ? "default" : "outline"}
+                asChild
+                className={cn(
+                  isInactiveService &&
+                    "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-md font-semibold",
+                )}
               >
-                <SparklesIcon className="w-4 h-4" />
-                <span>
-                  {isInactiveService
-                    ? "Browse Active Alternatives →"
-                    : "Alternatives"}
-                </span>
-              </Link>
-            </Button>
+                <Link
+                  href={`/item/${params.slug}/alternatives`}
+                  className="flex items-center justify-center space-x-2"
+                >
+                  <SparklesIcon className="w-4 h-4" />
+                  <span>
+                    {isInactiveService
+                      ? "Browse Active Alternatives →"
+                      : "Alternatives"}
+                  </span>
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
 
@@ -553,18 +557,20 @@ export default async function ItemPage({ params }: ItemPageProps) {
                 More Products & Alternatives
               </h2>
             </div>
-            <Link
-              href={`/item/${params.slug}/alternatives`}
-              className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 group"
-            >
-              <span>Compare all {item.name} alternatives</span>
-              <span
-                aria-hidden="true"
-                className="transition-transform group-hover:translate-x-0.5"
+            {hasAlternatives && (
+              <Link
+                href={`/item/${params.slug}/alternatives`}
+                className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 group"
               >
-                &rarr;
-              </span>
-            </Link>
+                <span>Compare all {item.name} alternatives</span>
+                <span
+                  aria-hidden="true"
+                  className="transition-transform group-hover:translate-x-0.5"
+                >
+                  &rarr;
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="mt-2">
