@@ -120,10 +120,8 @@ export const itemWithAlternativesBySlugQuery = defineQuery(`*[_type == "item" &&
     && forceHidden != true
     && sponsor != true
     && _id != ^._id
-    && (
-      count(categories[@._ref in ^.^.categories[]._ref]) > 0 ||
-      count(tags[@._ref in ^.^.tags[]._ref]) > 0
-    )] 
+    && count(categories[@._ref != "YC8O33bPim24nrYgMGuMGy" && @._ref in ^.^.categories[@._ref != "YC8O33bPim24nrYgMGuMGy"]._ref]) > 0
+  ] 
     | order(coalesce(featured, false) desc, publishDate desc) [0...18] {
       ${itemSimpleFields}
   }

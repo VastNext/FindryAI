@@ -1,5 +1,157 @@
 import type { CuratedItemData } from "@/data/item-curated/fakeface";
 
+export interface CuratedAlternativeEntry {
+  name: string;
+  slug?: string;
+  tagline: string;
+  pricing: string;
+  focus: string;
+  url: string;
+}
+
+export const UNSUMMARY_CURATED_ALTERNATIVES: CuratedAlternativeEntry[] = [
+  {
+    name: "Blinkist",
+    tagline:
+      "Industry leader in 15-minute book summaries with audio & text briefs",
+    pricing: "Freemium / Trial",
+    focus: "Curated Non-fiction Audio Books",
+    url: "https://www.blinkist.com",
+  },
+  {
+    name: "StoryShots",
+    tagline: "Free book summaries with animated infographics, audio, and text",
+    pricing: "Free / Premium",
+    focus: "Visual & Audio Book Takeaways",
+    url: "https://www.getstoryshots.com",
+  },
+  {
+    name: "NoteGPT",
+    tagline: "AI video, podcast, and article summarizer with visual mind maps",
+    pricing: "Free / Pro",
+    focus: "YouTube, Podcasts & Articles",
+    url: "https://notegpt.io",
+  },
+  {
+    name: "QuillBot",
+    tagline: "Long-form AI text summarizer, condenser, and rewriter",
+    pricing: "Free / Premium",
+    focus: "General Text & Document Condensation",
+    url: "https://quillbot.com/summarize",
+  },
+  {
+    name: "ChatPDF",
+    tagline:
+      "Upload books, PDFs, and research papers to chat, summarize, and extract",
+    pricing: "Free / Plus",
+    focus: "PDF & Long Document Q&A",
+    url: "https://www.chatpdf.com",
+  },
+  {
+    name: "MakeMySummary",
+    tagline:
+      "Generous free quotas for condensing articles, newsletters, and papers",
+    pricing: "Free",
+    focus: "Article & Text Summarization",
+    url: "https://makemysummary.com",
+  },
+  {
+    name: "Shortform",
+    tagline:
+      "Deep, comprehensive chapter-by-chapter book summaries and exercises",
+    pricing: "Free Trial / Paid",
+    focus: "In-depth Book Analysis",
+    url: "https://www.shortform.com",
+  },
+  {
+    name: "getAbstract",
+    tagline:
+      "Enterprise-grade library of 27,000+ business book and article summaries",
+    pricing: "Trial / Paid",
+    focus: "Business & Leadership Summaries",
+    url: "https://www.getabstract.com",
+  },
+  {
+    name: "Upword",
+    slug: "upword",
+    tagline:
+      "AI research tool that reads, summarizes, and generates study notes",
+    pricing: "Free / Pro",
+    focus: "Research Summarizer & Notes",
+    url: "https://www.upword.ai",
+  },
+  {
+    name: "12min",
+    tagline: "Micro-books and audio digests designed for busy professionals",
+    pricing: "Freemium",
+    focus: "12-Minute Book Summaries",
+    url: "https://12min.com",
+  },
+  {
+    name: "SMMRY",
+    tagline: "Instant, no-sign-up text reducer based on ranking key sentences",
+    pricing: "100% Free",
+    focus: "Direct Text & Webpage Reducer",
+    url: "https://smmry.com",
+  },
+  {
+    name: "TLDR This",
+    tagline:
+      "Browser extension and web tool that distills any article in seconds",
+    pricing: "Free / Basic",
+    focus: "Web Article Extraction",
+    url: "https://tldrthis.com",
+  },
+  {
+    name: "Resoomer",
+    tagline:
+      "Semantic text analyzer and summarizer for academic and news articles",
+    pricing: "Free / Pro",
+    focus: "Document & Article Condensation",
+    url: "https://resoomer.com",
+  },
+  {
+    name: "AskYourPDF",
+    tagline:
+      "AI document assistant for reading and summarizing lengthy books & papers",
+    pricing: "Free / Premium",
+    focus: "PDF Dialogue & Extraction",
+    url: "https://askyourpdf.com",
+  },
+  {
+    name: "SciSpace",
+    tagline:
+      "Read research papers and academic books with instant paragraph summaries",
+    pricing: "Free / Pro",
+    focus: "Academic Paper & Book Analysis",
+    url: "https://typeset.io",
+  },
+  {
+    name: "Glarity",
+    tagline:
+      "Open-source browser extension summarizing YouTube, Google, and news",
+    pricing: "Free",
+    focus: "Cross-platform Summary Extension",
+    url: "https://glarity.app",
+  },
+  {
+    name: "SummarizeBot",
+    tagline:
+      "Multi-platform bot that summarizes audio, links, and documents in chat",
+    pricing: "Free Trial",
+    focus: "Multi-media Bot Summaries",
+    url: "https://www.summarizebot.com",
+  },
+  {
+    name: "Summari",
+    tagline:
+      "API and consumer tool producing human-quality summaries in under 5 seconds",
+    pricing: "Free Trial / Pro",
+    focus: "Speed-focused Article Summarizer",
+    url: "https://www.summari.com",
+  },
+];
+
 export const unsummaryCuratedData: CuratedItemData = {
   slug: "unsummary",
   name: "Unsummary",

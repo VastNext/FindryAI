@@ -12,7 +12,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { isAlternativesEnabled } from "@/config/alternatives-whitelist";
 import { siteConfig } from "@/config/site";
+import {
+  UNSUMMARY_CURATED_ALTERNATIVES,
+  unsummaryCuratedData,
+} from "@/data/item-curated/unsummary";
 import { urlForIcon } from "@/lib/image";
 import { constructMetadata } from "@/lib/metadata";
 import type {
@@ -25,6 +30,7 @@ import {
   sponsorItemListQuery,
 } from "@/sanity/lib/queries";
 import {
+  AlertTriangleIcon,
   ArrowLeftIcon,
   CheckCircle2Icon,
   ExternalLinkIcon,
@@ -47,6 +53,11 @@ interface AlternativesPageProps {
 export async function generateMetadata({
   params,
 }: AlternativesPageProps): Promise<Metadata | undefined> {
+  // Only whitelisted flagship & high-search items are allowed to generate alternatives pages
+  if (!isAlternativesEnabled(params.slug)) {
+    return;
+  }
+
   const item = await sanityFetch<ItemWithAlternativesBySlugQueryResult>({
     query: itemWithAlternativesBySlugQuery,
     params: { slug: params.slug },
@@ -74,13 +85,19 @@ export async function generateMetadata({
     description,
     canonicalUrl,
     image: ogImageUrl.toString(),
-    noIndex: true,
+    // Curated high-value pages in the whitelist are indexed for SEO gain
+    noIndex: false,
   });
 }
 
 export default async function AlternativesPage({
   params,
 }: AlternativesPageProps) {
+  // Hard gate: 404 all non-whitelisted items to prune 1,000+ low-value thin pages
+  if (!isAlternativesEnabled(params.slug)) {
+    return notFound();
+  }
+
   const [item, sponsorItems] = await Promise.all([
     sanityFetch<ItemWithAlternativesBySlugQueryResult>({
       query: itemWithAlternativesBySlugQuery,
@@ -95,38 +112,59 @@ export default async function AlternativesPage({
     return notFound();
   }
 
+  const isUnsummary = params.slug === "unsummary";
   const iconProps = item.icon ? urlForIcon(item.icon) : null;
   const primaryCategory = item.categories?.[0];
   const alternatives = item.alternatives || [];
-  const count = alternatives.length;
+  const count = isUnsummary
+    ? UNSUMMARY_CURATED_ALTERNATIVES.length
+    : alternatives.length;
 
   const pageUrl = `${siteConfig.url}/item/${params.slug}/alternatives`;
   const itemUrl = `${siteConfig.url}/item/${params.slug}`;
 
-  // Structured FAQs for SEO
-  const faqs = [
-    {
-      question: `What is the best free alternative to ${item.name}?`,
-      answer:
-        alternatives.length > 0
-          ? `Among the curated options, tools like ${alternatives
-              .slice(0, 3)
-              .map((a) => a.name)
-              .join(
-                ", ",
-              )} offer competitive features, free tiers, or trial access depending on your workflow needs.`
-          : `Explore our directory to find similar tools with generous free tiers matching ${item.name}'s capabilities.`,
-    },
-    {
-      question: `Why should I consider alternatives to ${item.name}?`,
-      answer: `Users commonly look for alternatives to ${item.name} to find better pricing plans, specialized niche features, higher privacy/self-hosting standards, or faster integrations with their existing toolstack.`,
-    },
-    {
-      question: `How do I choose the right alternative to ${item.name}?`,
-      answer:
-        "Identify your core requirement—such as team collaboration, API access, cost efficiency, or specific workflow automation—and compare the options in our curated matrix above.",
-    },
-  ];
+  // Structured FAQs tailored for the item (clean, factual, no junk recommendations)
+  const faqs = isUnsummary
+    ? [
+        {
+          question: "What is the best active alternative to Unsummary?",
+          answer:
+            "Top active alternatives include Blinkist (for audio & curated book briefs), StoryShots (for visual & free book summaries), NoteGPT (for podcast and YouTube transcript condensation), and QuillBot (for general document summaries).",
+        },
+        {
+          question: "Why did Unsummary go offline?",
+          answer:
+            "As of late 2026, unsummary.com's origin servers stopped responding (HTTP 522). The service is discontinued. Users should migrate their workflow to dedicated book or media summarizers like StoryShots or Blinkist.",
+        },
+        {
+          question: "Which Unsummary alternatives have free tiers?",
+          answer:
+            "StoryShots offers free summaries with animations, NoteGPT provides free daily quotas for video & text summaries, SMMRY is 100% free with no sign-up, and MakeMySummary has a generous free tier.",
+        },
+      ]
+    : [
+        {
+          question: `What is the best free alternative to ${item.name}?`,
+          answer:
+            alternatives.length > 0
+              ? `Among the verified category peers, tools like ${alternatives
+                  .slice(0, 3)
+                  .map((a) => a.name)
+                  .join(
+                    ", ",
+                  )} offer competitive capabilities, free tiers, or trial access matching ${item.name}'s workflow.`
+              : `Explore our directory to find similar tools with generous free tiers matching ${item.name}'s capabilities.`,
+        },
+        {
+          question: `Why should I consider alternatives to ${item.name}?`,
+          answer: `Users commonly look for alternatives to ${item.name} to find flexible pricing models, specialized niche features, higher privacy/offline standards, or faster integrations with their existing toolstack.`,
+        },
+        {
+          question: `How do I choose the right alternative to ${item.name}?`,
+          answer:
+            "Identify your core requirement—such as offline usage, native performance, API access, or cost efficiency—and compare the options in our curated matrix above.",
+        },
+      ];
 
   const alternativesJsonLd = [
     {
@@ -137,12 +175,19 @@ export default async function AlternativesPage({
       url: pageUrl,
       mainEntity: {
         "@type": "ItemList",
-        itemListElement: alternatives.map((altItem, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          name: altItem.name,
-          url: `${siteConfig.url}/item/${altItem.slug?.current}`,
-        })),
+        itemListElement: isUnsummary
+          ? UNSUMMARY_CURATED_ALTERNATIVES.map((altItem, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              name: altItem.name,
+              url: altItem.url,
+            }))
+          : alternatives.map((altItem, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              name: altItem.name,
+              url: `${siteConfig.url}/item/${altItem.slug?.current}`,
+            })),
       },
     },
     {
@@ -217,15 +262,45 @@ export default async function AlternativesPage({
               {primaryCategory.name}
             </Badge>
           )}
+          {isUnsummary && (
+            <Badge
+              variant="outline"
+              className="text-xs bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30"
+            >
+              Discontinued
+            </Badge>
+          )}
         </div>
 
         <HeaderSection
           labelAs="h1"
-          label="Tool Comparison"
+          label="Curated Alternatives"
           titleAs="h2"
           title={`Top ${count > 0 ? `${count}+ ` : ""}${item.name} Alternatives & Competitors`}
-          subtitle={`Looking for alternatives to ${item.name}? Compare curated competitors, feature sets, pricing models, and capabilities to find the right fit for your workflow.`}
+          subtitle={
+            isUnsummary
+              ? "Unsummary is currently offline (HTTP 522). Compare 18 verified, active summarization tools across book briefs, podcast takeaways, and long-form document condensation."
+              : `Looking for alternatives to ${item.name}? Compare curated category competitors, features, pricing models, and capabilities to find the right fit for your workflow.`
+          }
         />
+
+        {/* Notice for discontinued services */}
+        {isUnsummary && (
+          <div className="max-w-2xl w-full p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-sm flex items-start gap-3 text-left">
+            <AlertTriangleIcon className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-amber-950 dark:text-amber-100">
+                Notice: Unsummary is no longer operational
+              </p>
+              <p className="mt-1 text-xs opacity-90 leading-relaxed">
+                The official domain (unsummary.com) is currently offline and
+                inactive. The tools listed below are active, working
+                alternatives specialized in non-fiction book digests, PDF
+                Q&amp;A, and media summarization.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-wrap justify-center gap-3">
           <Button variant="outline" size="sm" asChild>
@@ -238,7 +313,7 @@ export default async function AlternativesPage({
             </Link>
           </Button>
 
-          {item.link && (
+          {item.link && !isUnsummary && (
             <Button variant="ghost" size="sm" asChild>
               <Link
                 href={item.link}
@@ -251,112 +326,174 @@ export default async function AlternativesPage({
               </Link>
             </Button>
           )}
+
+          {isUnsummary && (
+            <Button variant="ghost" size="sm" asChild>
+              <a
+                href="#comparison-matrix"
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
+              >
+                <span>Explore 18 Active Summarizers ↓</span>
+              </a>
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* Comparison Table Section (High Information Gain for SEO) */}
-      {alternatives.length > 0 && (
-        <section className="bg-muted/30 border border-border/60 rounded-2xl p-6 lg:p-8 flex flex-col gap-6">
-          <div className="flex items-center gap-2.5">
-            <LayersIcon className="size-5 text-indigo-500" />
-            <h2 className="text-xl font-bold tracking-tight">
-              Quick Comparison: {item.name} vs. Alternatives
-            </h2>
-          </div>
+      {/* Comparison Table Section */}
+      <section
+        id="comparison-matrix"
+        className="bg-muted/30 border border-border/60 rounded-2xl p-6 lg:p-8 flex flex-col gap-6"
+      >
+        <div className="flex items-center gap-2.5">
+          <LayersIcon className="size-5 text-indigo-500" />
+          <h2 className="text-xl font-bold tracking-tight">
+            Comparison Matrix: {item.name} vs. Alternatives
+          </h2>
+        </div>
 
-          <div className="overflow-x-auto rounded-xl border border-border/60 bg-background/80">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[220px]">Tool Name</TableHead>
-                  <TableHead>Pricing Model</TableHead>
-                  <TableHead>Categories / Focus</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {/* Target Item Row */}
-                <TableRow className="bg-indigo-50/50 dark:bg-indigo-950/20 font-medium">
-                  <TableCell className="font-semibold flex items-center gap-2">
-                    {iconProps && (
-                      <Image
-                        src={iconProps.src}
-                        alt={`icon of ${item.name}`}
-                        width={20}
-                        height={20}
-                        className="rounded object-cover"
-                      />
-                    )}
-                    <span>{item.name}</span>
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] px-1.5 py-0 border-indigo-500/40 text-indigo-600 dark:text-indigo-400"
-                    >
-                      Baseline
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="capitalize text-xs">
-                      {item.pricePlan || "Free / Freemium"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-xs">
-                    {item.categories?.map((c) => c.name).join(", ") ||
+        <div className="overflow-x-auto rounded-xl border border-border/60 bg-background/80">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="w-[220px]">Tool Name</TableHead>
+                <TableHead>Pricing Model</TableHead>
+                <TableHead>Primary Focus</TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {/* Baseline Target Row */}
+              <TableRow className="bg-indigo-50/50 dark:bg-indigo-950/20 font-medium">
+                <TableCell className="font-semibold flex items-center gap-2">
+                  {iconProps && (
+                    <Image
+                      src={iconProps.src}
+                      alt={`icon of ${item.name}`}
+                      width={20}
+                      height={20}
+                      className="rounded object-cover"
+                    />
+                  )}
+                  <span>{item.name}</span>
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] px-1.5 py-0 border-indigo-500/40 text-indigo-600 dark:text-indigo-400"
+                  >
+                    Baseline
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={isUnsummary ? "destructive" : "secondary"}
+                    className="capitalize text-xs"
+                  >
+                    {isUnsummary
+                      ? "Discontinued"
+                      : item.pricePlan || "Free / Freemium"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-muted-foreground text-xs">
+                  {isUnsummary
+                    ? "Books, Podcasts & Media Summaries"
+                    : item.categories?.map((c) => c.name).join(", ") ||
                       "AI Tool"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      asChild
-                      className="h-8 text-xs"
-                    >
-                      <Link href={`/item/${params.slug}`}>View</Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    asChild
+                    className="h-8 text-xs"
+                  >
+                    <Link href={`/item/${params.slug}`}>View</Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
 
-                {/* Alternatives Rows */}
-                {alternatives.slice(0, 8).map((alt) => (
-                  <TableRow key={alt._id}>
-                    <TableCell className="font-medium flex items-center gap-2">
-                      <Link
-                        href={`/item/${alt.slug?.current}`}
-                        className="hover:underline text-foreground"
-                      >
-                        {alt.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="capitalize text-xs">
-                        {alt.pricePlan || "Free"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-xs">
-                      {alt.categories?.map((c) => c.name).join(", ") ||
-                        alt.tags
-                          ?.map((t) => t.name)
-                          .slice(0, 2)
-                          .join(", ") ||
-                        "AI Tool"}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        asChild
-                        className="h-8 text-xs"
-                      >
-                        <Link href={`/item/${alt.slug?.current}`}>Explore</Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </section>
-      )}
+              {/* Hand-curated Alternatives for Unsummary */}
+              {isUnsummary
+                ? UNSUMMARY_CURATED_ALTERNATIVES.map((alt) => (
+                    <TableRow key={alt.name}>
+                      <TableCell className="font-medium">
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            {alt.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground line-clamp-1">
+                            {alt.tagline}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className="capitalize text-xs text-foreground"
+                        >
+                          {alt.pricing}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-xs font-medium">
+                        {alt.focus}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          asChild
+                          className="h-8 text-xs gap-1"
+                        >
+                          <Link
+                            href={alt.slug ? `/item/${alt.slug}` : alt.url}
+                            target={alt.slug ? "_self" : "_blank"}
+                            rel={alt.slug ? undefined : "noopener noreferrer"}
+                          >
+                            <span>Explore</span>
+                            {!alt.slug && (
+                              <ExternalLinkIcon className="size-3" />
+                            )}
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : alternatives.slice(0, 10).map((alt) => (
+                    <TableRow key={alt._id}>
+                      <TableCell className="font-medium">
+                        <Link
+                          href={`/item/${alt.slug?.current}`}
+                          className="hover:underline text-foreground font-semibold"
+                        >
+                          {alt.name}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="capitalize text-xs">
+                          {alt.pricePlan || "Free"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-xs">
+                        {alt.categories?.map((c) => c.name).join(", ") ||
+                          "Category Peer"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          asChild
+                          className="h-8 text-xs"
+                        >
+                          <Link href={`/item/${alt.slug?.current}`}>
+                            Explore
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
 
       {/* Analytical Section: Why Look for Alternatives? */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -365,7 +502,7 @@ export default async function AlternativesPage({
             <ZapIcon className="size-5" />
           </div>
           <h3 className="font-semibold text-base">
-            Cost & Pricing Flexibility
+            Cost &amp; Pricing Flexibility
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Different tools offer varying tiers, usage credits, or open-source
@@ -388,7 +525,9 @@ export default async function AlternativesPage({
           <div className="size-9 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center">
             <SparklesIcon className="size-5" />
           </div>
-          <h3 className="font-semibold text-base">Ecosystem & Integration</h3>
+          <h3 className="font-semibold text-base">
+            Ecosystem &amp; Integration
+          </h3>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Finding a tool that natively connects with your existing tech stack
             (Slack, Notion, GitHub, APIs) can streamline team productivity.
@@ -396,31 +535,29 @@ export default async function AlternativesPage({
         </div>
       </section>
 
-      {/* Grid of Alternatives */}
-      <section className="flex flex-col gap-6">
-        <div className="flex items-center justify-between border-b pb-4">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">
-              All Curated Alternatives ({count})
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Browse the complete list of verified tools similar to {item.name}.
-            </p>
+      {/* Grid of Category Peers (for dynamic items) */}
+      {!isUnsummary && alternatives.length > 0 && (
+        <section className="flex flex-col gap-6">
+          <div className="flex items-center justify-between border-b pb-4">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">
+                All Verified Alternatives ({alternatives.length})
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Browse verified category peers with high capability overlap.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div>
-          {alternatives.length === 0 ? (
-            <EmptyGrid />
-          ) : (
+          <div>
             <ItemGrid
               items={alternatives}
               sponsorItems={sponsorItems || []}
               showSponsor={true}
             />
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* FAQ Section */}
       <section className="bg-muted/40 border border-border/60 rounded-2xl p-6 lg:p-8 flex flex-col gap-6 my-4">
@@ -437,10 +574,8 @@ export default async function AlternativesPage({
               key={faq.question}
               className="bg-background/90 border border-border/50 rounded-xl p-5 flex flex-col gap-2"
             >
-              <h3 className="font-semibold text-sm text-foreground">
-                {faq.question}
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <h3 className="font-semibold text-base">{faq.question}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {faq.answer}
               </p>
             </div>

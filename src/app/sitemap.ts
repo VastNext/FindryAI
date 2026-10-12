@@ -1,3 +1,4 @@
+import { ALTERNATIVES_WHITELIST_SLUGS } from "@/config/alternatives-whitelist";
 import { siteConfig } from "@/config/site";
 import type {
   BlogCategoryListQueryForSitemapResult,
@@ -20,7 +21,12 @@ import type { MetadataRoute } from "next";
 
 const site_url = process.env.NEXT_PUBLIC_APP_URL || siteConfig.url;
 
-export const SITEMAP_SEGMENTS = ["pages", "categories", "items"] as const;
+export const SITEMAP_SEGMENTS = [
+  "pages",
+  "categories",
+  "items",
+  "alternatives",
+] as const;
 
 export type SitemapSegment = (typeof SITEMAP_SEGMENTS)[number];
 
@@ -221,6 +227,19 @@ export default async function sitemap({
             lastModified: new Date(item._updatedAt).toISOString(),
           });
         }
+      }
+      break;
+    }
+
+    case "alternatives": {
+      // Only include the hand-curated, high-demand whitelist (25 tools)
+      // to protect crawl budget and ensure only top-quality comparison pages are indexed
+      const now = new Date().toISOString();
+      for (const slug of ALTERNATIVES_WHITELIST_SLUGS) {
+        sitemapList.push({
+          url: `${site_url}/item/${slug}/alternatives`,
+          lastModified: now,
+        });
       }
       break;
     }
