@@ -30,6 +30,7 @@ interface NotifySubmissionToUserEmailProps {
   userName?: string;
   itemName?: string;
   statusLink?: string;
+  priority?: boolean;
 }
 
 /**
@@ -39,6 +40,7 @@ export const NotifySubmissionToUserEmail = ({
   userName,
   itemName,
   statusLink,
+  priority,
 }: NotifySubmissionToUserEmailProps) => {
   const baseUrl = getBaseUrl();
   return (
@@ -58,8 +60,10 @@ export const NotifySubmissionToUserEmail = ({
             <Text style={paragraph}>Hi {userName},</Text>
             <Text style={paragraph}>Thank you for your submission.</Text>
             <Text style={paragraph}>
-              Your product named <b>{itemName}</b> will be reviewed in the next
-              48 hours before listing on our directory.
+              Your product named <b>{itemName}</b>{" "}
+              {priority
+                ? "has joined the badge fast-track queue: editorial review within 24-72 hours, and it will be listed if approved."
+                : "has entered our standard review queue. Review timing is not guaranteed and depends on queue capacity - it will be listed if approved."}
             </Text>
             <Text style={paragraph}>
               You can view your submission status by clicking the button below:

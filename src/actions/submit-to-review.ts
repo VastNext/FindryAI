@@ -92,6 +92,7 @@ export const submitToReview = async (
       result.name,
       statusLink,
       reviewLink,
+      priority,
     );
 
     return { status: "success", message: "Item submitted to review!" };

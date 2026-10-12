@@ -44,6 +44,7 @@ export const sendNotifySubmissionEmail = async (
   itemName: string,
   statusLink: string,
   reviewLink: string,
+  priority?: boolean,
 ) => {
   // console.log(`sendNotifySubmissionEmail,
   //   userName: ${userName},
@@ -60,6 +61,7 @@ export const sendNotifySubmissionEmail = async (
       userName,
       itemName,
       statusLink,
+      priority,
     }),
   });
 
