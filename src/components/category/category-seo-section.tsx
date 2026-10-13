@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { isAlternativesEnabled } from "@/config/alternatives-whitelist";
 import type { CategorySeoDetail } from "@/config/category-seo";
 import { cn } from "@/lib/utils";
 import {
@@ -119,7 +120,7 @@ export function CategorySeoFooter({
   const hasRelated = seo.relatedCategories && seo.relatedCategories.length > 0;
   const validFeaturedItems = (featuredItems || []).filter(
     (tool): tool is { name: string; slug: { current: string } } =>
-      Boolean(tool.slug?.current),
+      Boolean(tool.slug?.current && isAlternativesEnabled(tool.slug.current)),
   );
   const hasFeaturedAlternatives = validFeaturedItems.length > 0;
 

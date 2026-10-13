@@ -1,0 +1,23 @@
+// 仅列出站内已核对用途相近的条目；新增候选前须复核具体功能与服务状态。
+export const ALTERNATIVES_CANDIDATES: Record<string, string[]> = {
+  novelai: ["sudowrite", "novelistai", "deep-realms"],
+  autodraw: ["muse-pro", "scribble-diffusion"],
+  chefgpt: ["mealpractice", "mealsai", "ai-meal-planner"],
+  photocraft: ["pixlr", "picsart", "stylar"],
+  vectorcraft: ["kittl", "neosvg"],
+  filmcraft: ["capcut", "descript"],
+  "seedance-2-5": ["ray-32-ai", "pixverse", "kling-ai-video"],
+  "kling-ai-video": ["pixverse", "ray-32-ai", "pika"],
+  pika: ["kling-ai-video", "pixverse", "ray-32-ai"],
+  "qwen-image-2-1": ["nano-banana-2-1", "adobe-firefly", "openart"],
+  "nano-banana-2-1": ["qwen-image-2-1", "adobe-firefly", "openart"],
+  "leonardo-ai": ["openart", "midjourney", "ideogram"],
+  "melty-ai": ["cursor", "marscode", "refact-ai"],
+  cursor: ["melty-ai", "marscode", "refact-ai"],
+  notebooklm: ["sharly-ai", "unriddle", "myreader-ai"],
+  "perplexity-ai": ["andi", "you"],
+  writesonic: ["hypotenuse-ai", "nichesss", "longshot-ai"],
+  upword: ["scholarcy", "sharly-ai", "unriddle"],
+  "vocal-remover": ["fadr", "lalal-ai"],
+  suno: ["udio", "riffusion", "boomy"],
+};

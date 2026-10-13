@@ -1,4 +1,5 @@
-import { ALTERNATIVES_WHITELIST_SLUGS } from "@/config/alternatives-whitelist";
+import { ALTERNATIVES_CANDIDATES } from "@/config/alternatives-candidates";
+import { isAlternativesEnabled } from "@/config/alternatives-whitelist";
 import { siteConfig } from "@/config/site";
 import type {
   BlogCategoryListQueryForSitemapResult,
@@ -232,14 +233,28 @@ export default async function sitemap({
     }
 
     case "alternatives": {
-      // Only include the hand-curated, high-demand whitelist (25 tools)
-      // to protect crawl budget and ensure only top-quality comparison pages are indexed
-      const now = new Date().toISOString();
-      for (const slug of ALTERNATIVES_WHITELIST_SLUGS) {
-        sitemapList.push({
-          url: `${site_url}/item/${slug}/alternatives`,
-          lastModified: now,
+      const itemListQueryResult =
+        await sanityFetch<ItemListQueryForSitemapResult>({
+          query: itemListQueryForSitemap,
         });
+
+      const publishedSlugs = new Set(
+        itemListQueryResult.map((item) => item.slug),
+      );
+      for (const item of itemListQueryResult) {
+        if (
+          item.slug &&
+          isAlternativesEnabled(item.slug) &&
+          (item.slug === "unsummary" ||
+            ALTERNATIVES_CANDIDATES[item.slug]?.some((slug) =>
+              publishedSlugs.has(slug),
+            ))
+        ) {
+          sitemapList.push({
+            url: `${site_url}/item/${item.slug}/alternatives`,
+            lastModified: new Date(item._updatedAt).toISOString(),
+          });
+        }
       }
       break;
     }

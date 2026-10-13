@@ -115,14 +115,13 @@ export const itemWithAlternativesBySlugQuery = defineQuery(`*[_type == "item" &&
 && defined(publishDate) && publishDate <= now() && forceHidden != true] [0] {
   ${itemSimpleFields}
   "categories": categories[]-> { _id, name, slug },
-  "alternatives": *[_type == "item" && defined(slug.current) 
+  "alternatives": *[_type == "item" && slug.current in $alternativeSlugs
     && defined(publishDate) && publishDate <= now() 
     && forceHidden != true
     && sponsor != true
     && _id != ^._id
-    && count(categories[@._ref != "YC8O33bPim24nrYgMGuMGy" && @._ref in ^.^.categories[@._ref != "YC8O33bPim24nrYgMGuMGy"]._ref]) > 0
   ] 
-    | order(coalesce(featured, false) desc, publishDate desc) [0...18] {
+    [0...18] {
       ${itemSimpleFields}
   }
 }`);
