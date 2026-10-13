@@ -1,3 +1,4 @@
+import { siteConfig } from "@/config/site";
 import { ApprovalEmail } from "@/emails/approval-email";
 import { NotifySubmissionEmail } from "@/emails/notify-submission-to-admin";
 import { NotifySubmissionToUserEmail } from "@/emails/notify-submission-to-user";
@@ -121,16 +122,51 @@ export const sendPaymentNotifyAdminEmail = async ({
   });
 };
 
+export interface SendApprovalEmailOptions {
+  userName: string;
+  email: string;
+  itemName: string;
+  itemLink?: string;
+  dashboardLink?: string;
+  pricingLink?: string;
+  badgeLink?: string;
+  isLive?: boolean;
+}
+
 export const sendApprovalEmail = async (
-  userName: string,
-  email: string,
-  itemLink: string,
+  optionsOrUserName: SendApprovalEmailOptions | string,
+  email?: string,
+  itemLink?: string,
 ) => {
+  let opts: SendApprovalEmailOptions;
+  if (typeof optionsOrUserName === "string") {
+    opts = {
+      userName: optionsOrUserName,
+      email: email || "",
+      itemName: "Your product",
+      itemLink: itemLink || "",
+      dashboardLink: `${siteConfig.url}/dashboard`,
+      pricingLink: `${siteConfig.url}/pricing`,
+      badgeLink: `${siteConfig.url}/submission-guidelines`,
+      isLive: true,
+    };
+  } else {
+    opts = optionsOrUserName;
+  }
+
   await resend.emails.send({
     from: process.env.RESEND_EMAIL_FROM,
-    to: email,
-    subject: "Your submission has been approved",
-    react: ApprovalEmail({ userName, itemLink }),
+    to: opts.email,
+    subject: `Cheers! ${opts.itemName || "Your product"} has been approved on ${siteConfig.name}`,
+    react: ApprovalEmail({
+      userName: opts.userName,
+      itemName: opts.itemName,
+      itemLink: opts.itemLink,
+      dashboardLink: opts.dashboardLink,
+      pricingLink: opts.pricingLink,
+      badgeLink: opts.badgeLink,
+      isLive: opts.isLive,
+    }),
   });
 };
 
