@@ -1,5 +1,4 @@
 import ItemGrid from "@/components/item/item-grid";
-import EmptyGrid from "@/components/shared/empty-grid";
 import { HeaderSection } from "@/components/shared/header-section";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Badge } from "@/components/ui/badge";
@@ -12,12 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ALTERNATIVES_CANDIDATES } from "@/config/alternatives-candidates";
 import { isAlternativesEnabled } from "@/config/alternatives-whitelist";
 import { siteConfig } from "@/config/site";
-import {
-  UNSUMMARY_CURATED_ALTERNATIVES,
-  unsummaryCuratedData,
-} from "@/data/item-curated/unsummary";
+import { UNSUMMARY_CURATED_ALTERNATIVES } from "@/data/item-curated/unsummary";
 import { urlForIcon } from "@/lib/image";
 import { constructMetadata } from "@/lib/metadata";
 import type {
@@ -53,17 +50,23 @@ interface AlternativesPageProps {
 export async function generateMetadata({
   params,
 }: AlternativesPageProps): Promise<Metadata | undefined> {
-  // Only whitelisted flagship & high-search items are allowed to generate alternatives pages
+  // 未审核条目不生成可索引的对比页面。
   if (!isAlternativesEnabled(params.slug)) {
     return;
   }
 
   const item = await sanityFetch<ItemWithAlternativesBySlugQueryResult>({
     query: itemWithAlternativesBySlugQuery,
-    params: { slug: params.slug },
+    params: {
+      slug: params.slug,
+      alternativeSlugs: ALTERNATIVES_CANDIDATES[params.slug] || [],
+    },
   });
 
-  if (!item?.name) {
+  if (
+    !item?.name ||
+    (params.slug !== "unsummary" && !item.alternatives?.length)
+  ) {
     return;
   }
 
@@ -85,7 +88,6 @@ export async function generateMetadata({
     description,
     canonicalUrl,
     image: ogImageUrl.toString(),
-    // Curated high-value pages in the whitelist are indexed for SEO gain
     noIndex: false,
   });
 }
@@ -93,7 +95,7 @@ export async function generateMetadata({
 export default async function AlternativesPage({
   params,
 }: AlternativesPageProps) {
-  // Hard gate: 404 all non-whitelisted items to prune 1,000+ low-value thin pages
+  // 非白名单 URL 不再提供模板页。
   if (!isAlternativesEnabled(params.slug)) {
     return notFound();
   }
@@ -101,21 +103,29 @@ export default async function AlternativesPage({
   const [item, sponsorItems] = await Promise.all([
     sanityFetch<ItemWithAlternativesBySlugQueryResult>({
       query: itemWithAlternativesBySlugQuery,
-      params: { slug: params.slug },
+      params: {
+        slug: params.slug,
+        alternativeSlugs: ALTERNATIVES_CANDIDATES[params.slug] || [],
+      },
     }),
     sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
     }),
   ]);
 
-  if (!item) {
+  if (!item || (params.slug !== "unsummary" && !item.alternatives?.length)) {
     return notFound();
   }
 
   const isUnsummary = params.slug === "unsummary";
   const iconProps = item.icon ? urlForIcon(item.icon) : null;
   const primaryCategory = item.categories?.[0];
-  const alternatives = item.alternatives || [];
+  const candidateSlugs = ALTERNATIVES_CANDIDATES[params.slug] || [];
+  const alternatives = [...(item.alternatives || [])].sort(
+    (a, b) =>
+      candidateSlugs.indexOf(a.slug?.current || "") -
+      candidateSlugs.indexOf(b.slug?.current || ""),
+  );
   const count = isUnsummary
     ? UNSUMMARY_CURATED_ALTERNATIVES.length
     : alternatives.length;
@@ -123,7 +133,7 @@ export default async function AlternativesPage({
   const pageUrl = `${siteConfig.url}/item/${params.slug}/alternatives`;
   const itemUrl = `${siteConfig.url}/item/${params.slug}`;
 
-  // Structured FAQs tailored for the item (clean, factual, no junk recommendations)
+  // 常见问题与当前展示的候选保持一致。
   const faqs = isUnsummary
     ? [
         {
@@ -147,12 +157,12 @@ export default async function AlternativesPage({
           question: `What is the best free alternative to ${item.name}?`,
           answer:
             alternatives.length > 0
-              ? `Among the verified category peers, tools like ${alternatives
+              ? `Tools with similar use cases include ${alternatives
                   .slice(0, 3)
                   .map((a) => a.name)
                   .join(
                     ", ",
-                  )} offer competitive capabilities, free tiers, or trial access matching ${item.name}'s workflow.`
+                  )}. Compare their features and current pricing before choosing an option for your workflow.`
               : `Explore our directory to find similar tools with generous free tiers matching ${item.name}'s capabilities.`,
         },
         {
@@ -274,13 +284,13 @@ export default async function AlternativesPage({
 
         <HeaderSection
           labelAs="h1"
-          label="Curated Alternatives"
+          label="Alternatives"
           titleAs="h2"
           title={`Top ${count > 0 ? `${count}+ ` : ""}${item.name} Alternatives & Competitors`}
           subtitle={
             isUnsummary
               ? "Unsummary is currently offline (HTTP 522). Compare 18 verified, active summarization tools across book briefs, podcast takeaways, and long-form document condensation."
-              : `Looking for alternatives to ${item.name}? Compare curated category competitors, features, pricing models, and capabilities to find the right fit for your workflow.`
+              : `Looking for alternatives to ${item.name}? Explore tools with similar use cases and check their features and current pricing to find the right fit.`
           }
         />
 
@@ -541,10 +551,11 @@ export default async function AlternativesPage({
           <div className="flex items-center justify-between border-b pb-4">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
-                All Verified Alternatives ({alternatives.length})
+                Related Alternatives ({alternatives.length})
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Browse verified category peers with high capability overlap.
+                Explore tools selected for similar use cases; review each
+                product's features before switching.
               </p>
             </div>
           </div>
