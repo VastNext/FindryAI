@@ -26,7 +26,8 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  accessStages,
+  accessChannels,
+  architecturalMatrix,
   codeExamples,
   comparisonTable,
   corePillars,
@@ -46,6 +47,7 @@ import {
   Calculator,
   CheckCircle2,
   Clock,
+  Cloud,
   Code2,
   Copy,
   Cpu,
@@ -57,6 +59,7 @@ import {
   Globe2,
   Layers,
   Lock,
+  MessageSquare,
   Network,
   Play,
   Scale,
@@ -106,12 +109,13 @@ function StickyChapterNav() {
 
   const chapters = [
     { href: "#overview", label: "Overview" },
-    { href: "#pillars", label: "01 Core Pillars" },
+    { href: "#matrix", label: "01 Specs Matrix" },
     { href: "#benchmarks", label: "02 vs GPT & Claude" },
-    { href: "#pricing", label: "03 Pricing & ROI" },
-    { href: "#safeguards", label: "04 Safety & Fairwind" },
-    { href: "#code", label: "05 SDKs & Code" },
-    { href: "#faq", label: "06 FAQ & Sources" },
+    { href: "#pillars", label: "03 Core Pillars" },
+    { href: "#pricing", label: "04 Pricing & ROI" },
+    { href: "#access", label: "05 Where to Access" },
+    { href: "#code", label: "06 SDKs & Code" },
+    { href: "#faq", label: "07 FAQ & Citations" },
   ];
 
   return (
@@ -145,7 +149,7 @@ function StickyChapterNav() {
 
           <div className="hidden items-center gap-2 xl:flex">
             <Link
-              href={gemini4Argon.officialUrl}
+              href="https://aistudio.google.com/"
               target="_blank"
               rel="noreferrer"
               className={cn(
@@ -153,7 +157,7 @@ function StickyChapterNav() {
                 "h-9 px-3.5 text-xs sm:text-sm font-semibold rounded-lg shadow-2xs border-border/80 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all",
               )}
             >
-              <span>Google DeepMind Blog</span>
+              <span>Try in AI Studio</span>
               <ExternalLink className="ml-1.5 size-3.5" />
             </Link>
           </div>
@@ -209,7 +213,7 @@ export function Gemini4ArgonLanding() {
               className="border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400 gap-1.5 px-3 py-1 text-xs font-semibold"
             >
               <Sparkles className="size-3.5 fill-blue-500 text-blue-500 animate-pulse" />
-              <span>Google DeepMind · Released Sep 30, 2026</span>
+              <span>Google DeepMind · Globally Live Oct 13, 2026</span>
             </Badge>
             <Badge variant="secondary" className="font-mono text-xs">
               Model: {gemini4Argon.name}
@@ -219,7 +223,7 @@ export function Gemini4ArgonLanding() {
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl text-balance max-w-4xl">
             Gemini 4 Argon:{" "}
             <span className="bg-gradient-to-r from-blue-600 via-cyan-600 to-indigo-600 bg-clip-text text-transparent">
-              1M Output Tokens & Frontier Cyber Defense
+              1M Output Tokens & Frontier Intelligence
             </span>
           </h1>
 
@@ -235,13 +239,13 @@ export function Gemini4ArgonLanding() {
             </span>
             <span className="hidden sm:inline">•</span>
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="size-4 text-emerald-500" />
-              Fairwind Program: 650+ Cyber Defense Partners
+              <Globe2 className="size-4 text-emerald-500" />
+              Worldwide Access: AI Studio, Vertex AI & Gemini App
             </span>
             <span className="hidden sm:inline">•</span>
             <span className="flex items-center gap-1.5">
               <DollarSign className="size-4 text-amber-500" />
-              $2/$10 Launch Pricing (50% of Opus 5.5)
+              $2/$10 Launch Pricing through Nov 30 (50% of Opus 5.5)
             </span>
           </div>
 
@@ -256,29 +260,32 @@ export function Gemini4ArgonLanding() {
                 "gap-2 font-semibold shadow-md",
               )}
             >
-              <span>Read Official Announcement</span>
+              <span>Read Launch Announcement</span>
               <ArrowRight className="size-4" />
             </Link>
 
             <Link
-              href="#benchmarks"
+              href="https://aistudio.google.com/"
+              target="_blank"
+              rel="noreferrer"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "gap-2",
+                "gap-2 font-semibold border-border/80 hover:border-primary/50",
               )}
             >
-              <span>View vs GPT & Claude Benchmarks</span>
-              <Trophy className="size-4" />
+              <span>Open in Google AI Studio</span>
+              <ExternalLink className="size-4" />
             </Link>
 
             <Link
-              href="#pricing"
+              href="#matrix"
               className={cn(
                 buttonVariants({ variant: "ghost", size: "lg" }),
                 "gap-2 text-muted-foreground hover:text-foreground",
               )}
             >
-              <span>Token Pricing Calculator</span>
+              <span>Compare Specs & Benchmarks</span>
+              <Trophy className="size-4" />
             </Link>
           </div>
 
@@ -309,10 +316,221 @@ export function Gemini4ArgonLanding() {
       {/* Sticky Chapter Navigation */}
       <StickyChapterNav />
 
-      {/* ----------------- Chapter 01: Core Pillars ----------------- */}
-      <section id="pillars" className="flex flex-col gap-8 scroll-mt-28">
+      {/* ----------------- Chapter 01: Architectural Matrix vs Rivals ----------------- */}
+      <section id="matrix" className="flex flex-col gap-8 scroll-mt-28">
         <ChapterHeader
           number="CHAPTER 01"
+          label="Architectural Matrix"
+          title="Frontier Model Comparison: Gemini 4 Argon vs GPT-6 Astra & Claude Opus 5.5"
+          subtitle="Side-by-side technical specification matrix comparing context windows, maximum output headroom, pricing structures, and sweet spots."
+        />
+
+        <div className="rounded-xl border border-border/80 bg-card overflow-hidden shadow-xs">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              <TableRow>
+                <TableHead className="w-[180px] font-bold text-foreground">
+                  Dimension / Feature
+                </TableHead>
+                <TableHead className="w-[170px] font-bold text-blue-600 dark:text-blue-400">
+                  Gemini 4 Argon
+                </TableHead>
+                <TableHead className="w-[150px] font-bold text-foreground">
+                  GPT-6 Astra
+                </TableHead>
+                <TableHead className="w-[150px] font-bold text-foreground">
+                  Claude Opus 5.5
+                </TableHead>
+                <TableHead className="w-[140px] font-bold text-muted-foreground hidden lg:table-cell">
+                  Claude Fable 5.1
+                </TableHead>
+                <TableHead className="font-bold text-foreground">
+                  Key Architectural Notes
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {architecturalMatrix.map((row) => (
+                <TableRow
+                  key={row.dimension}
+                  className="transition-colors hover:bg-muted/30"
+                >
+                  <TableCell className="font-semibold text-foreground text-xs sm:text-sm">
+                    {row.dimension}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400">
+                    {row.gemini4Argon}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs sm:text-sm text-foreground">
+                    {row.gpt6Astra}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs sm:text-sm text-foreground">
+                    {row.claudeOpus55}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs sm:text-sm text-muted-foreground hidden lg:table-cell">
+                    {row.claudeFable51}
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {row.notes}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
+
+      {/* ----------------- Chapter 02: Benchmarks vs GPT & Claude ----------------- */}
+      <section id="benchmarks" className="flex flex-col gap-8 scroll-mt-28">
+        <ChapterHeader
+          number="CHAPTER 02"
+          label="Benchmark Showdown"
+          title="Rigorous Benchmark Results: Official DeepMind Model Card"
+          subtitle="Detailed head-to-head empirical evaluations across 17 industry benchmarks spanning agentic coding, knowledge work, scientific research, long-context needles, and computer use."
+        />
+
+        {/* Detailed Benchmark Table */}
+        <div className="rounded-xl border border-border/80 bg-card overflow-hidden shadow-xs">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              <TableRow>
+                <TableHead className="w-[190px] font-bold text-foreground">
+                  Benchmark & Domain
+                </TableHead>
+                <TableHead className="w-[130px] font-bold text-blue-600 dark:text-blue-400">
+                  Gemini 4 Argon
+                </TableHead>
+                <TableHead className="w-[120px] font-bold text-foreground">
+                  GPT-6 Astra
+                </TableHead>
+                <TableHead className="w-[120px] font-bold text-foreground">
+                  Claude Opus 5.5
+                </TableHead>
+                <TableHead className="w-[120px] font-bold text-muted-foreground hidden sm:table-cell">
+                  Claude Fable 5.1
+                </TableHead>
+                <TableHead className="font-bold text-foreground">
+                  Analysis & Winner
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {comparisonTable.map((row) => (
+                <TableRow
+                  key={row.benchmark}
+                  className="transition-colors hover:bg-muted/30"
+                >
+                  <TableCell className="font-semibold text-foreground text-xs sm:text-sm">
+                    <div>{row.benchmark}</div>
+                    <div className="text-[10px] font-normal text-muted-foreground">
+                      {row.category}
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-mono text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400">
+                    {row.gemini4Argon}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs sm:text-sm text-foreground">
+                    {row.gpt6Astra}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs sm:text-sm text-foreground">
+                    {row.claudeOpus55}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs sm:text-sm text-muted-foreground hidden sm:table-cell">
+                    {row.claudeFable51}
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      {row.winner === "argon" && (
+                        <Badge
+                          variant="default"
+                          className="bg-blue-600 hover:bg-blue-600 text-[10px] h-5 px-1.5 shrink-0"
+                        >
+                          Argon #1
+                        </Badge>
+                      )}
+                      {row.winner === "astra" && (
+                        <Badge
+                          variant="secondary"
+                          className="text-[10px] h-5 px-1.5 shrink-0"
+                        >
+                          Astra Lead
+                        </Badge>
+                      )}
+                      {row.winner === "opus" && (
+                        <Badge
+                          variant="secondary"
+                          className="text-[10px] h-5 px-1.5 shrink-0"
+                        >
+                          Opus Lead
+                        </Badge>
+                      )}
+                      {row.winner === "tie" && (
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] h-5 px-1.5 shrink-0"
+                        >
+                          Tied #1
+                        </Badge>
+                      )}
+                      <span>{row.notes}</span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Deep Analysis Summary Callout */}
+        <div className="rounded-2xl border border-border/80 bg-muted/40 p-6 sm:p-8">
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                <Trophy className="size-4 text-blue-500" />
+                <span>Where Argon Dominates</span>
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Argon crushes GDP-weighted economic knowledge work (Vals Index
+                68.9%), legal research (Harvey Legal 19.6% vs Astra 5.4%),
+                Zapier automation (51.3%), multi-file repository refactoring
+                (DeepSWE 77.9%), scientific research (LABBench 2 88.8%), and
+                1M-token graph reasoning (+12.4% over Astra).
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                <BrainCircuit className="size-4 text-purple-500" />
+                <span>Where Astra Leads</span>
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                OpenAI's GPT-6 Astra maintains competitive advantages on extreme
+                algorithmic puzzles (FrontierSWE v2 65.5%), deep scientific
+                terminal math (Terminal-Bench Science 68.1%), and direct desktop
+                screen GUI execution (OSWorld 2.0 72.6%).
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                <Terminal className="size-4 text-amber-500" />
+                <span>Where Opus 5.5 Shines</span>
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Anthropic's Claude Opus 5.5 retains mastery over deep shell and
+                CLI engineering automation (Terminal-Bench 4.0 66.4% vs Argon's
+                57.4%) and machine learning system training (PostTrainBench
+                49.3%).
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------- Chapter 03: Core Pillars ----------------- */}
+      <section id="pillars" className="flex flex-col gap-8 scroll-mt-28">
+        <ChapterHeader
+          number="CHAPTER 03"
           label="Core Breakthroughs"
           title="Four Flagship Capabilities: Reasoning, Cyber, Code & Knowledge"
           subtitle="Gemini 4 Argon is purposefully engineered for sustained enterprise workflows where multi-step reasoning, massive generation capacity, and autonomous validation are critical."
@@ -367,157 +585,13 @@ export function Gemini4ArgonLanding() {
         </div>
       </section>
 
-      {/* ----------------- Chapter 02: Benchmarks vs GPT & Claude ----------------- */}
-      <section id="benchmarks" className="flex flex-col gap-8 scroll-mt-28">
-        <ChapterHeader
-          number="CHAPTER 02"
-          label="Benchmark Showdown"
-          title="Gemini 4 Argon vs GPT-6 Astra & Claude Opus 5.5"
-          subtitle="Detailed head-to-head comparison across 12 rigorous industry benchmarks spanning coding, legal, finance, video understanding, and cybersecurity."
-        />
-
-        {/* Detailed Benchmark Table */}
-        <div className="rounded-xl border border-border/80 bg-card overflow-hidden shadow-xs">
-          <Table>
-            <TableHeader className="bg-muted/50">
-              <TableRow>
-                <TableHead className="w-[180px] font-bold text-foreground">
-                  Benchmark & Domain
-                </TableHead>
-                <TableHead className="w-[130px] font-bold text-blue-600 dark:text-blue-400">
-                  Gemini 4 Argon
-                </TableHead>
-                <TableHead className="w-[120px] font-bold text-foreground">
-                  GPT-6 Astra
-                </TableHead>
-                <TableHead className="w-[120px] font-bold text-foreground">
-                  Claude Opus 5.5
-                </TableHead>
-                <TableHead className="w-[120px] font-bold text-muted-foreground hidden sm:table-cell">
-                  Claude Fable 5.1
-                </TableHead>
-                <TableHead className="font-bold text-foreground">
-                  Analysis & Winner
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {comparisonTable.map((row) => (
-                <TableRow
-                  key={row.benchmark}
-                  className="transition-colors hover:bg-muted/30"
-                >
-                  <TableCell className="font-semibold text-foreground text-xs sm:text-sm">
-                    <div>{row.benchmark}</div>
-                    <div className="text-[10px] font-normal text-muted-foreground">
-                      {row.category}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-mono text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400">
-                    {row.gemini4Argon}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs sm:text-sm text-foreground">
-                    {row.gpt6Astra}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs sm:text-sm text-foreground">
-                    {row.claudeOpus55}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs sm:text-sm text-muted-foreground hidden sm:table-cell">
-                    {row.claudeFable51}
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      {row.winner === "argon" && (
-                        <Badge
-                          variant="default"
-                          className="bg-blue-600 hover:bg-blue-600 text-[10px] h-5 px-1.5"
-                        >
-                          Argon SOTA
-                        </Badge>
-                      )}
-                      {row.winner === "astra" && (
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] h-5 px-1.5"
-                        >
-                          Astra Lead
-                        </Badge>
-                      )}
-                      {row.winner === "opus" && (
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] h-5 px-1.5"
-                        >
-                          Opus Lead
-                        </Badge>
-                      )}
-                      {row.winner === "tie" && (
-                        <Badge
-                          variant="outline"
-                          className="text-[10px] h-5 px-1.5"
-                        >
-                          Tied #1
-                        </Badge>
-                      )}
-                      <span>{row.notes}</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Deep Analysis Summary Callout */}
-        <div className="rounded-2xl border border-border/80 bg-muted/40 p-6 sm:p-8">
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Trophy className="size-4 text-blue-500" />
-                <span>Where Argon Dominates</span>
-              </div>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                Argon crushes knowledge work (Vals Index, Harvey Legal Agent
-                19.6% vs 5.4%), Zapier automation (51.3%), multi-file software
-                refactoring (DeepSWE 77.9%), and long-video parsing (LVBench
-                91.7%).
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <BrainCircuit className="size-4 text-purple-500" />
-                <span>Where Astra Leads</span>
-              </div>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                GPT-6 Astra maintains competitive advantages on extreme
-                algorithmic puzzles (FrontierSWE v2 65.5%) and direct screen
-                computer-use GUI execution (OSWorld 2.0 72.6%).
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Terminal className="size-4 text-amber-500" />
-                <span>Where Opus 5.5 Shines</span>
-              </div>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                Anthropic's Claude Opus 5.5 retains mastery over deep shell and
-                CLI engineering automation (Terminal-Bench 4.0 66.4% vs Argon's
-                57.4%).
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------- Chapter 03: Pricing & Cost Calculator ----------------- */}
+      {/* ----------------- Chapter 04: Pricing & Cost Calculator ----------------- */}
       <section id="pricing" className="flex flex-col gap-8 scroll-mt-28">
         <ChapterHeader
-          number="CHAPTER 03"
+          number="CHAPTER 04"
           label="Pricing & Economics"
           title="API Pricing & 1M Output ROI Calculator"
-          subtitle="Argon introduces aggressive introductory pricing ($2 in / $10 out) with a 95% prompt caching discount, cutting enterprise inference bills by up to 80%."
+          subtitle="Argon introduces aggressive introductory pricing ($2 in / $10 out through Nov 30, 2026) with a 95% prompt caching discount, cutting enterprise inference bills by up to 80%."
         />
 
         {/* Pricing Table */}
@@ -697,103 +771,110 @@ export function Gemini4ArgonLanding() {
         </div>
       </section>
 
-      {/* ----------------- Chapter 04: Safeguards & Fairwind Program ----------------- */}
-      <section id="safeguards" className="flex flex-col gap-8 scroll-mt-28">
+      {/* ----------------- Chapter 05: Where to Access & Safeguards ----------------- */}
+      <section id="access" className="flex flex-col gap-8 scroll-mt-28">
         <ChapterHeader
-          number="CHAPTER 04"
-          label="Safety & Access"
-          title="The Fairwind Program & Frontier Safeguards"
-          subtitle="Why Google is taking a phased rollout approach and partnering with global cybersecurity institutions."
+          number="CHAPTER 05"
+          label="Where to Access"
+          title="Direct Access Channels & Frontier Safeguards"
+          subtitle="Gemini 4 Argon is globally available as of October 13, 2026 across consumer, developer, enterprise, and cybersecurity surfaces."
         />
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {frontierSafeguards.map((sf) => {
-            const Icon = sf.icon;
+        {/* Global Access Channels */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {accessChannels.map((ac) => {
+            const Icon = ac.icon;
             return (
               <div
-                key={sf.title}
-                className="flex gap-4 rounded-xl border border-border/80 bg-card p-5 shadow-xs transition-colors hover:border-primary/40"
+                key={ac.channel}
+                className="flex flex-col justify-between rounded-xl border border-border/80 bg-card p-5 shadow-xs transition-all hover:border-primary/40 hover:shadow-sm"
               >
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  <Icon className="size-6" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-bold text-foreground text-base sm:text-lg">
-                      {sf.title}
-                    </h3>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                      <Icon className="size-5" />
+                    </div>
+                    <Badge
+                      variant="secondary"
+                      className="font-mono text-[10px]"
+                    >
+                      {ac.badge}
+                    </Badge>
                   </div>
-                  <span className="font-mono text-xs text-primary/80">
-                    {sf.category}
-                  </span>
-                  <p className="mt-1 text-xs sm:text-sm leading-relaxed text-muted-foreground">
-                    {sf.description}
+                  <div>
+                    <h3 className="text-base font-bold text-foreground">
+                      {ac.channel}
+                    </h3>
+                    <p className="text-[11px] font-semibold text-primary mt-0.5">
+                      {ac.targetAudience}
+                    </p>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {ac.description}
                   </p>
+                </div>
+
+                <div className="pt-4">
+                  <Link
+                    href={ac.actionUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "w-full justify-between text-xs font-semibold rounded-lg",
+                    )}
+                  >
+                    <span>{ac.actionText}</span>
+                    <ExternalLink className="size-3.5" />
+                  </Link>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Rollout Stages Pipeline */}
+        {/* Safety & Red Teaming Grid */}
         <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8">
           <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-            <Clock className="size-5 text-primary" />
-            <span>Phased Access Roadmap</span>
+            <Lock className="size-5 text-emerald-500" />
+            <span>Frontier Safeguards & Alignment Architecture</span>
           </h3>
-          <div className="grid gap-4 md:grid-cols-3">
-            {accessStages.map((st) => (
-              <div
-                key={st.stage}
-                className={cn(
-                  "flex flex-col justify-between rounded-xl border p-4 text-xs transition-all",
-                  st.status === "active"
-                    ? "border-emerald-500/40 bg-emerald-500/5 shadow-xs"
-                    : "border-border/70 bg-muted/30",
-                )}
-              >
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-foreground text-sm">
-                      {st.stage}
-                    </span>
-                    {st.status === "active" ? (
-                      <Badge className="bg-emerald-600 text-[10px]">
-                        Active Now
-                      </Badge>
-                    ) : st.status === "next" ? (
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] text-blue-500 border-blue-500/40"
-                      >
-                        Next Up
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary" className="text-[10px]">
-                        Planned
-                      </Badge>
-                    )}
+          <div className="grid gap-6 md:grid-cols-2">
+            {frontierSafeguards.map((sf) => {
+              const Icon = sf.icon;
+              return (
+                <div
+                  key={sf.title}
+                  className="flex gap-4 rounded-xl border border-border/70 bg-muted/30 p-4 transition-colors hover:border-primary/40"
+                >
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <Icon className="size-5" />
                   </div>
-                  <span className="font-semibold text-primary">
-                    {st.audience}
-                  </span>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {st.description}
-                  </p>
+                  <div className="flex flex-col gap-1">
+                    <h4 className="font-bold text-foreground text-sm">
+                      {sf.title}
+                    </h4>
+                    <span className="font-mono text-[11px] text-primary/80">
+                      {sf.category}
+                    </span>
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      {sf.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ----------------- Chapter 05: Code & SDK Integrations ----------------- */}
+      {/* ----------------- Chapter 06: Code & SDK Integrations ----------------- */}
       <section id="code" className="flex flex-col gap-8 scroll-mt-28">
         <ChapterHeader
-          number="CHAPTER 05"
+          number="CHAPTER 06"
           label="Developer SDKs"
           title="SDK Implementation: TypeScript / Python / Vertex AI"
-          subtitle="Code snippets demonstrating how to allocate 1M token output budgets and thinking parameters in modern stacks."
+          subtitle="Code snippets demonstrating how to allocate 1M token output budgets and configure tunable thinking parameters in modern stacks."
         />
 
         <Tabs defaultValue="google-genai-ts" className="w-full">
@@ -852,11 +933,11 @@ export function Gemini4ArgonLanding() {
         </Tabs>
       </section>
 
-      {/* ----------------- Chapter 06: FAQs & Sources ----------------- */}
+      {/* ----------------- Chapter 07: FAQs & Citations ----------------- */}
       <section id="faq" className="flex flex-col gap-10 scroll-mt-28">
         <div className="flex flex-col gap-8">
           <ChapterHeader
-            number="CHAPTER 06"
+            number="CHAPTER 07"
             label="FAQ & Verified Citations"
             title="Frequently Asked Questions (FAQ)"
             subtitle="Essential technical facts, deployment rules, and verified primary sources regarding Google's Gemini 4 Argon."
@@ -880,7 +961,7 @@ export function Gemini4ArgonLanding() {
         <div className="flex flex-col gap-4 rounded-xl border border-border/60 bg-muted/30 p-6">
           <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
             <ExternalLink className="size-4 text-primary" />
-            Verified Documentation & Press Citations
+            Verified Documentation & Primary Press Citations
           </h4>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {sources.map((src) => (
