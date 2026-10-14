@@ -43,5 +43,11 @@ export const footerConfig: FooterConfig = {
         { title: "Sitemap", href: "/sitemap.xml" },
       ],
     },
+    {
+      title: "Friends",
+      items: [
+        { title: "AISpotNav", href: "https://aispotnav.com", external: true },
+      ],
+    },
   ],
 };
