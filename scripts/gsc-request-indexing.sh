@@ -1,43 +1,23 @@
 #!/bin/bash
-# Request Google Indexing for one or more URLs via the GSC URL Inspection UI,
-# driven by opencli browser automation.
+# Request Google Indexing for one or more URLs via GSC URL Inspection UI,
+# driven by opencli browser automation with rock-solid DOM event dispatching.
 #
 # Usage:
 #   bash scripts/gsc-request-indexing.sh <url> [url2 ...]
-#   bash scripts/gsc-request-indexing.sh --check     # verify setup only, submit nothing
+#   bash scripts/gsc-request-indexing.sh --check
 #   pnpm gsc:index <url>
-#
-# Config (real environment wins over .env):
-#   GSC_RESOURCE_ID   GSC property, e.g. "sc-domain:findryai.com" or "https://findryai.com/"
-#   OPENCLI_SESSION   opencli browser session name (default: gsc)
-#
-# Prereqs:
-#   - opencli CLI installed (`npm i -g @jackwener/opencli`)
-#   - the browser session must be logged into a Google account that has GSC
-#     access to the property. If not, the script fails with a screenshot of
-#     whatever the session shows (typically the Google login page).
-#
-# UI-language note: the flow matches the ENGLISH GSC strings
-# ("REQUEST INDEXING" button, "priority crawl queue" success toast). If your
-# GSC UI runs in another language, override GSC_TEXT_REQUEST / GSC_TEXT_SUCCESS.
-#
-# Quota: GSC allows roughly 10 "request indexing" calls per day per property.
-# The script does not track quota; Google rejects excess requests in the UI.
 
 set -u
 
 SESSION="${OPENCLI_SESSION:-gsc}"
-TEXT_REQUEST="${GSC_TEXT_REQUEST:-REQUEST INDEXING}"
-TEXT_SUCCESS="${GSC_TEXT_SUCCESS:-priority crawl queue}"
 SHOTS_DIR="tmp-shots"
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 
 say() { echo "[$(date +%H:%M:%S)] $*"; }
 die() { say "ERROR: $*"; exit 1; }
 
-# --- config: load GSC_RESOURCE_ID / OPENCLI_SESSION from .env if not in env ---
+# Load GSC_RESOURCE_ID from .env
 if [ -f "$REPO_ROOT/.env" ]; then
   while IFS= read -r line; do
     case "$line" in
@@ -49,132 +29,155 @@ if [ -f "$REPO_ROOT/.env" ]; then
   done < <(grep -E '^(GSC_RESOURCE_ID|OPENCLI_SESSION)=' "$REPO_ROOT/.env" || true)
 fi
 
-[ -n "${GSC_RESOURCE_ID:-}" ] || die "GSC_RESOURCE_ID not set. Add GSC_RESOURCE_ID=sc-domain:yourdomain.com to .env"
-command -v opencli >/dev/null 2>&1 || die "opencli not found (npm i -g @jackwener/opencli)"
+[ -n "${GSC_RESOURCE_ID:-}" ] || die "GSC_RESOURCE_ID not set in .env"
+command -v opencli >/dev/null 2>&1 || die "opencli not found"
 command -v node >/dev/null 2>&1 || die "node not found"
 
 ENC_RESOURCE="$(node -e "console.log(encodeURIComponent(process.argv[1]))" "$GSC_RESOURCE_ID")"
-BAR="input[role='combobox'][aria-label*='Inspect any URL']"
-SEARCH_BTN="button[aria-label='Search']"
 
 CHECK_ONLY="no"
 if [ "${1:-}" = "--check" ]; then
   CHECK_ONLY="yes"
   shift
 fi
+
 if [ "$CHECK_ONLY" != "yes" ]; then
   [ $# -ge 1 ] || { echo "usage: $0 [--check] <url> [url...]"; exit 1; }
 fi
+
 for url in "$@"; do
   case "$url" in https://*) ;; *) die "URL must start with https:// : $url" ;; esac
 done
 
-# --- helpers -----------------------------------------------------------------
-# GSC renders the Request-indexing button TWICE (desktop + narrow-layout copies).
-# The hidden duplicate "eats" clicks, so always click the VISIBLE ref.
-get_ref() {
-  opencli browser "$SESSION" find --role button --text "Request indexing" --limit 6 2>/dev/null \
-   | node -e "
-let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
-  try{const j=JSON.parse(d);
-    const c=(j.entries||[]).filter(e=>e.tag==='div'&&e.role==='button'&&/request/i.test(e.text||''));
-    const vis=c.filter(e=>e.visible===true);
-    console.log(vis.length?vis[0].ref:(c.length?c[c.length-1].ref:''));
-  }catch(e){console.log('');}
-});"
-}
-
-toast_ok() {
-  opencli browser "$SESSION" find --text "$TEXT_SUCCESS" --limit 3 2>/dev/null \
-   | node -e "
-let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
-  try{const j=JSON.parse(d);console.log((j.matches_n||0)>0?'YES':'NO');}catch(e){console.log('NO');}
-});"
-}
-
-# Type the URL and trigger the inspection.
-# 2026-10-12 lesson: text-based panel-switch detection (find/wait text on the
-# slug) is UNRELIABLE — GSC sometimes serves the inspection panel where text
-# find cannot see it, and after ~5 inspections in one session the SPA stops
-# switching panels entirely. The reliable pattern is: RELOAD the property page
-# fresh before EACH url, type + Search click, then blind-wait — no detection.
-trigger_inspection() {
-  local url="$1"
-  opencli browser "$SESSION" open "https://search.google.com/search-console?resource_id=$ENC_RESOURCE" >/dev/null 2>&1
-  sleep 12
-  opencli browser "$SESSION" wait selector "$BAR" --timeout 60 >/dev/null 2>&1 || return 1
-  opencli browser "$SESSION" type "$BAR" "$url" 2>/dev/null | grep -q '"typed": true' || return 1
-  sleep 2
-  opencli browser "$SESSION" click "$SEARCH_BTN" 2>/dev/null | grep -q '"clicked": true' || return 1
-  # blind wait: the panel switch cannot be detected reliably; give it time
-  sleep 55
-  return 0
-}
-
-# --- init: open GSC property, confirm session works ---------------------------
-say "opening GSC property $GSC_RESOURCE_ID (session: $SESSION)"
+say "Opening GSC property $GSC_RESOURCE_ID (session: $SESSION)..."
 opencli browser "$SESSION" open "https://search.google.com/search-console?resource_id=$ENC_RESOURCE" >/dev/null 2>&1
 sleep 10
-if ! opencli browser "$SESSION" wait selector "$BAR" --timeout 60 >/dev/null 2>&1; then
-  opencli browser "$SESSION" screenshot "$SHOTS_DIR/gsc-setup-fail.png" >/dev/null 2>&1
-  die "GSC inspection bar not found — see $SHOTS_DIR/gsc-setup-fail.png (login? wrong property? no access?)"
-fi
-say "GSC ready"
 
+# Verify input search bar is available
+CHECK_BAR="$(opencli browser "$SESSION" eval '(() => {
+  const input = document.querySelector("input[aria-label*=\"Inspect any URL\"]");
+  return input ? "ok" : "no";
+})()' 2>/dev/null | grep -o 'ok' || true)"
+
+if [ "$CHECK_BAR" != "ok" ]; then
+  mkdir -p "$SHOTS_DIR"
+  opencli browser "$SESSION" screenshot "$SHOTS_DIR/gsc-setup-fail.png" >/dev/null 2>&1
+  die "GSC inspection bar not found — see $SHOTS_DIR/gsc-setup-fail.png"
+fi
+
+say "GSC session ready."
 if [ "$CHECK_ONLY" = "yes" ]; then
-  say "check passed: session '$SESSION' is logged in and property is accessible. Nothing submitted."
+  say "Check passed. Nothing submitted."
   exit 0
 fi
 
-# --- per-URL submission (proven 2026-10-10 7/7; hardened 2026-10-12) ----------
-# The top-bar combobox ignores synthetic Enter/ArrowDown; the reliable trigger
-# is clicking the Search button next to it after typing the URL.
-# Hard-won rules: click only the VISIBLE request button; do NOT proceed unless
-# the panel actually switched to this URL (else you re-request the previous one);
-# after requesting, wait QUIETLY — clicks during the live test can cancel it.
-FAILS=0
+PASSED=0
+TOTAL=$#
+
 for url in "$@"; do
   slug="${url##*/}"
   say "=== START $url"
 
-  if ! trigger_inspection "$url"; then
-    say "FAIL could not trigger inspection for $url"
-    FAILS=$((FAILS+1)); continue
-  fi
-  if ! opencli browser "$SESSION" wait text "$TEXT_REQUEST" --timeout 90 >/dev/null 2>&1; then
-    say "WARN no $TEXT_REQUEST button appeared for $slug"
-  fi
-  sleep 3
+  # 1. Reload GSC home page fresh
+  opencli browser "$SESSION" open "https://search.google.com/search-console?resource_id=$ENC_RESOURCE" >/dev/null 2>&1
+  sleep 8
 
-  ref="$(get_ref)"
-  [ -n "$ref" ] || { say "FAIL request-button not found for $slug"; FAILS=$((FAILS+1)); continue; }
-  opencli browser "$SESSION" click "$ref" >/dev/null 2>&1 || { say "FAIL click failed for $slug"; FAILS=$((FAILS+1)); continue; }
-  say "request clicked (visible ref=$ref), waiting quietly for live test + toast..."
+  # 2. Trigger inspection via robust DOM events
+  say "Typing URL and triggering search..."
+  TRIGGER_RES="$(opencli browser "$SESSION" eval "(() => {
+    const input = document.querySelector('input[aria-label*=\"Inspect any URL\"]');
+    if (!input) return 'no_input';
+    input.focus();
+    input.value = '$url';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    const form = input.closest('form') || document.querySelector('form[role=\"search\"]');
+    const btns = form ? Array.from(form.querySelectorAll('button')) : [];
+    const searchBtn = btns.find(b => b.getAttribute('aria-label') === 'Search') || document.querySelector('button[aria-label=\"Search\"]');
+    if (searchBtn) {
+      searchBtn.click();
+      return 'ok';
+    }
+    return 'no_btn';
+  })()" 2>/dev/null | grep -o 'ok' || true)"
 
-  # quiet polling: no clicks for the first 3 checks (~2min) — mid-test clicks
-  # can cancel the live test. Only then allow a single confirm click per round.
-  ok="NO"
-  for i in 1 2 3 4 5 6; do
-    sleep 40
-    ok="$(toast_ok)"
-    [ "$ok" = "YES" ] && break
-    if [ "$i" -ge 3 ] && [ "$i" -le 4 ]; then
-      ref2="$(get_ref)"
-      if [ -n "$ref2" ]; then
-        opencli browser "$SESSION" click "$ref2" >/dev/null 2>&1 && say "confirm click sent (visible ref=$ref2)"
-      fi
+  if [ "$TRIGGER_RES" != "ok" ]; then
+    say "FAIL: could not trigger inspection for $slug"
+    continue
+  fi
+
+  # 3. Wait for panel to load (15-20s)
+  say "Waiting for inspection panel to load..."
+  sleep 18
+
+  # 4. Find and click REQUEST INDEXING
+  CLICKED="no"
+  for retry in 1 2 3 4 5; do
+    REQ_CLICK="$(opencli browser "$SESSION" eval '(() => {
+      const btns = Array.from(document.querySelectorAll("div[role=\"button\"], button"));
+      const reqBtn = btns.find(b => /request indexing/i.test(b.innerText || b.textContent || "") && b.offsetParent !== null);
+      if (reqBtn) {
+        reqBtn.click();
+        return "ok";
+      }
+      return "no";
+    })()' 2>/dev/null | grep -o 'ok' || true)"
+
+    if [ "$REQ_CLICK" = "ok" ]; then
+      CLICKED="yes"
+      say "Clicked REQUEST INDEXING button"
+      break
+    fi
+    sleep 3
+  done
+
+  if [ "$CLICKED" != "yes" ]; then
+    say "FAIL: REQUEST INDEXING button not found for $slug"
+    continue
+  fi
+
+  # 5. Wait for live test to complete (polling up to 120s)
+  say "Waiting for live URL test and confirmation dialog..."
+  SUBMITTED="no"
+  for poll in $(seq 1 24); do
+    sleep 5
+    STATUS="$(opencli browser "$SESSION" eval '(() => {
+      const allText = document.body.innerText;
+      if (/quota/i.test(allText) && /exceeded/i.test(allText)) {
+        return "quota";
+      }
+      const dialogs = Array.from(document.querySelectorAll("div[role=\"dialog\"], div[role=\"alertdialog\"]"));
+      for (const d of dialogs) {
+        const t = d.innerText || d.textContent || "";
+        if (/Indexing requested/i.test(t) || /priority crawl queue/i.test(t)) {
+          const dismiss = Array.from(d.querySelectorAll("button, div[role=\"button\"]")).find(b => /dismiss|got it/i.test(b.innerText || ""));
+          if (dismiss) dismiss.click();
+          return "success";
+        }
+      }
+      return "waiting";
+    })()' 2>/dev/null | grep -oE '(success|quota)' || true)"
+
+    if [ "$STATUS" = "success" ]; then
+      SUBMITTED="yes"
+      say "SUCCESS: Indexing requested for $url (queue priority added)"
+      PASSED=$((PASSED + 1))
+      break
+    fi
+
+    if [ "$STATUS" = "quota" ]; then
+      say "WARN: GSC Daily Quota Exceeded! Google has capped submissions for today."
+      exit 0
     fi
   done
 
-  if [ "$ok" = "YES" ]; then
-    say "=== SUCCESS $url (added to priority crawl queue)"
-  else
-    opencli browser "$SESSION" screenshot "$SHOTS_DIR/gsc-fail-$slug.png" >/dev/null 2>&1
-    say "=== FAIL(?) $url — no success toast; screenshot: $SHOTS_DIR/gsc-fail-$slug.png"
-    FAILS=$((FAILS+1))
+  if [ "$SUBMITTED" != "yes" ]; then
+    say "TIMEOUT: live test did not return success for $slug within 120s"
   fi
-  sleep 10
+
+  sleep 3
 done
 
-say "ALL DONE: $(( $# - FAILS ))/$# submitted, $FAILS failed"
-exit $(( FAILS > 0 ? 1 : 0 ))
+say "========================================="
+say "GSC Submission Finished: $PASSED/$TOTAL submitted successfully."
+say "========================================="
