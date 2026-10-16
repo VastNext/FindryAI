@@ -6,7 +6,7 @@ import { constructMetadata } from "@/lib/metadata";
 
 const baseMetadata = constructMetadata({
   title:
-    "Gemini 4 Argon AI Deep Dive — 1M Output Tokens, vs GPT-6 & Claude, Pricing & Benchmarks",
+    "Gemini 4 Argon vs Claude Opus 5.5 & GPT-6 — 1M Output Tokens, Benchmarks & Pricing Calculator",
   description: gemini4Argon.description,
   canonicalUrl: `${siteConfig.url}/gemini-4-argon`,
 });

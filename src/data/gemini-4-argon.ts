@@ -725,6 +725,12 @@ export const faqs: { question: string; answer: string }[] = [
   },
   {
     question:
+      "Gemini 4 Argon vs Claude Opus 5.5: Which model should you choose?",
+    answer:
+      "Choose Gemini 4 Argon for massive monolithic code migrations, long-horizon multi-hour agent workflows, long video understanding, and enterprise legal/financial knowledge work (Argon scores 77.9% on DeepSWE v1.1 vs Opus 5.5's 74.2%, and offers 1,000,000 output tokens at $2/$10 introductory pricing). Choose Claude Opus 5.5 if your workflow relies heavily on deep bash/CLI automation, interactive terminal engineering (Terminal-Bench 4.0 66.4% vs Argon's 57.4%), and machine learning system tuning (PostTrainBench 49.3%).",
+  },
+  {
+    question:
       "How does Gemini 4 Argon compare to GPT-6 Astra and Claude Opus 5.5?",
     answer:
       "According to Google's official Model Card, Argon leads on 13 of 18 benchmark evaluations: it is #1 on DeepSWE v1.1 (77.9% for agentic coding), the Vals Index (68.9% for GDP-weighted knowledge work), Zapier AutomationBench (51.3%), Harvey Legal Agent (19.6%), and LVBench video understanding (91.7%). Meanwhile, GPT-6 Astra retains leads on specialized puzzle coding (FrontierSWE v2 65.5%) and computer-use GUI automation (OSWorld 2.0 72.6%), and Claude Opus 5.5 remains dominant on deep CLI shell automation (Terminal-Bench 4.0 66.4%) and ML engineering (PostTrainBench 49.3%).",

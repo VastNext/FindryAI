@@ -50,17 +50,16 @@ async function purgeCloudflare() {
 
   const endpoint = `https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache`;
   try {
-    // @ts-expect-error agent in node-fetch / fetch
-    const res = await fetch(endpoint, {
+    const fetchOptions: any = {
       method: "POST",
       headers: {
         Authorization: `Bearer ${CF_TOKEN_ZONE}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ files: FULL_URLS }),
-      // @ts-expect-error agent
       agent,
-    });
+    };
+    const res = await fetch(endpoint, fetchOptions);
     const json = await res.json();
     console.log("[cloudflare purge result]:", JSON.stringify(json, null, 2));
   } catch (err) {
