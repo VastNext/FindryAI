@@ -727,7 +727,7 @@ export const faqs: { question: string; answer: string }[] = [
     question:
       "Gemini 4 Argon vs Claude Opus 5.5: Which model should you choose?",
     answer:
-      "Choose Gemini 4 Argon for massive monolithic code migrations, long-horizon multi-hour agent workflows, long video understanding, and enterprise legal/financial knowledge work (Argon scores 77.9% on DeepSWE v1.1 vs Opus 5.5's 74.2%, and offers 1,000,000 output tokens at $2/$10 introductory pricing). Choose Claude Opus 5.5 if your workflow relies heavily on deep bash/CLI automation, interactive terminal engineering (Terminal-Bench 4.0 66.4% vs Argon's 57.4%), and machine learning system tuning (PostTrainBench 49.3%).",
+      "When comparing Gemini Argon vs Claude Opus, the answer depends on your workload. Choose Gemini 4 Argon for massive monolithic code migrations, long-horizon multi-hour agent workflows, long video understanding, and enterprise legal/financial knowledge work (Argon scores 77.9% on DeepSWE v1.1 vs Opus 5.5's 74.2%, and offers 1,000,000 output tokens at $2/$10 introductory pricing — half of Claude Opus 5.5's cost). Choose Claude Opus 5.5 if your workflow relies heavily on deep bash/CLI automation, interactive terminal engineering (Terminal-Bench 4.0 66.4% vs Argon's 57.4%), and machine learning system tuning (PostTrainBench 49.3%).",
   },
   {
     question:
