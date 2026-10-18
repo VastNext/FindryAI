@@ -87,7 +87,9 @@ const itemFieldsWithRelated = /* groq */ `
     && defined(publishDate) && publishDate <= now()
     && forceHidden != true
     && sponsor != true
-    && count(categories[@._ref in ^.^.categories[]._ref]) > 0 && _id != ^._id]
+    && count(categories[@._ref in ^.^.categories[]._ref
+      && !(@._ref in *[_type == "category" && slug.current == "ai-tools"][]._id)]) > 0
+    && _id != ^._id]
     | order(publishDate desc, _createdAt desc) [0...6] {
       ${itemSimpleFields}
   },
