@@ -83,12 +83,12 @@ const itemFields = /* groq */ `
 // auto generate related items
 const itemFieldsWithRelated = /* groq */ `
   introduction,
-  "related": *[_type == "item" && defined(slug.current) 
-    && defined(publishDate) && publishDate <= now() 
+  "related": *[_type == "item" && defined(slug.current)
+    && defined(publishDate) && publishDate <= now()
     && forceHidden != true
     && sponsor != true
-    && count(categories[@._ref in ^.^.categories[]._ref]) > 0 && _id != ^._id] 
-    | order(publishedDate desc, _createdAt desc) [0...3] {
+    && count(categories[@._ref in ^.^.categories[]._ref]) > 0 && _id != ^._id]
+    | order(publishDate desc, _createdAt desc) [0...6] {
       ${itemSimpleFields}
   },
   ${itemSimpleFields}

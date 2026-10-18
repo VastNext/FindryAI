@@ -36,7 +36,10 @@ export function constructMetadata({
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: siteConfig.url,
+      // og:url must echo the page's own canonical URL, not the site root —
+      // it was hardcoded to the homepage, which made every page's OG object
+      // claim to be the homepage.
+      url: canonicalUrl || siteConfig.url,
       title: socialTitle,
       description,
       siteName: siteConfig.name,
