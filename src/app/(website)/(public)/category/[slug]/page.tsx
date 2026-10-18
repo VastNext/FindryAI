@@ -53,6 +53,12 @@ export async function generateMetadata({
   ogImageUrl.searchParams.append("description", description);
   ogImageUrl.searchParams.append("type", "Category");
 
+  // Page 1 is a primary landing page; ?page=N+ repeats the hub template with
+  // shifted item lists, which Google flags as Duplicate without user-selected
+  // canonical (e.g. /category/entertainment?page=2). Same policy as tag pages:
+  // noindex the aggregations, keep the crawlable pagination links.
+  const currentPage = searchParams?.page ? Number(searchParams.page) : 1;
+
   return constructMetadata({
     title,
     description,
@@ -61,6 +67,7 @@ export async function generateMetadata({
       searchParams?.page,
     ),
     image: ogImageUrl.toString(),
+    noIndex: Number.isFinite(currentPage) && currentPage > 1,
   });
 }
 

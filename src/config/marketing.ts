@@ -42,11 +42,5 @@ export const marketingConfig: MarketingConfig = {
       href: "/submit",
       icon: "submit",
     },
-    {
-      title: "Studio",
-      href: "/studio",
-      icon: "studio",
-      external: true,
-    },
   ],
 };

@@ -31,7 +31,6 @@ export const footerConfig: FooterConfig = {
         { title: "Pricing", href: "/pricing" },
         { title: "Submit", href: "/submit" },
         { title: "Submission Guidelines", href: "/submission-guidelines" },
-        { title: "Studio", href: "/studio", external: true },
       ],
     },
     {
