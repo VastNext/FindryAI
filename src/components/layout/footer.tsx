@@ -88,6 +88,20 @@ export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
                   className="h-8 w-auto"
                 />
               </a>
+              <a
+                href="https://tools.cafe"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-flex items-center"
+              >
+                <img
+                  src="https://tools.cafe/b/light.svg"
+                  alt="Featured on tools.cafe"
+                  width={256}
+                  height={80}
+                  className="h-8 w-auto"
+                />
+              </a>
             </div>
           </div>
         </div>
