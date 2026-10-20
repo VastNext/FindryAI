@@ -1,0 +1,43 @@
+name: Capture Graphify cover
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/capture-graphify-cover.yml']
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install isolated screenshot dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/microlink-runtime" --no-audit --no-fund @microlink/mql@0.13.12 dotenv@16.4.7
+          ln -s "$RUNNER_TEMP/microlink-runtime/node_modules" node_modules
+      - name: Capture official repository using existing Microlink pipeline
+        run: node scripts/microlink-batch-screenshot.mjs graphify-item=https://github.com/Graphify-Labs/graphify
+      - name: Check PNG size, dimensions and review checksum
+        run: |
+          python - <<'PY'
+          import hashlib, struct, pathlib
+          p = pathlib.Path('tmp-shots/seo-images/graphify-item.png')
+          b = p.read_bytes()
+          assert len(b) > 10240, 'Screenshot must exceed 10 KB'
+          assert b[:8] == bytes([137,80,78,71,13,10,26,10]), 'Not PNG'
+          w,h = struct.unpack('>II', b[16:24])
+          print('PNG bytes:', len(b), 'dimensions:', w, h)
+          print('REVIEW_SHA256:', hashlib.sha256(b).hexdigest())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: graphify-microlink-cover
+          path: tmp-shots/seo-images/graphify-item.png
+          retention-days: 7
+          if-no-files-found: error
