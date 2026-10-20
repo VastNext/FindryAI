@@ -44,20 +44,26 @@ async function main() {
   console.log("[verify]", JSON.stringify(verified));
   for (const path of ["/", "/item/graphify", ...verified.categories.map((slug: string) => "/category/" + slug), ...verified.tags.map((slug: string) => "/tag/" + slug)]) await refresh(path);
   let valid = false;
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const res = await fetch("https://findryai.com/item/graphify", { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(30000) });
-    const html = await res.text();
-    const hash = asset._id.split("-")[1];
-    const metas = html.match(/<meta[^>]*(?:property|name)="og:image"[^>]*>/g) || [];
-    valid = res.ok && html.includes(hash) && metas.some((m: string) => m.includes(hash));
-    console.log("[live] attempt", attempt + 1, "HTTP", res.status, "cover and og:image verified:", valid);
-    if (valid) break;
-    if (attempt < 4) {
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      await refresh("/item/graphify");
+  const hash = asset._id.split("-")[1];
+  for (let attempt = 0; attempt < 8; attempt++) {
+    try {
+      const res = await fetch("https://findryai.com/item/graphify", { headers: { "Cache-Control": "no-cache, no-store" }, signal: AbortSignal.timeout(30000) });
+      const html = await res.text();
+      const metas = html.match(/<meta[^>]*(?:property|name)="og:image"[^>]*>/g) || [];
+      valid = res.ok && html.includes(hash) && metas.some((m: string) => m.includes(hash));
+      console.log("[live] attempt", attempt + 1, JSON.stringify({ status: res.status, cover: html.includes(hash), og: metas, cf: res.headers.get("cf-cache-status"), age: res.headers.get("age"), vercel: res.headers.get("x-vercel-cache") }));
+      if (valid) break;
+      if (attempt === 0) {
+        const bypass = await fetch("https://findryai.com/item/graphify?cover-check=" + hash, { signal: AbortSignal.timeout(30000) });
+        const fresh = await bypass.text();
+        console.log("[cache-check]", JSON.stringify({ status: bypass.status, hasCover: fresh.includes(hash), og: fresh.match(/<meta[^>]*(?:property|name)="og:image"[^>]*>/g) || [] }));
+      }
+    } catch {
+      console.log("[live] transient HTTP or network failure; retrying bounded check");
     }
+    if (attempt < 7) await new Promise(resolve => setTimeout(resolve, 15000));
   }
-  if (!valid) throw new Error("Updated cover not yet visible on live page");
+  if (!valid) throw new Error("Updated cover not yet visible on canonical live page");
   const imageResponse = await fetch(verified.imageUrl, { signal: AbortSignal.timeout(30000) });
   if (!imageResponse.ok) throw new Error("Sanity CDN image unavailable");
   console.log("[done] reviewed Microlink repository screenshot bound; taxonomy preserved; live image and OG verified.");
