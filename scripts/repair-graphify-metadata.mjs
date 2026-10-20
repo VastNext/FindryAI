@@ -90,8 +90,20 @@ async function main() {
   report('Verified cover dimensions: ' + JSON.stringify(asset.metadata?.dimensions));
   const paths = ['/', '/item/graphify', ...verified.categories.map(x => '/category/' + x.slug), ...verified.tags.map(x => '/tag/' + x.slug)];
   for (const path of paths) await refresh(path);
-  const html = await (await response(site + '/item/graphify')).text();
   const hash = asset._id.split('-')[1];
+  let html = '';
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const page = await response(site + '/item/graphify', { headers: { 'Cache-Control': 'no-cache' } });
+    html = await page.text();
+    report('Live detail check ' + (attempt + 1) + ': ' + JSON.stringify({
+      title: html.match(/<title>([^<]*)<\/title>/)?.[1],
+      hasName: html.includes('Graphify'), hasCover: html.includes(hash),
+      cfCache: page.headers.get('cf-cache-status'), vercelCache: page.headers.get('x-vercel-cache'),
+      imageMeta: (html.match(/<meta[^>]*(?:property|name)="og:image"[^>]*>/g) || []).slice(0, 2)
+    }));
+    if (html.includes('Graphify') && html.includes(hash)) break;
+    if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 5000));
+  }
   if (!html.includes('Graphify') || !html.includes(hash)) throw new Error('Live detail page does not contain the expected image.');
   const og = html.match(/<meta[^>]*(?:property|name)="og:image"[^>]*>/g) || [];
   if (!og.some(meta => meta.includes(hash))) throw new Error('Live Open Graph image does not point to the uploaded cover.');
