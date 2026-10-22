@@ -27,7 +27,7 @@ export const faqConfig: FAQConfig = {
       id: "item-3",
       question: "What is the Pro plan?",
       answer:
-        "The Pro plan is designed for products seeking expedited review and exposure. It includes priority review within 12 hours, featured placement at the top of the homepage and category feeds for 30 days, an award badge across directory cards, unlimited submissions, and 3 dedicated dofollow backlinks on your listing. A launch-period early-bird price is available for a limited time.",
+        "The Pro plan is designed for products seeking expedited review and exposure. It includes priority review within 12 hours, featured placement at the top of the homepage and category feeds for 30 days, an award badge across directory cards, unlimited submissions, and 3 dedicated dofollow backlinks on your listing. New Pro listings are also included in our weekly digest email, sent automatically to newsletter subscribers. A launch-period early-bird price is available for a limited time.",
     },
     {
       id: "item-4",
