@@ -185,21 +185,44 @@ export default async function sitemap({
     }
 
     case "categories": {
-      const [categoryListQueryResult, blogCategoryListQueryResult] =
-        await Promise.all([
-          sanityFetch<CategoryListQueryForSitemapResult>({
-            query: categoryListQueryForSitemap,
-          }),
-          sanityFetch<BlogCategoryListQueryForSitemapResult>({
-            query: blogCategoryListQueryForSitemap,
-          }),
-        ]);
+      const [
+        categoryListQueryResult,
+        blogCategoryListQueryResult,
+        categoryFreshness,
+      ] = await Promise.all([
+        sanityFetch<CategoryListQueryForSitemapResult>({
+          query: categoryListQueryForSitemap,
+        }),
+        sanityFetch<BlogCategoryListQueryForSitemapResult>({
+          query: blogCategoryListQueryForSitemap,
+        }),
+        // Category docs barely change, so category._updatedAt alone let the
+        // sitemap claim Aug-18 timestamps while the pages kept gaining items.
+        // Track the newest member item instead and advertise the max.
+        sanityFetch<{ slug: string; lastItemUpdate: string | null }[]>({
+          query: `*[_type == "category" && defined(slug.current)] {
+              "slug": slug.current,
+              "lastItemUpdate": *[_type == "item" && defined(publishDate)
+                && publishDate <= now() && forceHidden != true
+                && references(^._id)] | order(_updatedAt desc) [0]._updatedAt
+            }`,
+        }),
+      ]);
+
+      const itemFreshness = new Map(
+        categoryFreshness.map((c) => [c.slug, c.lastItemUpdate]),
+      );
 
       for (const category of categoryListQueryResult) {
         if (category.slug && (category.count ?? 0) > 0) {
+          const candidates = [
+            category._updatedAt,
+            itemFreshness.get(category.slug),
+          ].filter((v): v is string => Boolean(v));
+          const lastmod = candidates.sort().at(-1) ?? category._updatedAt;
           sitemapList.push({
             url: `${site_url}/category/${category.slug}`,
-            lastModified: new Date(category._updatedAt).toISOString(),
+            lastModified: new Date(lastmod).toISOString(),
           });
         }
       }
