@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "Vane",
+      "slug": {
+        "_type": "slug",
+        "current": "vane"
+      },
+      "link": "https://github.com/ItzCrazyKns/Vane",
+      "description": "Vane is a self-hosted AI answer engine with source citations, SearxNG web search, and local or cloud model support. Learn the official Docker setup and privacy tradeoffs.",
+      "introduction": "### What is Vane?\n\nVane is an open-source AI answer engine for people who want to operate their own search interface. The project was previously known as Perplexica. It combines retrieved web sources with a language model and presents an answer with citations. Its official repository is the starting point for installation and current documentation.\n\nThe useful distinction from a hosted answer service is operational control: you choose the model, run the application and maintain its data. That also makes you responsible for updates, backups and checking results. A cited answer still needs verification against its sources.\n\n### Start with the official Docker image\n\nThe upstream README recommends Docker and provides a bundled image containing Vane and SearxNG. Its documented command is:\n\n```bash\ndocker run -d -p 3000:3000 -v vane-data:/home/vane/data --name vane itzcrazykns1337/vane:latest\n```\n\nAfter the container starts, visit http://localhost:3000 and complete the provider and model setup. The named volume persists application data. Check the current installation documentation before upgrading or changing a working installation.\n\nIf you already operate SearxNG, the repository also documents a slim image that accepts SEARXNG_API_URL. That path requires configuring SearxNG to return JSON; use the bundled image first if you do not need a separate search service.\n\n### Choose a model and a search mode\n\nThe documented model options include Ollama and cloud providers. Vane offers Speed, Balanced and Quality search modes, along with web, discussion and academic sources. It also documents file uploads, domain-specific search, image/video search and local search history.\n\nStart with a narrow question and inspect the cited pages. If you are testing a local model, confirm that the container can reach its server: localhost inside a container refers to that container. Use the operating-system-specific networking guidance in the official troubleshooting section.\n\n### Privacy and cost\n\nSelf-hosting the interface does not make every request offline. Web search still contacts search infrastructure, and a cloud model provider receives the information sent to its API. Local models can change that model-processing boundary, while internet retrieval remains a separate consideration.\n\nThe repository uses the MIT license. Hosting, hardware and any paid provider usage have separate costs. No independent speed, answer-quality benchmark or savings claim is made here.\n\n### Is Vane a Perplexity alternative?\n\nIt is relevant when the requirement is a self-operated answer engine with citations and configurable models. Compare that operational model with a managed service before deciding. This overview does not assert feature parity, equivalent answer quality or a current pricing comparison.\n\nBrowse more developer tools at https://findryai.com/category/developer-tools.\n\nOfficial documentation rechecked 2026-10-22:\n- https://github.com/ItzCrazyKns/Vane/blob/master/README.md\n- https://github.com/ItzCrazyKns/Vane/tree/master/docs/installation\nThis is a documentation-based guide, not a hands-on benchmark.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai"
+        ]
+      },
+      "reviewedCover": {
+        "path": "content/assets/vane-item.png",
+        "sha256": "fd7d3ddaa2b6d4d5253939239f37ff0cf39d4cc450254abac945d43d3a77e51f",
+        "sourceUrl": "https://github.com/ItzCrazyKns/Vane",
+        "alt": "Vane GitHub repository — self-hosted AI answer engine with SearxNG and local model support."
+      },
+      "coverageAliases": [
+        "perplexica"
+      ]
+    },
+    {
+      "_type": "item",
+      "name": "FreeLLMAPI",
+      "slug": {
+        "_type": "slug",
+        "current": "freellmapi"
+      },
+      "link": "https://github.com/tashfeenahmed/freellmapi",
+      "description": "FreeLLMAPI is a self-hosted router for provider APIs behind a local OpenAI-compatible endpoint. Follow the official setup, key management and free-tier limitations.",
+      "introduction": "### What is FreeLLMAPI?\n\nFreeLLMAPI is an open-source, self-hosted API router. It puts configured upstream providers behind a local endpoint so compatible clients can use one base URL and one unified credential. The project documents routing, fallback and usage tracking rather than providing an unlimited hosted inference service.\n\nIf you searched for “freellmapi github,” use the official tashfeenahmed/freellmapi repository. It contains the source, installation instructions and links to releases. Avoid choosing an installer solely because a third-party page repeats the product name.\n\n### Pick an installation path\n\nThe official documentation offers desktop downloads and Docker-based installation. Desktop users should select the installer matching their operating system and CPU architecture from the repository's releases page.\n\nFor Docker Compose, the documented prerequisites include Docker, Compose and OpenSSL. Clone the official repository, generate a new encryption key as described in the installation guide, keep that value in the local environment configuration, and start the Compose service. Do not commit that environment file.\n\nThe dashboard is documented at http://localhost:3001. Open the Keys page, add the provider credentials you are authorized to use, review the fallback chain and obtain the unified API key. A compatible client can then target http://localhost:3001/v1 with that unified key.\n\n### Verify a small request before connecting an agent\n\nChoose a model actually listed by your installation, then send one small request through your chosen client. Check the dashboard to confirm the serving provider and any fallback. This separates connectivity and quota problems from a coding agent's own configuration.\n\nProvider keys and the router's unified key serve different roles. The upstream key connects the router to a provider; the unified key authenticates your client to the router. Keep both out of public code, screenshots and URLs.\n\n### Free tiers are limits, not a guaranteed budget\n\nAvailability depends on the providers you configure and their current conditions. Fallback can select another available route; it cannot guarantee a response when every configured provider is unavailable or exhausted.\n\nThe upstream README advertises aggregate catalog and token figures. Those are project claims across providers, not an entitlement for every installation, so this guide does not repeat them as a promised allowance.\n\nThe open-source project uses the MIT license. Its README also describes an optional paid live-catalog service, listed at $19 per year when checked on October 22, 2026. Confirm the current terms at the official site before purchasing; upstream API and hosting costs are separate.\n\n### Protect persistent state\n\nThe installation guide explains that provider keys are encrypted at rest and that the same encryption key and persistent data must be retained during upgrades. Simply replacing the encryption key does not rotate existing encrypted records; follow the documented rotation procedure.\n\nThe Compose service defaults to localhost binding. Review the official LAN and reverse-proxy guidance before exposing it. The project explicitly positions itself for personal experimentation and learning rather than as a production inference guarantee.\n\nBrowse related developer tools at https://findryai.com/category/developer-tools.\n\nOfficial documentation rechecked 2026-10-22:\n- https://github.com/tashfeenahmed/freellmapi/blob/main/README.md\n- https://github.com/tashfeenahmed/freellmapi/blob/main/docs/en/install/01-install.md\n- https://github.com/tashfeenahmed/freellmapi/releases\n- https://freellmapi.co\nThis is a documentation-based guide, not an independently tested review.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "reviewedCover": {
+        "path": "content/assets/freellmapi-item.png",
+        "sha256": "46a44ab255fff4439e2375413cbbc02761450b2acc6d3b744d4670fd9b5fd7e8",
+        "sourceUrl": "https://github.com/tashfeenahmed/freellmapi",
+        "alt": "FreeLLMAPI GitHub repository — self-hosted model router with an OpenAI-compatible API."
+      }
+    }
+  ]
+}
