@@ -1,0 +1,37 @@
+name: Repair Graphify metadata
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-graphify-metadata.yml'
+      - 'scripts/repair-graphify-metadata.mjs'
+      - 'scripts/repair-graphify-metadata.test.mjs'
+permissions:
+  contents: read
+concurrency:
+  group: sanity-content-production
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check syntax and metadata safeguards
+        run: |
+          node --check scripts/repair-graphify-metadata.mjs
+          node --test scripts/repair-graphify-metadata.test.mjs
+      - name: Fill missing Graphify taxonomy and official cover
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+        run: node scripts/repair-graphify-metadata.mjs

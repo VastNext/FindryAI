@@ -1,0 +1,43 @@
+name: Attach reviewed Graphify cover
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/attach-graphify-cover.yml'
+      - 'scripts/attach-images-graphify-20261021.ts'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: sanity-content-production
+  cancel-in-progress: false
+jobs:
+  attach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: graphify-microlink-cover
+          path: tmp-shots/seo-images
+          run-id: 39512564050
+          github-token: ${{ github.token }}
+      - name: Install isolated uploader dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/sanity-image-runtime" --no-audit --no-fund @sanity/client@6.21.3 dotenv@16.4.7 tsx@4.19.2
+          ln -s "$RUNNER_TEMP/sanity-image-runtime/node_modules" node_modules
+      - name: Verify reviewed checksum and bind screenshot to Sanity
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+        run: '"$RUNNER_TEMP/sanity-image-runtime/node_modules/.bin/tsx" scripts/attach-images-graphify-20261021.ts'

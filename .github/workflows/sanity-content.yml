@@ -1,0 +1,51 @@
+name: Publish Sanity content
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: 'Optional content/publish/*.json path; leave empty to check credentials only'
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sanity-content.yml'
+      - 'scripts/sanity-content.mjs'
+      - 'content/publish/*.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sanity-content-production
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check publisher
+        run: node --test scripts/sanity-content.test.mjs
+      - name: Check credentials and publish selected manifests
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID || vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET || vars.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          CONTENT_MANIFEST: ${{ inputs.manifest }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: node scripts/sanity-content.mjs
