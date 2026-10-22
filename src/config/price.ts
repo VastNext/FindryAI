@@ -35,6 +35,7 @@ export const priceConfig: PriceConfig = {
         "Highlighted award badge across directory cards",
         "Unlimited submissions — no per-account cap",
         "3 dedicated dofollow backlinks",
+        "Inclusion in our weekly Pro digest email",
         "Direct email support",
       ],
       limitations: [],
