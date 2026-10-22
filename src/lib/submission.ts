@@ -3,6 +3,30 @@ import type { ItemInfo } from "@/types";
 /** Free plan lifetime submission cap per account (badge/Pro bypass it). */
 export const FREE_SUBMISSION_LIMIT = 2;
 
+type ExternalRelItem = {
+  sponsor?: boolean | null;
+  pricePlan?: string | null;
+  badgeVerifiedAt?: string | null;
+};
+
+/**
+ * Rel attribute for an item's outbound website link.
+ *
+ * The followed link is the badge/Pro incentive: free listings are nofollow
+ * unless the submitter has a verified Findry badge on their site (or is on
+ * Pro). Sponsors are marked `sponsored`. Single source of truth — every
+ * renderer of item.link must go through this.
+ */
+export const getExternalRel = (item: ExternalRelItem): string => {
+  if (item.pricePlan === PricePlans.SPONSOR || item.sponsor) {
+    return "sponsored noopener noreferrer";
+  }
+  if (item.pricePlan === PricePlans.FREE && !item.badgeVerifiedAt) {
+    return "nofollow noopener noreferrer";
+  }
+  return "noopener noreferrer";
+};
+
 export enum PricePlans {
   FREE = "free",
   PRO = "pro",

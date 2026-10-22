@@ -54,7 +54,7 @@ export async function submit(
       return {
         status: "error",
         message:
-          "Free plan includes up to 2 submissions per account. To submit more, verify our badge on your site (fast-track review included) or upgrade to Pro.",
+          "Free plan includes up to 2 submissions per account. To submit more, verify our badge on your site (fast-track review and a followed listing link included) or upgrade to Pro.",
       };
     }
 

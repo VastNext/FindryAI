@@ -12,10 +12,9 @@ export const priceConfig: PriceConfig = {
       description: "Free Submission for AI Builders",
       benefits: [
         "Up to 2 submissions per account",
-        "Get 1 high-authority dofollow backlink to boost SEO",
         "Permanent product directory listing",
-        "Badge-verified submissions: editorial review within 24-72 hours, then publish if approved",
-        "No badge required: standard queue without a guaranteed review time",
+        "Badge-verified submissions: editorial review within 24-72 hours and a followed listing link",
+        "No badge required: standard queue without a guaranteed review time (listing link is nofollow)",
         "Full support for product updates and screenshots",
       ],
       limitations: [
@@ -29,13 +28,12 @@ export const priceConfig: PriceConfig = {
     },
     {
       title: PricePlans.PRO,
-      description: "Featured Placement & Expedited Review (Launch Price)",
+      description: "Expedited Review & Ongoing Promotion",
       benefits: [
         "Priority editorial review within 12 hours",
-        "Featured placement at top of homepage & category for 30 days",
-        "Highlighted award badge across directory cards",
-        "3 dedicated dofollow backlinks",
-        "Priority promotion in newsletters & daily tweet feeds",
+        "Unlimited submissions — no per-account cap",
+        "Followed listing link on every published submission",
+        "Promotion in our newsletter & daily tweet feeds",
         "Direct email support",
       ],
       limitations: [],
@@ -49,7 +47,7 @@ export const priceConfig: PriceConfig = {
       title: PricePlans.SPONSOR,
       description: "Site-wide Banner & Prime Sponsorship (Inquire)",
       benefits: [
-        "Everything in Pro featured listing",
+        "Everything in Pro",
         "Sticky sponsor banner across all directory & article pages",
         "Exclusive sponsorship slot per category / time period",
         "Custom UTM analytics with a monthly performance report",
