@@ -44,6 +44,15 @@ export default defineType({
         "If the item is featured, it will be displayed in the featured section",
     }),
     defineField({
+      name: "featuredUntil",
+      title: "Featured Until",
+      type: "datetime",
+      initialValue: () =>
+        new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      description:
+        "Featured placement expires automatically after this moment (30-day Pro placement). Leave empty only for legacy items.",
+    }),
+    defineField({
       name: "link",
       title: "Link",
       type: "string",
@@ -53,7 +62,8 @@ export default defineType({
       name: "affiliateLink",
       title: "Affiliate Link",
       type: "string",
-      description: "The affiliate link, not shown on the website, leave it blank if you don't have one",
+      description:
+        "The affiliate link, not shown on the website, leave it blank if you don't have one",
     }),
     defineField({
       name: "description",
@@ -313,7 +323,8 @@ export default defineType({
     defineField({
       name: "forceHidden",
       title: "Force Hidden",
-      description: "If the item is force hidden, it will not be displayed regardless of the status. It's helpful when you want to hide an item temporarily.",
+      description:
+        "If the item is force hidden, it will not be displayed regardless of the status. It's helpful when you want to hide an item temporarily.",
       type: "boolean",
       group: "status",
       initialValue: false,
@@ -377,10 +388,18 @@ export default defineType({
       proPlanStatus,
       sponsorPlanStatus,
     }) {
-      const error = freePlanStatus === "rejected" || proPlanStatus === "failed" || sponsorPlanStatus === "failed";
+      const error =
+        freePlanStatus === "rejected" ||
+        proPlanStatus === "failed" ||
+        sponsorPlanStatus === "failed";
       const title = date ? `✅ ${name}` : error ? `❌ ${name}` : `⏳ ${name}`;
       const feature = featured ? "⭐" : "";
-      const status = pricePlan.toUpperCase() === PricePlans.FREE.toUpperCase() ? freePlanStatus : pricePlan.toUpperCase() === PricePlans.PRO.toUpperCase() ? proPlanStatus : sponsorPlanStatus;
+      const status =
+        pricePlan.toUpperCase() === PricePlans.FREE.toUpperCase()
+          ? freePlanStatus
+          : pricePlan.toUpperCase() === PricePlans.PRO.toUpperCase()
+            ? proPlanStatus
+            : sponsorPlanStatus;
       const time = date
         ? `date: ${format(parseISO(date), "yyyy/MM/dd")}`
         : "not published";

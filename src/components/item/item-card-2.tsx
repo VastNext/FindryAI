@@ -27,7 +27,7 @@ export default function ItemCard2({ item }: ItemCard2Props) {
       className={cn(
         "border rounded-lg flex flex-col justify-between p-6",
         "duration-300 shadow-sm hover:shadow-md transition-shadow",
-        item.featured
+        item.featuredActive
           ? "border-orange-300 border-spacing-1.5 bg-orange-50/50 dark:bg-orange-950/10 hover:bg-orange-50 dark:hover:bg-accent/60"
           : "hover:bg-accent/60 transition-colors duration-300",
       )}
@@ -47,11 +47,15 @@ export default function ItemCard2({ item }: ItemCard2Props) {
             />
           )}
 
-          <Link href={`${itemUrlPrefix}/${item.slug.current}`} className="min-w-0 flex-1">
+          <Link
+            href={`${itemUrlPrefix}/${item.slug.current}`}
+            className="min-w-0 flex-1"
+          >
             <h3
               className={cn(
                 "text-xl font-medium truncate overflow-hidden text-ellipsis",
-                item.featured && "text-gradient_indigo-purple font-semibold",
+                item.featuredActive &&
+                  "text-gradient_indigo-purple font-semibold",
               )}
             >
               {item.name}
