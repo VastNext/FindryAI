@@ -49,7 +49,7 @@ export const priceConfig: PriceConfig = {
       title: PricePlans.SPONSOR,
       description: "Site-wide Banner & Prime Sponsorship (Inquire)",
       benefits: [
-        "Everything in Pro",
+        "Everything in Pro (listing links use Google's sponsored annotation)",
         "Sticky sponsor banner across all directory & article pages",
         "Exclusive sponsorship slot per category / time period",
         "Custom UTM analytics with a monthly performance report",
