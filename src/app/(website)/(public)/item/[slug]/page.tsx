@@ -472,6 +472,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
                       href={itemLink}
                       target="_blank"
                       prefetch={false}
+                      rel={externalRel}
                       className="font-medium link-underline line-clamp-1"
                     >
                       {new URL(item.link).hostname}
