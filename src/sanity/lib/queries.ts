@@ -69,6 +69,7 @@ export const itemSimpleFields = /* groq */ `
   rejectionReason,
   badgeReviewPriority,
   badgeVerifiedAt,
+  "featuredActive": featured == true && (!defined(featuredUntil) || featuredUntil > now()),
   badgeUnavailableNotifiedAt,
   submitter->,
   collections[]->,
@@ -138,7 +139,7 @@ export const itemListQuery = defineQuery(`*[_type == "item" && defined(slug.curr
   && defined(publishDate) && publishDate <= now()
   && forceHidden != true
   && sponsor != true]
-  | order(coalesce(featured, false) desc, publishDate desc) {
+  | order((featured == true && (!defined(featuredUntil) || featuredUntil > now())) desc, publishDate desc) {
     ${itemSimpleFields}
 }`);
 
@@ -149,7 +150,7 @@ export const sponsorItemListQuery = defineQuery(`*[_type == "item" && defined(sl
   && sponsor == true
   && (!defined(sponsorStartDate) || sponsorStartDate <= now())
   && (!defined(sponsorEndDate) || sponsorEndDate >= now())]
-  | order(coalesce(featured, false) desc, publishDate desc) {
+  | order((featured == true && (!defined(featuredUntil) || featuredUntil > now())) desc, publishDate desc) {
     ${itemSimpleFields}
 }`);
 
@@ -157,8 +158,9 @@ export const itemListOfFeaturedQuery = defineQuery(`*[_type == "item" && defined
   && defined(publishDate) && publishDate <= now() 
   && forceHidden != true 
   && sponsor != true
-  && featured == true] 
-  | order(coalesce(featured, false) desc, publishDate desc) [0...$count] {
+  && featured == true
+  && (!defined(featuredUntil) || featuredUntil > now())] 
+  | order((featured == true && (!defined(featuredUntil) || featuredUntil > now())) desc, publishDate desc) [0...$count] {
     ${itemSimpleFields}
 }`);
 
@@ -166,7 +168,7 @@ export const itemListOfLatestQuery = defineQuery(`*[_type == "item" && defined(s
   && defined(publishDate) && publishDate <= now() 
   && forceHidden != true
   && sponsor != true] 
-  | order(coalesce(featured, false) desc, publishDate desc) [0...$count] {
+  | order((featured == true && (!defined(featuredUntil) || featuredUntil > now())) desc, publishDate desc) [0...$count] {
     ${itemSimpleFields}
 }`);
 

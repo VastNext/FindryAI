@@ -13,7 +13,7 @@ export const priceConfig: PriceConfig = {
       benefits: [
         "Up to 2 submissions per account",
         "Permanent product directory listing",
-        "Badge-verified submissions: editorial review within 24-72 hours and a followed listing link",
+        "Badge-verified submissions: editorial review within 24-72 hours and one followed listing link",
         "No badge required: standard queue without a guaranteed review time (listing link is nofollow)",
         "Full support for product updates and screenshots",
       ],
@@ -34,8 +34,7 @@ export const priceConfig: PriceConfig = {
         "Featured placement at top of homepage & category for 30 days",
         "Highlighted award badge across directory cards",
         "Unlimited submissions — no per-account cap",
-        "Followed listing link on every published submission",
-        "Promotion in our newsletter & daily tweet feeds",
+        "3 dedicated dofollow backlinks",
         "Direct email support",
       ],
       limitations: [],

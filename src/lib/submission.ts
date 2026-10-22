@@ -12,17 +12,27 @@ type ExternalRelItem = {
 /**
  * Rel attribute for an item's outbound website link.
  *
- * The followed link is the badge/Pro incentive: free listings are nofollow
- * unless the submitter has a verified Findry badge on their site (or is on
- * Pro). Sponsors are marked `sponsored`. Single source of truth — every
- * renderer of item.link must go through this.
+ * The followed link is the badge/Pro incentive, and its depth is tiered:
+ * free listings without a verified badge are nofollow everywhere; free
+ * badge-verified listings earn exactly ONE followed link (the primary
+ * "Visit Website" CTA — secondary anchors stay nofollow); Pro keeps all
+ * three anchors followed; sponsors are marked `sponsored`. Single source
+ * of truth — every renderer of item.link must go through this.
  */
-export const getExternalRel = (item: ExternalRelItem): string => {
+export const getExternalRel = (
+  item: ExternalRelItem,
+  position: "primary" | "secondary" = "primary",
+): string => {
   if (item.pricePlan === PricePlans.SPONSOR || item.sponsor) {
     return "sponsored noopener noreferrer";
   }
-  if (item.pricePlan === PricePlans.FREE && !item.badgeVerifiedAt) {
-    return "nofollow noopener noreferrer";
+  if (item.pricePlan === PricePlans.FREE) {
+    if (!item.badgeVerifiedAt) {
+      return "nofollow noopener noreferrer";
+    }
+    return position === "primary"
+      ? "noopener noreferrer"
+      : "nofollow noopener noreferrer";
   }
   return "noopener noreferrer";
 };

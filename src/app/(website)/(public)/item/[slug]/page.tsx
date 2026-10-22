@@ -146,7 +146,6 @@ export default async function ItemPage({ params }: ItemPageProps) {
     curatedData?.serviceStatusNotice?.isInactive,
   );
   const hasAlternatives = isAlternativesEnabled(params.slug);
-  const externalRel = getExternalRel(item);
 
   const breadcrumbItems = [
     {
@@ -269,7 +268,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
                 <h1
                   className={cn(
                     "text-4xl tracking-wider font-bold flex items-center gap-2",
-                    item.featured &&
+                    item.featuredActive &&
                       "text-gradient_indigo-purple font-semibold",
                   )}
                 >
@@ -338,7 +337,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
               <Link
                 href={itemLink}
                 target="_blank"
-                rel={externalRel}
+                rel={getExternalRel(item)}
                 prefetch={false}
                 className="flex items-center justify-center space-x-2"
               >
@@ -385,7 +384,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
               <Link
                 href={`${itemLink}`}
                 target="_blank"
-                rel={externalRel}
+                rel={getExternalRel(item, "secondary")}
                 prefetch={false}
                 className="relative block w-full h-full"
               >
@@ -472,7 +471,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
                       href={itemLink}
                       target="_blank"
                       prefetch={false}
-                      rel={externalRel}
+                      rel={getExternalRel(item, "secondary")}
                       className="font-medium link-underline line-clamp-1"
                     >
                       {new URL(item.link).hostname}

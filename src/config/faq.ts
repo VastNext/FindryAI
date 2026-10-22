@@ -21,13 +21,13 @@ export const faqConfig: FAQConfig = {
       id: "item-2",
       question: "How does the badge fast-track review work?",
       answer:
-        "Add our official badge (Dark, Light, or Neutral) to your public product website and verify it during submission. Verified submissions receive editorial review within 24-72 hours and are published if approved, and their listing link is followed. A badge is optional: submissions without one enter the standard queue with no guaranteed review time and a nofollow listing link. Removing the badge after publication turns the listing link back to nofollow and may return your listing to the review queue.",
+        "Add our official badge (Dark, Light, or Neutral) to your public product website and verify it during submission. Verified submissions receive editorial review within 24-72 hours and are published if approved, and their listing earns one followed link (the primary Visit Website anchor). A badge is optional: submissions without one enter the standard queue with no guaranteed review time and a nofollow listing link. Removing the badge after publication turns the listing link back to nofollow and may return your listing to the review queue.",
     },
     {
       id: "item-3",
       question: "What is the Pro plan?",
       answer:
-        "The Pro plan is designed for products seeking expedited review and exposure. It includes priority review within 12 hours, featured placement at the top of the homepage and category feeds for 30 days, an award badge across directory cards, unlimited submissions, a followed listing link on every published submission, and promotion in our newsletter and daily tweet feeds. A launch-period early-bird price is available for a limited time.",
+        "The Pro plan is designed for products seeking expedited review and exposure. It includes priority review within 12 hours, featured placement at the top of the homepage and category feeds for 30 days, an award badge across directory cards, unlimited submissions, and 3 dedicated dofollow backlinks on your listing. A launch-period early-bird price is available for a limited time.",
     },
     {
       id: "item-4",

@@ -77,10 +77,10 @@ export default function ItemCard({ item }: ItemCardProps) {
                 <span
                   className={cn(
                     "truncate group-hover:text-primary inline-flex items-center gap-1",
-                    item.featured && "text-gradient_indigo-purple",
+                    item.featuredActive && "text-gradient_indigo-purple",
                   )}
                 >
-                  {item.featured && (
+                  {item.featuredActive && (
                     <AwardIcon className="w-4 h-4 flex-shrink-0 text-indigo-500" />
                   )}
                   <span className="truncate">{item.name}</span>
