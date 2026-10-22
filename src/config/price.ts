@@ -28,9 +28,11 @@ export const priceConfig: PriceConfig = {
     },
     {
       title: PricePlans.PRO,
-      description: "Expedited Review & Ongoing Promotion",
+      description: "Expedited Review, Featured Placement & Ongoing Promotion",
       benefits: [
         "Priority editorial review within 12 hours",
+        "Featured placement at top of homepage & category for 30 days",
+        "Highlighted award badge across directory cards",
         "Unlimited submissions — no per-account cap",
         "Followed listing link on every published submission",
         "Promotion in our newsletter & daily tweet feeds",
