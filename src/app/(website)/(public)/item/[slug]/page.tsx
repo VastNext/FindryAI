@@ -15,6 +15,7 @@ import { fakefaceCuratedData } from "@/data/item-curated/fakeface";
 import { unsummaryCuratedData } from "@/data/item-curated/unsummary";
 import { urlForIcon, urlForImage } from "@/lib/image";
 import { constructMetadata } from "@/lib/metadata";
+import { getExternalRel } from "@/lib/submission";
 import { cn, getItemTargetLinkInWebsite, getLocaleDate } from "@/lib/utils";
 import type {
   ItemInfoBySlugQueryResult,
@@ -145,14 +146,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
     curatedData?.serviceStatusNotice?.isInactive,
   );
   const hasAlternatives = isAlternativesEnabled(params.slug);
-  const isSponsor = item.sponsor || item.pricePlan === "sponsor";
-  const isFreePlan =
-    item.pricePlan === "free" && item.freePlanStatus !== "approved";
-  const externalRel = isSponsor
-    ? "sponsored noopener noreferrer"
-    : isFreePlan
-      ? "nofollow noopener noreferrer"
-      : "noopener noreferrer";
+  const externalRel = getExternalRel(item);
 
   const breadcrumbItems = [
     {

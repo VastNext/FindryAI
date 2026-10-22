@@ -13,22 +13,21 @@ export const faqConfig: FAQConfig = {
       answer:
         "Yes! Free submission is open to all AI builders and creators. \nYou will get:\n" +
         "- Permanent listing on our curated directory\n" +
-        "- 1 high-authority dofollow backlink to boost your SEO\n" +
         "- Up to 2 submissions per account on the free plan\n" +
-        "- Badge-verified submissions reviewed within 24-72 hours and published if approved; no-badge submissions have no guaranteed review time\n" +
+        "- Badge-verified submissions reviewed within 24-72 hours with a followed listing link; no-badge submissions enter the standard queue with no guaranteed review time and a nofollow listing link\n" +
         "- More than 2 submissions requires a verified badge or the Pro plan",
     },
     {
       id: "item-2",
       question: "How does the badge fast-track review work?",
       answer:
-        "Add our official badge (Dark, Light, or Neutral) to your public product website and verify it during submission. Verified submissions receive editorial review within 24-72 hours and are published if approved. A badge is optional: submissions without one enter the standard queue with no guaranteed review time. Removing the badge after publication may return your listing to the review queue.",
+        "Add our official badge (Dark, Light, or Neutral) to your public product website and verify it during submission. Verified submissions receive editorial review within 24-72 hours and are published if approved, and their listing link is followed. A badge is optional: submissions without one enter the standard queue with no guaranteed review time and a nofollow listing link. Removing the badge after publication turns the listing link back to nofollow and may return your listing to the review queue.",
     },
     {
       id: "item-3",
-      question: "What is the Pro Featured plan?",
+      question: "What is the Pro plan?",
       answer:
-        "The Pro plan is designed for products seeking instant exposure. It includes priority review within 12 hours, featured placement at the top of homepage and category feeds for 30 days, highlighted badges, 3 dedicated dofollow backlinks, and inclusion in our curated social updates. A launch-period early-bird price is available for a limited time.",
+        "The Pro plan is designed for products seeking expedited review and ongoing promotion. It includes priority review within 12 hours, unlimited submissions, a followed listing link on every published submission, and promotion in our newsletter and daily tweet feeds. A launch-period early-bird price is available for a limited time.",
     },
     {
       id: "item-4",
@@ -39,7 +38,7 @@ export const faqConfig: FAQConfig = {
       id: "item-5",
       question: "Do I need to provide a reciprocal backlink or badge?",
       answer:
-        "No reciprocal link or badge is strictly required for standard free submission. However, adding our official badge grants fast-track priority review and helps both communities grow.",
+        "No reciprocal link or badge is strictly required — standard free submissions stay listed permanently. However, adding our official badge grants fast-track editorial review and a followed listing link, so verified sites get both priority and full link credit.",
     },
   ],
 };

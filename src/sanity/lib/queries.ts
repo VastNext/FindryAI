@@ -68,6 +68,7 @@ export const itemSimpleFields = /* groq */ `
   sponsorPlanStatus,
   rejectionReason,
   badgeReviewPriority,
+  badgeVerifiedAt,
   badgeUnavailableNotifiedAt,
   submitter->,
   collections[]->,
