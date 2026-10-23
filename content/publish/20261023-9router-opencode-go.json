@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "9Router",
+      "slug": {
+        "_type": "slug",
+        "current": "9router"
+      },
+      "link": "https://9router.com/",
+      "description": "9Router is an open-source gateway for AI coding clients. Learn its npm setup, local API endpoint, provider configuration and fallback limits before connecting an agent.",
+      "introduction": "## What is 9Router?\n\n9Router is a self-hosted gateway that connects compatible AI coding clients to configured model providers. Its repository documents an OpenAI-compatible API, request format translation, provider management, usage tracking and fallback routing. It is relevant when several coding tools need a shared local connection and you want to manage their upstream providers in one place.\n\nThe official source is [decolua/9router on GitHub](https://github.com/decolua/9router), linked from [9router.com](https://9router.com/). If you searched for **9router github**, start with that repository and its documentation. Provider availability and model identifiers change; use your installation's current catalog.\n\n## 9Router install: start with the npm package\n\nThe official quick start documents Node.js 20 or later and this global installation:\n\n```bash\nnpm install -g 9router\n9router\n```\n\nThe dashboard runs at `http://localhost:20128`; the documented dashboard route is `http://localhost:20128/dashboard`. The repository also provides source and Docker installation options. Review the official environment and persistence instructions before choosing those routes.\n\nIn the dashboard, connect a provider you are authorized to use. Authentication depends on that provider. Copy the client-facing API key from your dashboard and select an available model. Keep upstream credentials and the router's client key separate from public code or screenshots.\n\n## Connect an OpenAI-compatible client\n\nFor a client that accepts an OpenAI-compatible base URL, configure `http://localhost:20128/v1`, the dashboard-issued key and a model identifier available in your installation. The documented model-list route is `GET /v1/models`, authenticated with the client key.\n\nSend one small test request and inspect the dashboard before connecting a long-running coding workflow. Check which provider served it and whether a fallback occurred. A containerized client has its own localhost; follow your container networking instructions when the router runs on the host.\n\nThe README documents integrations for multiple coding clients. Their settings and protocol requirements differ, so consult the relevant integration instructions rather than assuming that every client uses identical configuration fields.\n\n## Fallback and cost: what to check\n\n9Router can route between configured providers when one route is unavailable or reaches its limits. This does not grant extra provider quota or guarantee a response if all routes fail. Review fallback order and usage tracking before sending expensive work.\n\nThe project advertises token compression and cost savings. These are upstream claims, not measurements from an independent test here. Compression can affect the information passed to a model, so evaluate it against your own tasks and inspect the resulting behavior.\n\nThe gateway is MIT licensed. Hosting, provider subscriptions and API usage have separate costs. Access through a router remains subject to each provider's terms and availability.\n\n## 9Router versus a managed gateway\n\nA local gateway puts installation, updates, persistent state and provider configuration under your control. A managed service has a different operating and billing model. Choose based on the providers and client protocols you need, maintenance effort and current terms; no feature-parity or price-superiority claim is made here.\n\nKeep the dashboard private while configuring it, set an appropriate password using the documented settings, and review the exposure and storage guidance before making it reachable beyond your own machine.\n\nFor another self-hosted routing option, see [FreeLLMAPI](https://findryai.com/item/freellmapi). Browse [Developer Tools](https://findryai.com/category/developer-tools) for related software.\n\n## Sources\n\nOfficial documentation checked October 23, 2026:\n- [9Router repository and installation instructions](https://github.com/decolua/9router)\n- [Official product site](https://9router.com/)\n\nThis is a documentation-based setup overview, not a hands-on performance or security audit.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "reviewedCover": {
+        "path": "content/assets/9router-item.png",
+        "sha256": "2ab9e8b6198fd83490e4f2c74297dee4d573549ce1e059a19c3c5431b1eed671",
+        "sourceUrl": "https://github.com/decolua/9router",
+        "alt": "9Router official GitHub repository showing the open-source AI coding gateway and installation documentation."
+      }
+    },
+    {
+      "_type": "item",
+      "name": "OpenCode Go",
+      "slug": {
+        "_type": "slug",
+        "current": "opencode-go"
+      },
+      "link": "https://opencode.ai/go",
+      "description": "OpenCode Go offers subscription access to coding models. Compare the $10 Go and $40 Go Plus plans, connect an API key and check model-specific usage limits.",
+      "introduction": "## What is OpenCode Go?\n\nOpenCode Go is an optional subscription for accessing coding models through OpenCode and compatible agents. You can use OpenCode without subscribing. It is useful to evaluate when you want a curated model service with a recurring budget.\n\n## Plans and limits\n\nThe official product page lists Go at **$10 per month** and Go Plus at **$40 per month**, checked October 23, 2026. Go Plus offers higher usage limits. Both advertise cancellation at any time and optional credit top-ups.\n\nThese plans have usage allowances. Before subscribing, check the current model table and the rules for additional credit. This overview does not claim unlimited access, benchmark superiority or guaranteed savings.\n\n## Connect it to OpenCode\n\n1. Sign in to the official OpenCode Console and subscribe to a plan.\n2. Copy the API key.\n3. In the OpenCode terminal interface, run `/connect`, choose OpenCode Go and enter the key.\n4. Run `/models` and select an available model.\n\nThe documentation says these subscriptions are for single-member workspaces. Model availability can change. Usage limits are tracked across five-hour, weekly and monthly windows, so check all three before estimating capacity.\n\n## Using other coding agents\n\nThe official documentation describes supported clients and session-header requirements. Check your client's current integration instructions before moving an existing workflow. A basic API connection alone does not establish that a client meets the service's traffic requirements.\n\nKeep the key private. Start with a small coding task and inspect usage before a larger session. No independent reliability or quality test is claimed here.\n\nExplore more [Developer Tools](https://findryai.com/category/developer-tools).\n\n## Official sources\n\nChecked October 23, 2026:\n- [OpenCode Go plans](https://opencode.ai/go)\n- [Go setup, supported clients and usage limits](https://opencode.ai/docs/go/)",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "ai",
+          "coding"
+        ]
+      },
+      "reviewedCover": {
+        "path": "content/assets/opencode-go-item.png",
+        "sha256": "c74fe8865d11221663bb4d435c62a84f49dfe05256e9314a8c825a0aae4d375c",
+        "sourceUrl": "https://opencode.ai/go",
+        "alt": "OpenCode Go official subscription page showing the Go and Go Plus coding-model plans."
+      }
+    }
+  ]
+}
