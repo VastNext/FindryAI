@@ -33,8 +33,11 @@ async function main() {
     console.log(`[revalidate] ${path} -> HTTP ${res.status}`);
   }
   console.log("=== 2. Cloudflare purge ===");
-  const { HttpsProxyAgent } = await import("https-proxy-agent");
-  const agent = new HttpsProxyAgent("http://127.0.0.1:7890");
+  // api.cloudflare.com is DNS-poisoned from this machine; native fetch ignores
+  // the node-fetch-style `agent` option, so the proxy must go through undici's
+  // dispatcher instead.
+  const { ProxyAgent } = await import("undici");
+  const dispatcher = new ProxyAgent("http://127.0.0.1:7890");
   const res = await fetch(
     `https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache`,
     {
@@ -44,8 +47,8 @@ async function main() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ files: FULL_URLS }),
-      agent,
-    },
+      dispatcher,
+    } as RequestInit,
   );
   console.log("[cf purge]:", JSON.stringify(await res.json()));
 }
