@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "Superpowers",
+      "slug": {
+        "_type": "slug",
+        "current": "superpowers"
+      },
+      "link": "https://github.com/obra/superpowers",
+      "description": "Install Superpowers for AI coding agents: choose the Claude Code, Cursor or Gemini CLI route, verify workflow skills and troubleshoot common setup issues.",
+      "introduction": "## What is Superpowers?\n\nSuperpowers is an open-source collection of skills and workflow guidance for AI coding agents. The official project is [obra/superpowers on GitHub](https://github.com/obra/superpowers). It helps structure work around requirements, design, implementation planning, testing and review. It runs inside a supported coding agent; it is not a standalone language model.\n\nIf you searched for **superpowers github**, use the official repository above. This guide focuses on choosing an installation route and checking that the workflow is available, rather than claiming independent benchmark results.\n\n## Install Superpowers in Claude Code\n\nThe repository documents two marketplace routes. Choose one route so that you do not install the same workflow twice.\n\nFor Anthropic's official marketplace, use:\n\n```text\n/plugin install superpowers@claude-plugins-official\n```\n\nAlternatively, register the project's own marketplace and install from it:\n\n```text\n/plugin marketplace add obra/superpowers-marketplace\n/plugin install superpowers@superpowers-marketplace\n```\n\nThese commands belong in Claude Code's command interface. They are not shell commands to run in an ordinary terminal. Follow any host permission prompts and check the host's installed-plugin list.\n\n## Other supported agents\n\nInstallation is specific to the agent. The README documents a Cursor marketplace route, `/add-plugin superpowers`, and a Gemini CLI extension route:\n\n```bash\ngemini extensions install https://github.com/obra/superpowers\n```\n\nIt also links separate instructions for OpenCode and other hosts. An installation in one agent does not automatically configure another. Use the current README section for your exact host and version rather than copying a command from a different integration.\n\n## Verify the workflow on a small project\n\nStart a small, disposable coding task after installing. Ask the agent to explain the requirement, propose a design and identify how it will verify the result. Check which skills it actually loads before allowing larger changes.\n\nThe documented workflow progresses from clarification and planning to implementation and review. Depending on the host and chosen execution skill, work may be implemented in the current session or delegated to subagents. Availability depends on host capabilities; the repository's description is not a guarantee that every host exposes the same tools.\n\nReview the resulting diff and run your project's own checks. The presence of a skill is not evidence that the code is correct or that it is safe to deploy.\n\n## Troubleshooting and costs\n\nIf a skill stays silent or triggers unexpectedly, the repository documents a `diagnosing-superpowers` skill for investigating session behavior. Check that you installed the plugin in the host you are using and consult that integration's update instructions.\n\nThe project uses the MIT license. Model usage, an agent subscription and optional commercial support are separate from the repository license; this listing does not promise free inference or unlimited execution.\n\nFor another engineering workflow collection, see [Addy's Agent Skills](https://findryai.com/item/addyosmani-agent-skills). Explore [Developer Tools](https://findryai.com/category/developer-tools) for related software.\n\n## Official sources\n\nDocumentation checked October 25, 2026:\n\n- [Superpowers README, host-specific installation and troubleshooting](https://github.com/obra/superpowers)\n- [Project marketplace](https://github.com/obra/superpowers-marketplace)\n\nThis is a documentation-based setup guide. No hands-on performance comparison is claimed.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "obra superpowers"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/superpowers-item.png",
+        "sha256": "95b2277416fc86883b32c24f9433721113025d8de8f48ae539a6177f7c4ba8f6",
+        "alt": "Superpowers official GitHub repository showing the AI coding agent skills framework and software development workflow.",
+        "sourceUrl": "https://github.com/obra/superpowers"
+      }
+    },
+    {
+      "_type": "item",
+      "name": "Addy's Agent Skills",
+      "slug": {
+        "_type": "slug",
+        "current": "addyosmani-agent-skills"
+      },
+      "link": "https://github.com/addyosmani/agent-skills",
+      "description": "Set up Addy's Agent Skills for AI coding: compare CLI and native plugin installation, understand host-specific commands and fix missing shared references.",
+      "introduction": "## What is Addy's Agent Skills?\n\n[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) is an open-source collection of engineering skills for AI coding agents. The repository covers requirements, planning, incremental implementation, testing, code review and release practices.\n\nIt is useful when you want reusable engineering guidance inside an existing agent. It does not replace the agent or supply model access. A shared Markdown skill and a host-native plugin can expose different commands, so choose an integration deliberately.\n\n## Browse before installing\n\nThe README documents the open skills CLI as one installation route:\n\n```bash\nnpx skills add addyosmani/agent-skills --list\n```\n\nReview the available skills and their instructions before installing them. To install through that CLI, the documented repository command is:\n\n```bash\nnpx skills add addyosmani/agent-skills\n```\n\nFollow the CLI's prompts for the target agent. Installing Markdown skills this way does not establish that every native plugin command or hook is also installed.\n\n## Native Claude Code installation\n\nFor Claude Code's plugin integration, the repository documents:\n\n```text\n/plugin marketplace add addyosmani/agent-skills\n/plugin install agent-skills@addy-agent-skills\n```\n\nThe lifecycle commands include `/spec`, `/plan`, `/build` and `/test`. When a built-in command has the same name, use the namespaced plugin form; the README gives `/agent-skills:review` as an example.\n\nA reasonable first task is a small change with a clear expected result: clarify requirements, review the proposed plan, implement a narrow slice, and inspect the checks and diff. Keep the project's own requirements and release rules in view.\n\n## Skills versus commands across hosts\n\nThe README provides separate setup guidance for Cursor, Gemini CLI, OpenCode and other agents. Cursor uses skill files and short project rules; OpenCode can discover skills through its skill mechanism, with optional command wrappers configured separately. Do not assume Claude Code's slash commands appear in those environments.\n\nThe repository also describes an optional `/build auto` mode for Claude Code workflows. It reduces manual steps between planned tasks, but the documented process still pauses on failures or risky steps. It is not a reason to skip review or grant an agent unrestricted access.\n\n## Missing shared references after a single-skill install\n\nThe README identifies a portability limitation: installing one skill with the skills CLI copies that skill's directory, while shared checklists under the repository-level `references/` directory may be absent.\n\nIf a skill refers to a missing supplementary checklist, compare the path with the official repository. The documented options include a whole-repository integration, a repository clone, or placing the required checklist inside the installed skill's own references directory. Do not invent a replacement checklist and treat it as the official one.\n\n## Choosing this collection\n\nUse this pack when its engineering guidance fits your team's process and your agent can load it. Review overlap with other installed workflow packs: multiple instructions covering planning or testing can add redundant context or conflicting expectations.\n\n[Superpowers](https://findryai.com/item/superpowers) is another workflow-oriented collection. Compare the actual skills, installation mechanism and host support you need; this guide makes no claim that one produces better code.\n\nThe repository is MIT licensed. Agent subscriptions and model usage may still cost money. Browse [Developer Tools](https://findryai.com/category/developer-tools) for related projects.\n\n## Official source\n\nDocumentation checked October 25, 2026:\n\n- [Agent Skills README, installation routes, command behavior and shared-reference limitation](https://github.com/addyosmani/agent-skills)\n\nThis overview is based on the project's documentation, not a hands-on reliability or performance test.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "agent skills",
+        "agent-skills",
+        "addyosmani agent skills"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/agent-skills-item.png",
+        "sha256": "a2c3d06a2dc22d4417c5b87550087633b4f91e30e4ad751aab71c60ba6b64136",
+        "alt": "Addy Osmani's official Agent Skills GitHub repository showing engineering workflow skills for AI coding agents.",
+        "sourceUrl": "https://github.com/addyosmani/agent-skills"
+      }
+    }
+  ]
+}
