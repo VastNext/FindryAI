@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "HyperFrames",
+      "slug": {
+        "_type": "slug",
+        "current": "hyperframes"
+      },
+      "link": "https://github.com/heygen-com/hyperframes",
+      "description": "Set up HeyGen HyperFrames with Claude Code or standalone skills. Learn the local HTML-to-video preview and MP4 render workflow, requirements and cost boundaries.",
+      "introduction": "## What is HyperFrames?\n\nHyperFrames is HeyGen's open-source framework for making video from HTML, CSS, media and seekable animation. Its CLI previews compositions in a browser and renders them to MP4 using headless Chrome and FFmpeg.\n\nThe official project is [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes), with documentation at [hyperframes.heygen.com](https://hyperframes.heygen.com/introduction). This guide covers **HyperFrames Claude** setup, local preview and rendering. The framework gives a coding agent a video authoring workflow; it is not itself a language model or a promise of automatically generated footage.\n\n## Choose a starting point\n\nThe official quickstart offers three routes: a Studio desktop app, an agent working in a local project folder, or a hosted AI-chat connector. Choose the local route when keeping editable project files and controlling rendering matters.\n\nThe desktop quickstart currently lists macOS and Linux. For Windows, it directs users toward the alternative routes. Check the current Studio platform list before downloading.\n\nFor manual local CLI work, the README specifies Node.js 22 or later and FFmpeg. Confirm that those prerequisites work in the environment where you will render.\n\n## Use HyperFrames with Claude Code\n\nThe README documents a versioned Claude Code plugin. Run these commands in a terminal:\n\n```bash\nclaude plugin marketplace add heygen-com/hyperframes\nclaude plugin install hyperframes@hyperframes\n```\n\nIn Claude Code, the plugin's entry skill is `/hyperframes:hyperframes`. Start with a narrow request, such as a ten-second title sequence using media you already own, then inspect the generated project.\n\nThe plugin installation guide explains marketplace auto-updates. Review that setting deliberately, particularly if a production workflow depends on a specific plugin version.\n\n## Standalone skills are another route\n\nFor agents using standalone skills, the project documents:\n\n```bash\nnpx hyperframes skills update\n```\n\nThis installs the core set from the project's current main branch. The interactive alternative is `npx skills add heygen-com/hyperframes`; its picker offers a Core Skills group.\n\nThe README distinguishes the core skills from optional slideshow, Figma and migration skills. Do not assume that installing every published skill is required for an ordinary video. Use the integration matching your host rather than layering duplicate plugin and standalone installations without checking them.\n\n## Create, preview and render a local project\n\nThe manual quickstart is:\n\n```bash\nnpx hyperframes init my-video\ncd my-video\nnpx hyperframes preview\n```\n\nAfter inspecting the composition in the browser, render from the project directory:\n\n```bash\nnpx hyperframes render\n```\n\nAn agent-assisted project uses the same preview command when reopening it. Keep the project files, media and font dependencies together so that the render can resolve them.\n\nPreviewing a browser page is only one check. Scrub through the composition, inspect representative frames and play the exported MP4 to check duration, animation, audio and missing media. A successful render command alone does not establish that the finished video is correct.\n\n## Why seekable animation matters\n\nThe renderer advances the composition frame by frame. The animation therefore needs to represent its state at an arbitrary timestamp. An effect driven only by uncontrolled wall-clock time can look different in preview and export.\n\nUse the project's animation contract and supported adapters. When troubleshooting, first separate asset-loading problems from timeline problems: check a simple composition before adding remote media, complex animation or audio.\n\n## Is HyperFrames free?\n\nThe repository uses Apache 2.0 licensing. The official quickstart describes HyperFrames as free while distinguishing the costs of an AI agent's plan and HeyGen media credits. Local compute and optional hosted services also need to be considered; a free framework does not mean every production input is free.\n\nExplore [Developer Tools](https://findryai.com/category/developer-tools) for related software and [Superpowers](https://findryai.com/item/superpowers) for a separate coding-agent workflow collection.\n\n## Official sources\n\nChecked October 26, 2026:\n\n- [Repository and CLI quickstart](https://github.com/heygen-com/hyperframes)\n- [Make your first video](https://hyperframes.heygen.com/quickstart)\n- [Plugin installation guide](https://hyperframes.heygen.com/guides/plugins)\n\nThis is a documentation-based setup guide, not a hands-on rendering benchmark.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "video"
+        ]
+      },
+      "coverageAliases": [
+        "hyperframes studio",
+        "heygen hyperframes",
+        "hyperframes by heygen"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/hyperframes-item.png",
+        "sha256": "66618933b82e0ed11ae0be4bf383bcb2d135fdd837f858388e1039145e99033e",
+        "sourceUrl": "https://github.com/heygen-com/hyperframes",
+        "alt": "Official HeyGen HyperFrames GitHub repository showing the open-source HTML-to-video framework and agent integrations."
+      }
+    },
+    {
+      "_type": "item",
+      "name": "Headroom",
+      "slug": {
+        "_type": "slug",
+        "current": "headroom"
+      },
+      "link": "https://github.com/headroomlabs-ai/headroom",
+      "description": "Configure Headroom for Claude Code in the terminal or VS Code. Check local proxy routing, distinguish the Python CLI from the npm SDK and restore prior settings.",
+      "introduction": "## What is Headroom for Claude?\n\nHeadroom is an open-source context-compression project maintained at [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom). It provides a local proxy, programming libraries and agent integrations. The aim is to reduce the context sent to a model, particularly repetitive tool output and logs.\n\nIf you searched for **headroom claude**, first distinguish the Claude Code terminal integration from Anthropic's Claude Code extension inside VS Code. They use different wrapper commands.\n\nCompression runs locally in the documented setup. Requests still go onward to the configured model provider, so local compression does not mean the entire AI interaction stays on your computer.\n\n## Install the CLI from the Python package\n\nThe project's quickstart documents this isolated CLI installation:\n\n```bash\nuv tool install --python 3.13 \"headroom-ai[all]\"\n```\n\nInside a Python project or virtual environment, it also documents `pip install \"headroom-ai[all]\"`.\n\nThe similarly named npm package is the TypeScript SDK. Installing it does not provide the `headroom` CLI. If your terminal reports that the command is missing, check which package and environment you installed before troubleshooting the proxy.\n\n## Wrap Claude Code in a terminal\n\nConfirm that your normal Claude Code session works first. From the intended project directory, launch:\n\n```bash\nheadroom wrap claude\n```\n\nThe README says the wrapper starts a local proxy and launches the agent through it. Launch wrapped sessions each time you want that setup applied.\n\nThe wrapper also documents a Serena code-navigation integration. Review its project scope; `--code-memory none` is the documented option for skipping that addition. Do not treat a successful CLI install as proof that every optional integration is configured.\n\nUse `headroom doctor` for the documented health check and inspect the proxy's requests and statistics. Run a small, familiar task before using it for a long session.\n\n## Claude Code inside VS Code\n\nFor Anthropic's official VS Code extension, follow the separate extension guide. It requires a working, signed-in extension, VS Code 1.98 or newer and loopback access from the extension host.\n\nThe guide documents:\n\n```bash\npip install \"headroom-ai[proxy]\"\nheadroom wrap vscode-claude\n```\n\nRun the wrapper from the project directory, reload the VS Code window after the initial configuration, and keep the wrapper terminal running.\n\nThe integration configures Claude Code's endpoint to use a project-attributed local proxy URL. The documentation says it preserves the prior settings for restoration and does not replace your Anthropic credentials.\n\n## Verify routing, not just proxy health\n\nThe VS Code guide uses `http://127.0.0.1:8787/health` as a health check. Then send one request in the Claude Code panel and confirm that it appears in the dashboard or proxy log printed by the wrapper.\n\nA healthy proxy with no recorded request may mean the extension has not reloaded or cannot reach the same loopback interface. This is especially relevant when an editor and its extension host run in different environments.\n\n## Stop and undo the VS Code configuration\n\nStopping the wrapper and restoring settings are separate actions. The extension guide says that after Ctrl+C, the configured endpoint remains in place and requests fail rather than silently bypassing Headroom.\n\nRestart the wrapper before continuing, or restore the previous configuration with:\n\n```bash\nheadroom unwrap vscode-claude\n```\n\nFor terminal wrapping, the README documents `headroom unwrap claude` as the corresponding undo command. Consult the integration-specific guide if you used a custom profile.\n\n## Measure savings on your own workload\n\nThe project identifies repetitive tool output as a useful target. Short conversations and already compact content can offer little benefit. Compression behavior depends on content, settings and the active integration.\n\nDo not translate a claimed token reduction directly into an identical bill reduction: provider cache pricing, input/output mix and task behavior also affect cost. Compare representative tasks, inspect the result quality and distinguish reported estimates from measured usage.\n\nThe repository is Apache 2.0 licensed. Provider usage and any commercial offerings are separate. This guide makes no independent savings or accuracy guarantee.\n\nBrowse [Developer Tools](https://findryai.com/category/developer-tools) and [9Router](https://findryai.com/item/9router) for a separate provider-routing tool; routing and context compression address different needs.\n\n## Official sources\n\nChecked October 26, 2026:\n\n- [Headroom repository and agent wrapper overview](https://github.com/headroomlabs-ai/headroom)\n- [Quickstart](https://docs.headroomlabs.ai/docs/quickstart)\n- [Claude Code in VS Code: setup, verification and undo](https://docs.headroomlabs.ai/docs/vscode-claude-code)\n- [Compression limitations](https://docs.headroomlabs.ai/docs/limitations)\n\nThis is a documentation-based guide, not a hands-on cost or performance test.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "headroom ai",
+        "headroom-ai",
+        "headroom claude",
+        "headroom-claude"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/headroom-item.png",
+        "sha256": "1b48e8fc7fd972bbbd0153f5625956350f55df69fdb0afb698bdd82e2609cd8d",
+        "sourceUrl": "https://github.com/headroomlabs-ai/headroom",
+        "alt": "Official Headroom GitHub repository showing local context compression, proxy and agent integration documentation."
+      }
+    }
+  ]
+}
