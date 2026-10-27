@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "Power BI Authoring MCP",
+      "slug": {
+        "_type": "slug",
+        "current": "powerbi-modeling-mcp"
+      },
+      "link": "https://github.com/microsoft/powerbi-modeling-mcp",
+      "description": "Set up Microsoft's Power BI Authoring MCP, formerly Modeling MCP. Choose local or hosted access, connect a semantic model and verify permissions before editing.",
+      "introduction": "## Power BI Modeling MCP is now Power BI Authoring MCP\n\nSearching for **power bi modeling mcp server** leads to Microsoft's [powerbi-modeling-mcp repository](https://github.com/microsoft/powerbi-modeling-mcp). Its current product name is Power BI Authoring MCP Server. It exposes semantic-model operations to an AI agent, including work on tables, measures and relationships, plus DAX queries.\n\nThe distinction matters: authoring a semantic model is different from designing a report page. The server's README says it cannot edit report pages or model diagram layouts.\n\n## Choose the deployment before installing\n\nMicrosoft recommends the hosted option for supported Fabric-workspace workflows. Local deployment provides access to Power BI Desktop and PBIP/TMDL files on your machine. Microsoft's comparison also distinguishes authentication and transaction support.\n\nUse [Microsoft's deployment comparison](https://learn.microsoft.com/en-us/power-bi/developer/mcp/power-bi-authoring-mcp) to choose one route. Avoid registering overlapping local and remote tool sets merely to try both.\n\nFor model changes you need Write permission; Build permission alone permits DAX queries. Local Fabric connections also require the capacity's XMLA endpoint to allow writes. The hosted route has a tenant-level setting and client-authentication requirements. The current comparison says local deployment does not support macOS.\n\n## Local setup through VS Code\n\nThe repository's guided route uses VS Code, GitHub Copilot Chat and the Power BI Authoring MCP extension linked from the README.\n\nAfter installation, open Copilot chat and check the available tools for the server. If it is missing, confirm that the MCP-server option is enabled in your GitHub Copilot settings. Enterprise policy can require administrator action.\n\nStart with a copy of a small model. Decide which model, workspace or PBIP folder the agent should use before asking for an edit. Keep the initial task narrow enough that you can inspect the complete result.\n\n## Manual local registration\n\nThe official npm package is `@microsoft/powerbi-modeling-mcp`. The repository documents a stdio server launched through `npx` with `--start`.\n\nFor clients using a VS Code-style `servers` configuration:\n\n```json\n{\n  \"servers\": {\n    \"powerbi-authoring-local\": {\n      \"type\": \"stdio\",\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@microsoft/powerbi-modeling-mcp@latest\",\n        \"--start\"\n      ]\n    }\n  }\n}\n```\n\nOther clients may use a different enclosing configuration key. Check the client's own configuration format rather than pasting a registration into an unrelated settings section.\n\nThe npm distribution requires EULA acceptance before other tool calls. Review the [official EULA](https://github.com/microsoft/powerbi-modeling-mcp/blob/main/EULA.txt) and explicitly authorize acceptance. This example does not pre-accept it.\n\n## Connect, inspect, then change one thing\n\nThe repository supports connection requests identifying a Desktop model, a Fabric semantic model or a PBIP definition folder. Name the intended target precisely.\n\nA useful first exercise is:\n\n1. Ask for a list of tables and measures without editing them.\n2. Check that the list belongs to the intended model.\n3. Ask for a proposed description for one measure.\n4. Review it before authorizing that single change.\n5. Reopen the model and inspect the result.\n\nFor a file-based workflow, keep the baseline in Git and review the resulting diff. For a connected model, preserve a recoverable backup before allowing changes. An agent's confirmation is only one part of verification; check the model itself and test the affected calculations.\n\n## What to check when something fails\n\nSeparate installation, connection and authorization problems. A server missing from the tool list is different from a visible server that cannot connect. A model that can be queried but cannot be modified suggests checking permissions and endpoint configuration.\n\nModel metadata and query results may reach the LLM provider selected by your client. Use a model appropriate for that environment and avoid sharing a session containing private business data.\n\nThis guide does not promise a free Power BI environment or model access. Check the licenses and plans for your own Fabric, Power BI and agent setup.\n\nBrowse [Developer Tools](https://findryai.com/category/developer-tools) for related integrations.\n\n## Official sources\n\nChecked October 27, 2026:\n\n- [Microsoft repository: installation, connections, tools and limitations](https://github.com/microsoft/powerbi-modeling-mcp)\n- [Microsoft Learn: hosted versus local deployment](https://learn.microsoft.com/en-us/power-bi/developer/mcp/power-bi-authoring-mcp)\n- [Distribution EULA](https://github.com/microsoft/powerbi-modeling-mcp/blob/main/EULA.txt)\n\nThis is a documentation-based setup guide. No live model changes or performance tests were performed for this listing.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "ai",
+          "productivity"
+        ]
+      },
+      "coverageAliases": [
+        "power bi modeling mcp server",
+        "power bi authoring mcp server",
+        "power-bi-modeling-mcp",
+        "power-bi-authoring-mcp"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/powerbi-modeling-mcp-item.png",
+        "sha256": "1c4060edd8e5d7dd1cc79461989e979203066d1ebd5204c74c7ec7ec4dfe83d8",
+        "sourceUrl": "https://github.com/microsoft/powerbi-modeling-mcp",
+        "alt": "Official Microsoft Power BI Modeling MCP GitHub repository, now documented as Power BI Authoring MCP for semantic models."
+      }
+    },
+    {
+      "_type": "item",
+      "name": "Concat",
+      "slug": {
+        "_type": "slug",
+        "current": "concat"
+      },
+      "link": "https://github.com/jub0t/concat",
+      "description": "Find the official Concat video editor, prepare local AI models and connect an agent over MCP. Learn download checks, headless mode and project-saving limits.",
+      "introduction": "## Which Concat GitHub project is the video editor?\n\nThe video editor discussed here is [jub0t/Concat](https://github.com/jub0t/concat). A search for **concat github** also returns string-concatenation utilities and unrelated projects. Check the repository owner before downloading.\n\nConcat is a local video editor with AI-assisted features and an integrated MCP server. Its README positions it as a CapCut alternative and currently describes the application as beta. That does not establish feature parity with CapCut; test the editing tasks that matter to you.\n\n## Download a build for your platform\n\nUse the project's [GitHub Releases](https://github.com/jub0t/Concat/releases) page to select a package and its checksum. The README lists desktop and mobile builds, but architecture and packaging availability differ. For example, it currently lists Windows x86_64 while Windows ARM builds are paused.\n\nFor a first evaluation, use a short, nonessential media clip. Check import, playback, one edit and export before moving a larger project into the application. Keep the original media and a project backup.\n\nIf your operating system cannot run the package, check the current platform notes and system requirements. Do not assume a similarly named download from another repository is an equivalent build.\n\n## Local AI features need model preparation\n\nThe repository documents automatic captions, text-to-speech and background removal. Its local AI models are downloaded through Settings before offline use.\n\nCheck that the required model has finished downloading before assuming a feature is broken. A useful caption test is a brief recording with a known transcript: inspect timing and words, correct mistakes, and export a small sample.\n\nThe README describes local processing and no subscription requirement. The project is licensed under AGPL-3.0-or-later. Model downloads, hardware capacity and the current release's limitations still matter when choosing a workflow.\n\n## Connect an AI agent through MCP\n\nThe app includes its MCP server. The integration guide registers the installed Concat executable with the `--mcp` argument; a separate MCP package is not required.\n\nFor a standard macOS installation, the documented Claude Code command is:\n\n```bash\nclaude mcp add concat -- /Applications/Concat.app/Contents/MacOS/concat --mcp\n```\n\nUse your actual installed executable path on other systems. The [MCP guide](https://github.com/jub0t/Concat/blob/main/docs/MCP.md) lists Windows, Linux and AppImage paths, plus JSON registration examples. Windows JSON paths require escaped backslashes.\n\nRestart or reload your MCP client as needed, then ask it to inspect the available Concat tools. Confirm the version and operating mode before letting it create files.\n\n## Window-connected and headless modes\n\nThe integration guide distinguishes a connection through the running application from an independent headless engine. The `concat_version` tool reports the mode.\n\nThe automatic mode can connect through the window when Scripts and apps automation is enabled. Otherwise, it runs headlessly. Explicit `--mcp window` and `--mcp headless` modes let you choose deliberately.\n\nThe guide says the agent works on its own projects; it does not provide live editing of the project currently visible in the window. Project-folder locking prevents simultaneous conflicting opens. If a project is refused, inspect which process owns it rather than copying files around to bypass the lock.\n\n## A small first automation\n\nGive the agent a dedicated output folder and one clip you are authorized to use. Ask it to inspect the media, create a separate project, add the clip, propose a title, save and export.\n\nReview the timeline and a representative preview frame before exporting the full cut. Then play the output file and check audio, duration, captions and the title's position. This separates a valid command sequence from a usable finished video.\n\nThe MCP guide lists tools for importing media, timeline edits, titles, captions, effects, frame inspection and export. Edits remain in memory until saved, so explicitly confirm the project was saved as well as exported.\n\nFor code-authored HTML-to-video workflows, see [HyperFrames](https://findryai.com/item/hyperframes). Concat is an editor with automation; choose according to whether you want a timeline workflow or a code-authored composition.\n\n## Official sources\n\nChecked October 27, 2026:\n\n- [Concat repository and platform notes](https://github.com/jub0t/concat)\n- [Official releases](https://github.com/jub0t/Concat/releases)\n- [MCP setup, modes and tool reference](https://github.com/jub0t/Concat/blob/main/docs/MCP.md)\n\nThis is a documentation-based introduction. No hands-on export benchmark or CapCut feature-equivalence test is claimed.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "video"
+        ]
+      },
+      "coverageAliases": [
+        "concat video editor",
+        "concat-video-editor",
+        "concat editor"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/concat-item.png",
+        "sha256": "112d57b1d29f9dc73682538a3585623922ea8389049d71f55f36fa135fc26fcd",
+        "sourceUrl": "https://github.com/jub0t/concat",
+        "alt": "Official jub0t Concat GitHub repository showing the local video editor with AI features, MCP automation and platform downloads."
+      }
+    }
+  ]
+}
