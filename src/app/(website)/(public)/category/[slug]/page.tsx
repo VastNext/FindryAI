@@ -46,7 +46,10 @@ export async function generateMetadata({
 
   const seo = getCategorySeo(params.slug, category.name);
   const title = seo.seoTitle;
-  const description = seo.seoDescription || category.description || "";
+  // Prefer the category's own Sanity description over the shared fallback
+  // template — 18 categories rendering the same sentence erases their
+  // individual value.
+  const description = category.description || seo.seoDescription || "";
 
   const ogImageUrl = new URL(`${siteConfig.url}/api/og`);
   ogImageUrl.searchParams.append("title", category.name);
@@ -117,7 +120,7 @@ export default async function CategoryPage({
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       name: seo.h1 || category?.name,
-      description: seo.seoDescription || category?.description,
+      description: category?.description || seo.seoDescription,
       url: `${siteConfig.url}/category/${params.slug}`,
     },
     {
