@@ -43,8 +43,8 @@ async function purgeCloudflare() {
     return;
   }
 
-  const { HttpsProxyAgent } = await import("https-proxy-agent");
-  const agent = new HttpsProxyAgent("http://127.0.0.1:7890");
+  const { ProxyAgent } = await import("undici");
+  const dispatcher = new ProxyAgent("http://127.0.0.1:7890");
 
   const endpoint = `https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache`;
   try {
@@ -55,7 +55,7 @@ async function purgeCloudflare() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ files: FULL_URLS }),
-      agent,
+      dispatcher,
     };
     const res = await fetch(endpoint, fetchOptions);
     const json = await res.json();

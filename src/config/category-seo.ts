@@ -153,13 +153,16 @@ export function getCategorySeo(
   const name =
     fallbackName ||
     slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  // Category names like "Audio Tools" already carry the suffix — appending
+  // "AI Tools" produced titles such as "Best Audio Tools AI Tools".
+  const suffix = /tools$/i.test(name) ? "" : " AI Tools";
   return {
-    seoTitle: `Best ${name} AI Tools (2026 Directory)`,
-    seoDescription: `Explore curated ${name} AI tools and software. Compare features, pricing, and alternatives to supercharge your workflow with Findry AI.`,
-    h1: `${name} AI Tools`,
-    subtitle: `Discover and compare top-rated ${name} AI tools vetted for quality and productivity.`,
+    seoTitle: `Best ${name}${suffix} (2026 Directory)`,
+    seoDescription: `Explore curated ${name}${suffix ? " AI tools" : ""} and software. Compare features, pricing, and alternatives to supercharge your workflow with Findry AI.`,
+    h1: `${name}${suffix}`,
+    subtitle: `Discover and compare top-rated ${name} vetted for quality and productivity.`,
     intro: [
-      `Browse our comprehensive collection of ${name} AI tools designed to streamline your daily tasks, automate repetitive processes, and unlock new creative capabilities.`,
+      `Browse our comprehensive collection of ${name} designed to streamline your daily tasks, automate repetitive processes, and unlock new creative capabilities.`,
     ],
   };
 }
