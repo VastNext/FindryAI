@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "GPU Unlock",
+      "slug": {
+        "_type": "slug",
+        "current": "gpu-unlock"
+      },
+      "link": "https://github.com/Zagitta/gpu-unlock",
+      "description": "Check GPU Unlock 2.0.0 support for NVIDIA RTX generations, Ada's experimental status, older 1.1.1 guides and workload-specific verification before changing Linux boot.",
+      "introduction": "## What is GPU Unlock?\n\n[Zagitta/gpu-unlock](https://github.com/Zagitta/gpu-unlock) is a community Linux kernel-module project targeting selected NVIDIA GeForce cards for AI compute. The maintainer describes it as removing a tensor-throughput restriction before the normal NVIDIA driver binds the GPU.\n\nThis is a documentation-based compatibility guide, not an independent hardware test. The project's performance figures are upstream claims and user reports, not results measured by Findry AI.\n\n## GPU Unlock Ada support and other generations\n\nThe README checked October 28, 2026 identifies version **2.0.0** and gives these support labels:\n\n| Generation | Upstream status |\n| --- | --- |\n| Ampere / RTX 30 | Stable |\n| Ada Lovelace / RTX 40 | Experimental |\n| Turing / RTX 20 | Experimental |\n| Blackwell / RTX 50 | Not supported |\n\nThese are generation summaries. Check the exact card and PCI device ID against the repository's current support table and recipes; a family name alone is not a compatibility result.\n\nFor **gpu unlock ada**, the important distinction is experimental support. Do not interpret an Ada card appearing in the README as a guarantee that every board, laptop or power configuration behaves identically.\n\nFor **gpu unlock 1.1.1**, check whether instructions belong to that older version before applying them. The current README describes a 2.0.0 boot flow; this listing does not recommend mixing old release instructions with a newer checkout.\n\n## Which AI workloads could benefit?\n\nThe README distinguishes tensor-heavy prompt processing, training and image-generation workloads from memory-bound token generation. It reports no improvement for gaming, ordinary FP32 CUDA or several lower-precision model paths.\n\nTreat that as a reason to identify your bottleneck first. A faster matrix-multiply test does not establish the same improvement in an entire application. Loading time, CPU work, transfers, model precision and memory bandwidth can dominate different parts of the run.\n\nBefore evaluating any change, write down the workload you actually care about: for example, prompt processing at a fixed input length or image generation with a fixed model and settings.\n\n## Read the installation path before changing the machine\n\nThe upstream project is Linux-focused. Its README describes distribution-specific package installation and an explicit kernel-command-line opt-in. It also explains module ordering relative to the NVIDIA driver.\n\nThis changes boot-time behavior. Confirm that you can restore the existing boot configuration and keep a working recovery route before proceeding. Follow the current official instructions for your distribution instead of combining commands from unrelated tutorials.\n\nThe FAQ says the project's repository is its authoritative source and disclaims unrelated websites, coins and installers. A Windows port is linked as a separate project; it is not the Linux maintainer's Windows support commitment.\n\n## A useful verification sequence\n\nIf you choose to evaluate it on a supported machine:\n\n1. Record the exact GPU, driver, kernel, model, precision and application settings.\n2. Save a baseline using several repeated runs after warm-up.\n3. Follow one version's installation instructions and inspect its boot logs.\n4. Repeat the identical workload and check output correctness as well as elapsed time.\n5. Compare temperatures, stability and power behavior before keeping the configuration.\n\nFor text generation, record prompt processing separately from token decoding. For image generation, keep dimensions, steps and other settings fixed. Report variation across runs rather than only the fastest result.\n\nThe README documents checking kernel logs for `gpu_unlock`. It also describes removing the opt-in kernel parameter to stop unlocking, and package removal to remove the module and initramfs additions. Read that recovery path before installation.\n\n## Laptop and power-state considerations\n\nThe project notes that powering off a dedicated laptop GPU resets the change. Its suspend/resume handling and hibernation limitations are documented separately. A successful initial boot therefore does not demonstrate that the configuration survives every power transition.\n\nThe module and packaging are GPL-2.0-only; NVIDIA firmware has separate terms. Do not infer firmware redistribution rights from the module license.\n\nBrowse [Developer Tools](https://findryai.com/category/developer-tools) for related AI infrastructure projects.\n\n## Official source\n\nChecked October 28, 2026:\n\n- [GPU Unlock README: support table, version, workload claims, installation and recovery](https://github.com/Zagitta/gpu-unlock)\n- [Upstream compatibility reports](https://github.com/Zagitta/gpu-unlock/issues)\n\nNo installation, speedup or hardware-safety test was performed for this listing.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai"
+        ]
+      },
+      "coverageAliases": [
+        "gpu unlock",
+        "gpuunlock"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/gpu-unlock-item.png",
+        "sha256": "46f0651b9be9ca6b02c8d09c7a4de2502e2333f7246d1c5e5fb6dac52eba9db5",
+        "sourceUrl": "https://github.com/Zagitta/gpu-unlock",
+        "alt": "Official Zagitta GPU Unlock GitHub repository showing Linux AI-compute compatibility documentation for GeForce RTX GPUs."
+      }
+    },
+    {
+      "_type": "item",
+      "name": "Postiz",
+      "slug": {
+        "_type": "slug",
+        "current": "postiz"
+      },
+      "link": "https://postiz.com/",
+      "description": "Choose Postiz Cloud or self-hosting, connect a social channel and verify a first scheduled post. Learn AI-workflow boundaries and a read-only API connection check.",
+      "introduction": "## What is the Postiz app?\n\n[Postiz](https://postiz.com/) is a social-media management platform for scheduling content, collaborating and reviewing analytics. The official [gitroomhq/postiz-app repository](https://github.com/gitroomhq/postiz-app) provides the self-hosted edition and links the managed cloud service.\n\nThe project documents AI-assisted content features and automation interfaces. This guide focuses on choosing an edition, completing a first scheduling workflow and checking an API connection. It does not claim that a connected account guarantees successful publication on every platform.\n\n## Cloud or self-hosted?\n\nCloud is the managed route; self-hosting gives you responsibility for infrastructure, updates and provider configuration. The repository's source is AGPL-3.0 licensed.\n\nThe official quickstart says cloud access requires choosing a subscription, with a trial commonly offered to new organizations. A trial is different from an ongoing free cloud plan. Check current pricing and quotas before subscribing.\n\nFor self-hosting, plan for the application services, persistent data, backups, updates and platform-specific developer credentials. AI provider usage can introduce separate charges. A license with no software subscription fee does not make a deployment costless.\n\nMake the choice around operating effort as well as price: who will handle failed jobs, restore backups and reconnect accounts when a provider changes its requirements?\n\n## Complete one scheduling cycle first\n\nThe official quickstart's flow is: connect a channel, compose content, choose a date and confirm the result. A channel represents a connected social account.\n\nStart with one account you control and content you are authorized to publish. Check the displayed account identity before creating a post. Review the platform preview, media and any required channel-specific fields.\n\nThe composer supports shared text plus channel-specific overrides. Its Draft action does not publish; adding a post to the calendar schedules it, while Post Now requests immediate publication.\n\nBefore enabling a larger workflow, verify all three states separately:\n\n- The draft contains the intended text and media.\n- The schedule uses the intended time and account.\n- The final post actually appears on the destination platform.\n\nA calendar entry proves scheduling, not delivery. If the destination is missing the post, inspect the job status and channel connection before retrying.\n\n## Self-hosting includes provider setup\n\nThe repository distinguishes running Postiz from connecting social-platform APIs. Many self-hosted providers need your own developer application and approval. That work is separate from starting the app.\n\nUse the [current installation documentation](https://docs.postiz.com/self-host/installation/overview) for the selected deployment method and the provider-specific connection guide for each account. Keep persistent storage and configuration under your deployment's normal backup process.\n\nAn API or OAuth error should be investigated at the layer where it occurs. Application login, platform authorization, media acceptance and actual posting are different checks.\n\n## First API check: list integrations\n\nThe [Public API overview](https://docs.postiz.com/public-api/introduction) documents API-key and OAuth-token authentication through the Authorization header. Use a server-side secret store or protected runtime environment, not a browser bundle or public repository.\n\nFor a minimal cloud check, the documented read-only endpoint is:\n\n```text\nGET https://api.postiz.com/public/v1/integrations\nAuthorization: <your private credential>\n```\n\nInspect that response before preparing a posting request. Confirm that each integration belongs to the expected account; do not guess integration IDs from display names.\n\nFor self-hosting, use the API base URL documented for your instance. Do not send a self-hosted credential to the cloud endpoint merely because an example uses the cloud URL.\n\nThe API overview distinguishes authentication, authorization, malformed requests and rate limits. Resolve those errors explicitly. If a posting request times out, check whether the post was created before blindly resubmitting it and risking a duplicate.\n\n## Add AI and automation deliberately\n\nThe repository links a Node.js SDK, n8n integration and agent interfaces. Choose one route for the first workflow, keep a small test set and inspect the destination results.\n\nReview AI-generated text, links and media before scheduling. Keep a record of the intended destination and publication time so that a failed automation can be investigated without reconstructing its entire input.\n\nFor preparing video before distribution, see [Concat](https://findryai.com/item/concat). Browse [Developer Tools](https://findryai.com/category/developer-tools) for related automation software.\n\n## Official sources\n\nChecked October 28, 2026:\n\n- [Postiz repository and cloud/self-hosted comparison](https://github.com/gitroomhq/postiz-app)\n- [First-post quickstart](https://docs.postiz.com/general/quickstart)\n- [API authentication and errors](https://docs.postiz.com/public-api/introduction)\n\nThis is a documentation-based workflow guide. No accounts were connected and no social posts were sent while preparing this listing.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "marketing"
+        ]
+      },
+      "coverageAliases": [
+        "postiz app",
+        "postiz-app"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/postiz-item.png",
+        "sha256": "a485e568f85547a575baebd9b1a77083b2d0e122651315fd4da69241eefd8560",
+        "sourceUrl": "https://github.com/gitroomhq/postiz-app",
+        "alt": "Official Postiz app GitHub repository showing the open-source social scheduling platform, AI integrations and self-hosted edition."
+      }
+    }
+  ]
+}
