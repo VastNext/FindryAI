@@ -17,6 +17,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/category/personal-sites",
+        destination: "/category",
+        permanent: true,
+      },
+      {
+        source: "/category/blogs",
+        destination: "/category",
+        permanent: true,
+      },
+      {
         source: "/home3",
         destination: "/",
         permanent: true,
