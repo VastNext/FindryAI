@@ -2039,7 +2039,7 @@ export type GroupListQueryResult = Array<{
   }>;
 }>;
 // Variable: categoryListQuery
-// Query: *[_type == "category" && defined(slug.current)]   | order(priority desc) {      ...,}
+// Query: *[_type == "category" && defined(slug.current) && !(slug.current in ["blogs", "personal-sites"])]   | order(priority desc) {      ...,}
 export type CategoryListQueryResult = Array<{
   _id: string;
   _type: "category";
@@ -2675,7 +2675,7 @@ export type ItemListQueryForSitemapResult = Array<{
   slug: string | null;
 }>;
 // Variable: categoryListQueryForSitemap
-// Query: *[_type == "category" && defined(slug.current)] | order(_createdAt asc) {  _id,    _updatedAt,  "slug": slug.current,  "count": count(*[_type == "item" && defined(publishDate) && publishDate <= now() && forceHidden != true && references(^._id)])}
+// Query: *[_type == "category" && defined(slug.current) && !(slug.current in ["blogs", "personal-sites"])] | order(_createdAt asc) {  _id,    _updatedAt,  "slug": slug.current,  "count": count(*[_type == "item" && defined(publishDate) && publishDate <= now() && forceHidden != true && references(^._id)])}
 export type CategoryListQueryForSitemapResult = Array<{
   _id: string;
   _updatedAt: string;
@@ -2737,7 +2737,7 @@ declare module "@sanity/client" {
     "*[_type == \"collection\" && defined(slug.current)] \n  | order(priority desc) {\n    \n  ...,\n  icon {\n    ...,\n    \"blurDataURL\": asset->metadata.lqip,\n    \"imageColor\": asset->metadata.palette.dominant.background,\n  },\n\n}": CollectionListQueryResult;
     "*[_type == \"collection\" && slug.current == $slug][0] {\n  \n  ...,\n  icon {\n    ...,\n    \"blurDataURL\": asset->metadata.lqip,\n    \"imageColor\": asset->metadata.palette.dominant.background,\n  },\n\n}": CollectionQueryResult;
     "*[_type==\"group\"] | order(priority desc, _createdAt asc) {\n  \n  ...,\n  \"categories\": *[_type=='category' && references(^._id)] | order(priority desc, _createdAt asc)\n  { \n    ..., \n  }\n\n}": GroupListQueryResult;
-    "*[_type == \"category\" && defined(slug.current)] \n  | order(priority desc) {\n    \n  ...,\n\n}": CategoryListQueryResult;
+    "*[_type == \"category\" && defined(slug.current) && !(slug.current in [\"blogs\", \"personal-sites\"])] \n  | order(priority desc) {\n    \n  ...,\n\n}": CategoryListQueryResult;
     "*[_type == \"category\" && slug.current == $slug][0] {\n  \n  ...,\n\n}": CategoryQueryResult;
     "*[_type == \"tag\" && defined(slug.current)] \n  | order(slug.current asc) {\n    \n  ...,\n\n}": TagListQueryResult;
     "*[_type == \"tag\" && slug.current == $slug][0] {\n  \n  ...,\n\n}": TagQueryResult;
@@ -2753,7 +2753,7 @@ declare module "@sanity/client" {
     "\n  *[_type == \"blogCategory\"] {\n  \n  name,\n  slug,\n  description,\n  priority,\n\n  \"count\": count(*[_type == \"blogPost\" && references(^._id)])\n} | order(count desc) [0...5]": BlogCategoryWithCountQueryResult;
     "\n  *[_type == \"user\" && _id == $id][0] {\n    ...,\n    accounts[]->,\n  }\n": UserWithAccountsQueryResult;
     "*[_type == \"item\" && defined(slug.current) && defined(publishDate) && publishDate <= now() && forceHidden != true] | order(_createdAt asc) {\n  _id,\n  _updatedAt,\n  \"slug\": slug.current,\n}": ItemListQueryForSitemapResult;
-    "*[_type == \"category\" && defined(slug.current)] | order(_createdAt asc) {\n  _id,  \n  _updatedAt,\n  \"slug\": slug.current,\n  \"count\": count(*[_type == \"item\" && defined(publishDate) && publishDate <= now() && forceHidden != true && references(^._id)])\n}": CategoryListQueryForSitemapResult;
+    "*[_type == \"category\" && defined(slug.current) && !(slug.current in [\"blogs\", \"personal-sites\"])] | order(_createdAt asc) {\n  _id,  \n  _updatedAt,\n  \"slug\": slug.current,\n  \"count\": count(*[_type == \"item\" && defined(publishDate) && publishDate <= now() && forceHidden != true && references(^._id)])\n}": CategoryListQueryForSitemapResult;
     "*[_type == \"tag\" && defined(slug.current)] | order(_createdAt asc) {\n  _id,  \n  _updatedAt,\n  \"slug\": slug.current,\n  \"count\": count(*[_type == \"item\" && defined(publishDate) && publishDate <= now() && forceHidden != true && references(^._id)])\n}": TagListQueryForSitemapResult;
     "*[_type == \"collection\" && defined(slug.current)] | order(_createdAt asc) {\n  _id,  \n  _updatedAt,\n  \"slug\": slug.current,\n  \"count\": count(*[_type == \"item\" && defined(publishDate) && publishDate <= now() && forceHidden != true && references(^._id)])\n}": CollectionListQueryForSitemapResult;
     "*[_type == \"blogPost\" && defined(slug.current) && defined(publishDate)] | order(publishDate desc, _createdAt asc) {\n  _id,  \n  _updatedAt,\n  \"slug\": slug.current,\n}": BlogListQueryForSitemapResult;

@@ -185,7 +185,7 @@ export const groupListQuery = groq`*[_type=="group"] | order(priority desc, _cre
   ${groupFields}
 }`;
 
-export const categoryListQuery = defineQuery(`*[_type == "category" && defined(slug.current)] 
+export const categoryListQuery = defineQuery(`*[_type == "category" && defined(slug.current) && !(slug.current in ["blogs", "personal-sites"])] 
   | order(priority desc) {
     ${categoryFields}
 }`);
@@ -374,7 +374,7 @@ export const itemListQueryForSitemap = groq`*[_type == "item" && defined(slug.cu
   "slug": slug.current,
 }`;
 
-export const categoryListQueryForSitemap = groq`*[_type == "category" && defined(slug.current)] | order(_createdAt asc) {
+export const categoryListQueryForSitemap = groq`*[_type == "category" && defined(slug.current) && !(slug.current in ["blogs", "personal-sites"])] | order(_createdAt asc) {
   _id,  
   _updatedAt,
   "slug": slug.current,
