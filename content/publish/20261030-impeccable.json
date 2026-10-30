@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "Impeccable",
+      "slug": {
+        "_type": "slug",
+        "current": "impeccable"
+      },
+      "link": "https://github.com/pbakaus/impeccable",
+      "description": "Install Impeccable for AI coding agents, set project design context and distinguish source checks from rendered-page scans with this practical GitHub guide.",
+      "introduction": "## What is Impeccable?\n\n[Impeccable](https://github.com/pbakaus/impeccable) gives AI coding agents a vocabulary for reviewing and improving interfaces. Instead of asking an agent to “make it better,” you can request a critique of a specific component, a typography pass or a technical audit.\n\nThe official project supports tools including Claude Code, Cursor, Codex CLI and GitHub Copilot. It combines agent instructions with a detector that can also run from a terminal. This guide follows the upstream README checked October 30, 2026; it is not an independent benchmark of design quality.\n\n## Install from the official GitHub project\n\nFrom the root of the project you want to work on:\n\n```bash\nnpx impeccable install\n```\n\nThe installer detects supported coding tools and offers project or global installation. Review its proposed changes, including any optional hooks, then reload the coding tool. Hook availability and approval steps differ by host; installing a skill alone does not establish that automatic checks are running.\n\nRun `/impeccable init` in the agent. On Codex, use `$impeccable init` instead. The initialization step reads the project, asks about missing product context and writes `PRODUCT.md`.\n\nFor an existing interface, run `/impeccable document` to capture its visual system in `DESIGN.md`. Review those files: an incorrect audience or design constraint can steer later edits in the wrong direction.\n\n## Start with one component\n\nA practical first target is a component with a clear purpose, such as pricing cards or a settings form:\n\n```text\n/impeccable critique the pricing cards\n/impeccable polish settings\n```\n\nThe README distinguishes `critique`, a UX review, from `audit`, a technical quality report. Direction commands such as `quieter`, `bolder`, `typeset` and `layout` give the agent a more specific task.\n\nFirst inspect the findings, choose one change and review the resulting diff. For pricing cards, check whether plan differences and the primary action remain clear. For a form, test labels, keyboard access, validation and narrow screens. These checks make the result assessable; a model-generated score alone does not establish usability.\n\n## Source scans and rendered-page scans differ\n\nThe CLI can run without an agent:\n\n```bash\nnpx impeccable detect src/\nnpx impeccable detect http://localhost:5173\nnpx impeccable detect --json .\nnpx impeccable detect --github src/\n```\n\nUse the actual address of your local development server rather than assuming port 5173.\n\nSource files such as JSX and TSX receive pattern checks. Checks that require a rendered page, including contrast and tiny text, need a URL scan, which uses an installed Chrome or Edge browser. A source-only scan therefore cannot establish that the rendered interface passes those checks.\n\nThe documented exit codes distinguish findings from failure: **2** means findings were detected, while **1** means a target could not be scanned. Preserve that distinction in automation so an unavailable server is not reported as a clean review.\n\n## Keep iteration tied to working code\n\nImpeccable's live mode opens a development server with an overlay, lets you explore variants and writes the accepted variant back to source. Use it with a local checkout and review the resulting changes.\n\nAfter any design pass, run the project's normal checks and inspect the affected interaction in a browser. Confirm responsive behavior, focus visibility, empty states and error handling where relevant. Detector output complements these checks; it does not replace them.\n\nUse `npx impeccable update` to refresh an installation. If setup becomes inconsistent, the README documents `/impeccable doctor` for checking stale context and broken hooks.\n\n## License and operating costs\n\nThe repository is Apache-2.0 licensed. That license does not include a subscription to a coding agent, model API usage or other services used by your development workflow. Check those providers separately instead of treating an open-source skill as a bundled AI service.\n\nFor broader agent workflows, see [Superpowers](https://findryai.com/item/superpowers). Browse [Developer Tools](https://findryai.com/category/developer-tools) for related projects.\n\n## Official source\n\n- [Impeccable GitHub README: installation, commands, detector behavior and license](https://github.com/pbakaus/impeccable)\n\nCommands and behavior were checked against the official documentation on October 30, 2026. No local installation or comparative design test was performed for this listing.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "impeccable github",
+        "pbakaus impeccable"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/impeccable-item.png",
+        "sha256": "2b44e987514a39a337e37293857488db9dd71f6d19332c6a8928d389a131dd1c",
+        "sourceUrl": "https://github.com/pbakaus/impeccable",
+        "alt": "Official pbakaus Impeccable GitHub repository showing its design vocabulary for coding agents and Apache-2.0 license."
+      }
+    }
+  ]
+}
