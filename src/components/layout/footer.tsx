@@ -103,6 +103,20 @@ export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
                     className="h-8 w-auto"
                   />
                 </a>
+                <a
+                  href="https://siftfox.com/tool/findry-ai"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex items-center"
+                >
+                  <img
+                    src="https://siftfox.com/badges/live-light.svg"
+                    alt="Live on SiftFox"
+                    width={168}
+                    height={56}
+                    className="h-8 w-auto"
+                  />
+                </a>
               </div>
             </div>
           </div>
