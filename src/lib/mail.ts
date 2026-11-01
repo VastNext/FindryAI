@@ -47,21 +47,20 @@ export const sendNotifySubmissionEmail = async (
   reviewLink: string,
   priority?: boolean,
 ) => {
-  // console.log(`sendNotifySubmissionEmail,
-  //   userName: ${userName},
-  //   userEmail: ${userEmail},
-  //   itemName: ${itemName},
-  //   reviewLink: ${reviewLink},
-  //   statusLink: ${statusLink}`);
+  const dashboardLink = `${SITE_URL}/dashboard`;
+  const userSubject = priority
+    ? `[${siteConfig.name}] Submission received: ${itemName} (Priority Queue)`
+    : `[${siteConfig.name}] ${itemName} is waiting in a long review queue`;
 
   await resend.emails.send({
     from: process.env.RESEND_EMAIL_FROM,
     to: userEmail,
-    subject: "Thank you for your submission",
+    subject: userSubject,
     react: NotifySubmissionToUserEmail({
       userName,
       itemName,
       statusLink,
+      dashboardLink,
       priority,
     }),
   });
@@ -69,7 +68,7 @@ export const sendNotifySubmissionEmail = async (
   await resend.emails.send({
     from: process.env.RESEND_EMAIL_FROM,
     to: process.env.RESEND_EMAIL_ADMIN,
-    subject: `New submission with ${itemName}`,
+    subject: `New submission with ${itemName}${priority ? " [Priority/Badge]" : ""}`,
     react: NotifySubmissionEmail({ itemName, reviewLink }),
   });
 };
