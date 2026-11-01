@@ -65,12 +65,15 @@ export const sendNotifySubmissionEmail = async (
     }),
   });
 
-  await resend.emails.send({
-    from: process.env.RESEND_EMAIL_FROM,
-    to: process.env.RESEND_EMAIL_ADMIN,
-    subject: `New submission with ${itemName}${priority ? " [Priority/Badge]" : ""}`,
-    react: NotifySubmissionEmail({ itemName, reviewLink }),
-  });
+  // 仅对加了徽章的优先队列提交通知管理员；普通无徽章队列不发送，避免打扰与浪费 Resend 配额
+  if (priority) {
+    await resend.emails.send({
+      from: process.env.RESEND_EMAIL_FROM,
+      to: process.env.RESEND_EMAIL_ADMIN,
+      subject: `New submission with ${itemName} [Priority/Badge]`,
+      react: NotifySubmissionEmail({ itemName, reviewLink }),
+    });
+  }
 };
 
 export const sendPaymentSuccessEmail = async (
