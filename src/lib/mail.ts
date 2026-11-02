@@ -47,31 +47,33 @@ export const sendNotifySubmissionEmail = async (
   reviewLink: string,
   priority?: boolean,
 ) => {
-  // console.log(`sendNotifySubmissionEmail,
-  //   userName: ${userName},
-  //   userEmail: ${userEmail},
-  //   itemName: ${itemName},
-  //   reviewLink: ${reviewLink},
-  //   statusLink: ${statusLink}`);
+  const dashboardLink = `${SITE_URL}/dashboard`;
+  const userSubject = priority
+    ? `[${siteConfig.name}] Submission received: ${itemName} (Priority Queue)`
+    : `[${siteConfig.name}] ${itemName} is waiting in a long review queue`;
 
   await resend.emails.send({
     from: process.env.RESEND_EMAIL_FROM,
     to: userEmail,
-    subject: "Thank you for your submission",
+    subject: userSubject,
     react: NotifySubmissionToUserEmail({
       userName,
       itemName,
       statusLink,
+      dashboardLink,
       priority,
     }),
   });
 
-  await resend.emails.send({
-    from: process.env.RESEND_EMAIL_FROM,
-    to: process.env.RESEND_EMAIL_ADMIN,
-    subject: `New submission with ${itemName}`,
-    react: NotifySubmissionEmail({ itemName, reviewLink }),
-  });
+  // 仅对加了徽章的优先队列提交通知管理员；普通无徽章队列不发送，避免打扰与浪费 Resend 配额
+  if (priority) {
+    await resend.emails.send({
+      from: process.env.RESEND_EMAIL_FROM,
+      to: process.env.RESEND_EMAIL_ADMIN,
+      subject: `New submission with ${itemName} [Priority/Badge]`,
+      react: NotifySubmissionEmail({ itemName, reviewLink }),
+    });
+  }
 };
 
 export const sendPaymentSuccessEmail = async (
