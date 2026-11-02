@@ -118,6 +118,18 @@ export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
                   />
                 </a>
               </div>
+              <a
+                href="https://viberank.dev/apps/Findry%20AI"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center"
+              >
+                <img
+                  src="https://viberank.dev/badge?app=Findry%20AI&theme=light"
+                  alt="Findry AI on VibeRank"
+                  className="h-8 w-auto"
+                />
+              </a>
             </div>
           </div>
         </div>
