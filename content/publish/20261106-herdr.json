@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "Herdr",
+      "slug": {
+        "_type": "slug",
+        "current": "herdr"
+      },
+      "link": "https://github.com/herdrdev/herdr",
+      "description": "Install Herdr for coding-agent terminals, organize workspaces and verify detach, restart and native agent recovery without confusing layout restore with live processes.",
+      "introduction": "## What is Herdr?\n\n[Herdr](https://github.com/herdrdev/herdr) is an open-source runtime for coding-agent terminals. It organizes workspaces, tabs and panes, tracks agent state and keeps terminal processes in a background server when a client detaches.\n\nIt works with existing coding tools such as Claude Code, Codex and OpenCode. You still install and authenticate those tools separately; Herdr manages the terminals in which they run.\n\nThis guide covers the documented terminal workflow and session recovery. It follows the upstream README and version 0.9.5 documentation checked November 6, 2026. No local installation, agent task or recovery test was performed for this listing.\n\n## Install from the official project\n\nThe official README links release binaries and several package-manager routes. For a Homebrew-managed installation:\n\n```bash\nbrew install herdr\n```\n\nUse the [official releases](https://github.com/herdrdev/herdr/releases) and installation documentation for your operating system. The latest stable release endpoint returned v0.9.5 when checked.\n\nPick the package and instructions for the interface you intend to use. Searches for Herdr app, GPUI, desktop and mobile can lead to different client discussions; this guide does not assume that every client has the same platform support or feature set.\n\nAfter installation, start the documented terminal client from a project directory:\n\n```bash\nherdr\n```\n\nConfirm the working directory before launching an agent. A new pane should operate in the repository you intend to change.\n\n## Begin with one workspace and one agent\n\nA workspace groups a project's tabs, panes and agents. Use one project per workspace initially so that you can identify which task needs attention.\n\nStart an already configured agent in a pane, for example `claude` or `codex`. Herdr's sidebar reports states such as working, blocked, done and idle.\n\nA state indicator is a coordination aid. Inspect the agent's actual output when it reports completion or waits for input. The terminal runtime does not establish that a feature passes tests or that a generated change is correct.\n\nThe documented controls support mouse interaction and a keyboard prefix. Press Ctrl+B, release it, then press the action key:\n\n- V splits right.\n- Minus splits down.\n- C creates a tab.\n- Q detaches the client.\n\nUse the in-app help to check the active bindings if your configuration differs.\n\n## Detach and reattach deliberately\n\nThe quick start documents Ctrl+B followed by Q as a normal detach. Running `herdr` again reattaches to the background session.\n\nDuring a normal detach, the server and pane processes continue running. Closing a client window therefore does not necessarily stop an agent, development server or test command.\n\nFor a first persistence check, use a harmless long-running command, detach and reattach, then confirm that you returned to the same live terminal. Do this before relying on the behavior for an important agent task.\n\nThe documented `herdr server stop` command ends the default server session and its panes. Treat it as a stop operation rather than another way to detach.\n\n## A machine restart is a different case\n\nThe official session-state guide separates several mechanisms:\n\n| Mechanism | What it preserves |\n| --- | --- |\n| Normal detach | Original server-owned terminal processes keep running |\n| Snapshot restore after server restart | Saved workspace, tab and pane layout, directories and focus |\n| Pane history replay | Recent saved screen contents, when enabled and matched to the layout |\n| Native agent restore | A supported agent conversation resumed using a valid session reference |\n\nAfter a full server or machine restart, the original processes are gone. A restored pane can be a new shell in its saved directory, even if the layout looks familiar.\n\nPane screen history is off by default. Replaying terminal output does not resume the command that produced it.\n\nNative agent restoration depends on a supported integration and a valid session reference. The guide documents:\n\n```bash\nherdr integration status\n```\n\nUse that output to inspect integration versions. An unsupported or invalid reference can fall back to a normal shell. Verify the actual resumed conversation before allowing it to continue changing files.\n\n## Keep updates and remote work assessable\n\nThe README describes combining local work and saved SSH machines. Confirm which machine owns a pane before running a build, changing files or entering credentials.\n\nThe documentation also describes an experimental live-handoff mechanism for replacing supported running servers while attempting to preserve processes. It is opt-in, has compatibility requirements and can interrupt in-flight coordination requests.\n\nUse the update method appropriate to your installation. Package-manager installations are updated through that package manager; do not assume the built-in updater and its handoff options apply.\n\nFor a recovery check, record the project revision, pane directory, agent integration and task state. After reconnecting or restoring, check those values and the agent's last observed result instead of relying only on the pane title.\n\n## Costs, privacy and related tools\n\nHerdr is Apache-2.0 licensed. Agent subscriptions, model APIs, remote machines and optional services can have separate costs.\n\nSession files and optional terminal history can contain prompts, command output and private project details. Treat the session directory with the same care as terminal history.\n\nFor improving the structure around long-running agent tasks, see [Learn Harness Engineering](https://findryai.com/item/learn-harness-engineering). For bounded implementation and review workflows, see [Superpowers](https://findryai.com/item/superpowers).\n\n## Official sources\n\n- [Herdr README and installation routes](https://github.com/herdrdev/herdr)\n- [Quick start](https://herdr.dev/docs/quick-start/)\n- [Session state and restore](https://herdr.dev/docs/session-state/)\n\nDocumentation checked November 6, 2026. This guide reports documented behavior rather than measured uptime, restart survival or compatibility results.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "herdr app",
+        "herdr ai"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/herdr-item.png",
+        "sha256": "15ad1acd9aefa191995c241b1f67729758058a33b2794e74ca8319aea03e5d73",
+        "sourceUrl": "https://github.com/herdrdev/herdr",
+        "alt": "Official herdrdev Herdr GitHub repository showing the coding-agent terminal runtime, project source and Apache-2.0 license."
+      }
+    }
+  ]
+}
