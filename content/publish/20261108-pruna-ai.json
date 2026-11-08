@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "Pruna AI",
+      "slug": {
+        "_type": "slug",
+        "current": "pruna-ai"
+      },
+      "link": "https://www.pruna.ai/",
+      "description": "Explore Pruna AI demos, hosted model APIs and the open-source optimization library, with setup guidance, pricing boundaries and a practical evaluation checklist.",
+      "introduction": "Pruna AI offers hosted model endpoints alongside the open-source `pruna` optimization library. The useful starting point is deciding whether you want to try a model, integrate an API, or optimize a model you already run. These routes have different setup requirements and costs.\n\n## Which Pruna route should you choose?\n\n| Your task | Start here | What to check |\n| --- | --- | --- |\n| Try a model in the browser | The official website's Demos link | Current model choices, access requirements and generation costs |\n| Add generation to an application | Pruna User Portal and API documentation | Endpoint inputs, output format, billing unit and account access |\n| Optimize your own model | PrunaAI/pruna on GitHub | Algorithm compatibility, hardware, dependencies and output quality |\n\n### Looking for “demo Pruna AI” or “Pruna AI playground”?\n\nThe [official pricing page](https://www.pruna.ai/pricing) links to [Pruna Demos](https://demo.pruna.ai/). Use that official route to distinguish the service from unrelated products with similar names. We confirmed the link; the demo's interactive controls were not readable in our public text check, and we did not run a generation. Current availability, sign-in requirements and any allowance should be checked in the application itself.\n\nA demo result can help you inspect a particular output. It does not establish your application's latency, total cost or consistency across a production workload. Keep the model name, settings and input alongside any result you compare.\n\n## Hosted API costs versus open-source software\n\nPruna's [documentation](https://docs.pruna.ai/en/stable/) describes serverless performance-model endpoints and a separate framework for optimizing your own models. Its [User Portal](https://dashboard.pruna.ai/login) is the official API access route.\n\nThe [pricing page](https://www.pruna.ai/pricing) lists model-specific charges with units such as image outputs, video seconds and training steps. Check the selected endpoint and configuration before budgeting. This guide does not promise a free hosted tier or reproduce a rate that could change.\n\nThe GitHub library is Apache-2.0 licensed. Using open-source software still involves compute, storage, model downloads and any applicable model licences. Installing the library does not turn a paid hosted endpoint into a free local model.\n\n## Getting started with the optimization library\n\nThe [repository](https://github.com/PrunaAI/pruna) provides caching, compilation, quantization, pruning and other optimization techniques behind a common interface. Different methods affect speed, memory and quality differently; support for a model family does not guarantee that every algorithm fits every checkpoint.\n\nRead the [installation guide](https://docs.pruna.ai/en/stable/setup/install.html) before creating an isolated environment. It identifies Linux as the officially supported platform; macOS and Windows compatibility depends on algorithm dependencies. CPU and GPU installation paths are documented, with additional packages needed by some algorithms. Choose dependencies for the method you intend to use.\n\nThe repository's basic installation command is:\n\n```bash\npip install pruna\n```\n\nFor a reproducible project, record the installed version and follow its matching documentation. Review CUDA and model requirements before starting a GPU example.\n\nThe documented workflow is to load a pretrained model, configure a `SmashConfig`, apply `smash`, evaluate the resulting model and run inference. The [first-model guide](https://github.com/PrunaAI/pruna/blob/main/docs/user_manual/smash.rst) illustrates this process. Its examples are starting points to adapt to your environment, rather than benchmark results from Findry AI.\n\n## How to evaluate whether an optimization helps\n\nBegin with one representative workload and one compatible method. Save an unoptimized baseline, then compare the optimized version using the same inputs and hardware. Record latency, memory use and task quality; where compilation is involved, distinguish setup or warm-up time from repeated inference.\n\nFor image generation, inspect artifacts and prompt adherence as well as numeric metrics. For other model types, choose evaluation data that reflects the task. Keep the baseline available if a smaller model or faster run loses quality your application needs. Pruna's evaluation interfaces support this workflow, but this page reports no measured speedup or savings.\n\nPruna is a useful candidate for developers who need control over inference trade-offs, and for teams evaluating hosted image or video endpoints. Browse more [developer tools](/category/developer-tools) and [open-source tools](/tag/open-source) to compare approaches.\n\nSources checked November 8, 2026: official repository, installation documentation, product documentation and pricing page linked above. Findry AI did not install Pruna, submit API jobs or perform a model benchmark for this guide.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "pruna",
+        "pruna ai playground",
+        "demo pruna ai"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/pruna-20261108.png",
+        "sha256": "85545b049e19aeeeb0efdfe00a10efe07ed6ec10773dcaaefaf67daafb17f495",
+        "sourceUrl": "https://github.com/PrunaAI/pruna",
+        "alt": "PrunaAI/pruna GitHub repository showing model optimization project files, description and Apache-2.0 licence"
+      }
+    }
+  ]
+}
