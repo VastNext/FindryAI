@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "Lemo-Opuscar",
+      "slug": {
+        "_type": "slug",
+        "current": "lemo-opuscar"
+      },
+      "link": "https://github.com/lemomo-ai/lemo-opuscar",
+      "description": "Set up Lemo-Opuscar for code-rendered films: compare installation routes, check dependencies, choose a style and review output quality and licensing.",
+      "introduction": "Lemo-Opuscar is an open-source film-style toolkit for coding agents. Its current library lists 66 styles with example films. The agent builds scenes in code, renders frames and assembles sound and video. For someone searching for the Lemo-Opuscar GitHub project, the useful decisions are which installation route to use, which dependencies a film needs, and how to inspect the finished output.\n\n## Choose an installation route\n\nThe [official repository](https://github.com/lemomo-ai/lemo-opuscar) provides a Claude Code plugin and a clone-based workflow. Its authors tune the styles for their chosen Claude model and warn that results can differ with other models. Treat that as a compatibility statement from the project, not a guarantee of identical output.\n\n| Route | Best fit | Where work is stored |\n| --- | --- | --- |\n| Claude Code plugin | Reuse the library across projects | Shared library in `~/lemo-opuscar`; each film stays in the folder where you started |\n| Repository clone | Inspect the files and work inside the project | Films under `films/<name>/` in the clone |\n| Another coding agent | Adapt the skill to an existing environment | Copy the documented skill folder and check agent compatibility |\n\nThe README documents these plugin commands:\n\n```sh\nclaude plugin marketplace add lemomo-ai/lemo-opuscar\nclaude plugin install lemo-opuscar@lemolab\n```\n\nFor the clone route:\n\n```sh\ngit clone https://github.com/lemomo-ai/lemo-opuscar.git\ncd lemo-opuscar\nclaude\n```\n\nChoose one route for a first project so that library paths and output locations are easy to follow. Check the current README before installation.\n\n## Check dependencies before requesting a film\n\nThe [technical guide](https://github.com/lemomo-ai/lemo-opuscar/blob/main/TECHNIQUE.md) requires Node 20 or later, ffmpeg 7 or later, and Python 3.11 or later, or uv for Python management. An installed ffmpeg executable is insufficient if its major version is too old.\n\n```sh\nnode --version\nffmpeg -version\npython --version\n```\n\nThe project separates basic rendering dependencies from voice, music and additional sample libraries. Install the tiers needed by the selected style. Some 3D styles benefit from a GPU, while individual styles can require extra packages or external material. Read that style's instructions before budgeting disk space or starting downloads.\n\nCode availability does not make every film costless. Budget for coding-agent access, token use, rendering time, storage and any services or assets you choose. We have not measured the time or cost of producing a film.\n\n## Choose a style with a clear acceptance target\n\nUse the [official gallery](https://lemomo-ai.github.io/lemo-opuscar/) to compare finished examples, then open the corresponding style instructions. A data story, watercolor animation and 3D product sequence have different production needs. Start with a short subject you can verify.\n\nA practical first brief should specify the subject, intended audience, duration, aspect ratio, language, assets you own and whether you want a storyboard review. For example, ask for a short explanation of one product feature, using your approved facts and brand materials. Request the source project alongside the exported film.\n\nKeep the 66-style library separate from the project's OPUSCAR 98 showcase. The showcase presents a different collection; its title does not describe the count of standard library styles.\n\n## Review the exported file and source project\n\nThe documented pipeline renders a web scene frame by frame and combines picture, speech, music and subtitles through ffmpeg. That gives you source files to revise, but a completed command is only one part of acceptance.\n\n| Check | What to inspect |\n| --- | --- |\n| Picture | Opening, middle and ending; missing fonts, blank frames and incorrect cropping |\n| Readability | Whether titles and subtitles stay visible long enough at the intended display size |\n| Sound | Spoken names and numbers, voice/music balance and the final seconds of audio |\n| Delivery | Duration, aspect ratio, output file and the files needed to rebuild it |\n| Accuracy | Every factual statement and any data, quotations or labels used on screen |\n\nThe technical guide describes contact sheets, text-readability checks, speech checks and a final watch with sound. Use those checks on your own output and keep notes on failures. A gallery example demonstrates the author's work; it does not validate a newly generated film.\n\n## Understand the licence before reusing examples\n\nThe repository's [licensing section](https://github.com/lemomo-ai/lemo-opuscar#licence) distinguishes MIT-licensed code and documentation from demo films and stills distributed under CC BY 4.0. Demo reuse requires the stated attribution and change notice, with third-party materials retaining their own terms. It also excludes six specified narration tracks from the CC BY licence.\n\nRead the credits for any example material you reuse. Prefer your own cleared assets and voice recordings where attribution or service terms would complicate delivery. The project says films you make with the library are yours, but you remain responsible for the materials included in them.\n\nFor more approaches, compare [HyperFrames](/item/hyperframes) for programmatic video work and [Concat](/item/concat) for an editing-oriented workflow, or browse [developer tools](/category/developer-tools).\n\nSources checked November 9, 2026: the official README, technical guide, plugin marketplace configuration and licence. Findry AI did not install the plugin, render a film or benchmark its output for this guide.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "video"
+        ]
+      },
+      "coverageAliases": [
+        "lemo opuscar",
+        "lemo opuscar github"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/lemo-opuscar-20261109.png",
+        "sha256": "392fe2d4dbb4b49dc6c1c50aacaf4f0bb96b7b19cbbf9abc6fac9cf609b49246",
+        "sourceUrl": "https://github.com/lemomo-ai/lemo-opuscar",
+        "alt": "Official lemomo-ai/lemo-opuscar GitHub repository showing the code-rendered film toolkit, project folders and description"
+      }
+    }
+  ]
+}
