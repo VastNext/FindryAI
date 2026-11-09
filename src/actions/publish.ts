@@ -96,10 +96,34 @@ export async function publish(itemId: string): Promise<ServerActionResponse> {
     if (!result) {
       return { status: "error", message: "Failed to publish item!" };
     }
-    // 条目带上 publishDate 后会进入首页/分类/搜索列表，全站页面多为 48h ISR，
-    // 这里按根布局整体失效，确保新发布立即可见；Banner 走 sponsor-banner 标签缓存，
-    // 在此统一失效一次（事件驱动，平时零轮询）
-    revalidatePath("/", "layout");
+    // 条目带上 publishDate 后会进入首页/分类/标签/合集列表，这些页面多为 48h ISR。
+    // 不能按根布局整体失效——那会让全站页面在下一次爬取时全部回源重渲染（Fast
+    // Origin Transfer 超额告警的主因之一），只失效该条目涉及的页面即可；
+    // 条目页尚未生成时 revalidatePath 同样生效，首次访问即按新内容渲染
+    const detail = await sanityClient.fetch<{
+      slug?: string;
+      categorySlugs?: (string | null)[];
+      tagSlugs?: (string | null)[];
+      collectionSlugs?: (string | null)[];
+    } | null>(
+      '*[_type == "item" && _id == $id][0]{"slug": slug.current, "categorySlugs": categories[]->slug.current, "tagSlugs": tags[]->slug.current, "collectionSlugs": collections[]->slug.current}',
+      { id: itemId },
+      { useCdn: false },
+    );
+    revalidatePath("/");
+    if (detail?.slug) {
+      revalidatePath(`/item/${detail.slug}`);
+    }
+    for (const slug of detail?.categorySlugs ?? []) {
+      if (slug) revalidatePath(`/category/${slug}`);
+    }
+    for (const slug of detail?.tagSlugs ?? []) {
+      if (slug) revalidatePath(`/tag/${slug}`);
+    }
+    for (const slug of detail?.collectionSlugs ?? []) {
+      if (slug) revalidatePath(`/collection/${slug}`);
+    }
+    // Banner 走 sponsor-banner 标签缓存，事件驱动统一失效一次（平时零轮询）
     revalidateTag("sponsor-banner");
     return { status: "success", message: "Successfully published!" };
   } catch (error) {
