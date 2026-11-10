@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "slug": {
+        "_type": "slug",
+        "current": "alpha-vantage-mcp-server"
+      },
+      "name": "Alpha Vantage MCP Server",
+      "link": "https://mcp.alphavantage.co/",
+      "description": "Connect AI assistants to Alpha Vantage financial data through MCP, with official OAuth setup, API access limits and a practical first-request validation checklist.",
+      "introduction": "## What Alpha Vantage MCP Server does\n\nAlpha Vantage MCP Server connects an MCP-capable assistant or agent to Alpha Vantage financial-data functions. It is useful when building a research assistant that needs a named data source rather than relying on a model's memory. The official project exposes API functions as discoverable MCP tools. Availability depends on the API key, endpoint and market-data entitlement; connecting the server alone does not make every dataset real time.\n\n## Start with the official remote connection\n\nThe [official setup page](https://mcp.alphavantage.co/) recommends the OAuth connection at `https://mcp.alphavantage.co/mcp`. In a compatible client's remote MCP settings, add that address, follow the authorization page and authorize your Alpha Vantage API key there. The older connection that places an API key directly in the URL is deprecated. Keep keys out of shared configuration, screenshots and prompts.\n\nAfter connecting, inspect the tools your client discovers before asking for data. A successful connection and a successful data request are separate checks. If you rotate your key, the official instructions say to disconnect and reconnect so you can authorize the replacement.\n\nFor developers who need to examine or run the implementation themselves, the [official source repository](https://github.com/alphavantage/alpha_vantage_mcp) documents a local command, `uvx marketdata-mcp-server YOUR_API_KEY`. Review its runtime requirements and handle the argument as a secret. The hosted connection is the simpler starting point when you do not need to operate a local process.\n\n## A small first-request checklist\n\nStart with one explicitly named instrument and one clearly specified data interval. Before allowing an agent to summarize a result, check these fields yourself:\n\n- Symbol and exchange: ambiguous company names can resolve to the wrong instrument. Ask the agent to show which symbol it used.\n- Observation date and time zone: distinguish the date of a returned observation from the time the assistant retrieved it.\n- Frequency and units: daily, intraday and percentage values should not be silently mixed.\n- Price adjustment: establish whether the requested series is raw or adjusted before comparing observations.\n- Response status: preserve rate-limit, entitlement and missing-data messages instead of turning them into plausible numbers.\n\nThese are suggested acceptance checks for your workflow, not a claim that we executed authenticated requests. A useful trial prompt is: “Retrieve the selected symbol's daily series for the requested range. Show the source function, symbol, observation dates and adjustment convention before summarizing. If the source refuses the request, report the reason without substituting estimates.”\n\n## Access limits and paid data\n\nAlpha Vantage's [support page](https://www.alphavantage.co/support/) offers a free API key and states a standard allowance of up to 25 requests per day. That makes request budgeting relevant even during setup: repeated agent retries can consume a small quota quickly.\n\nThe [premium page](https://www.alphavantage.co/premium/) explains higher-throughput access and paid endpoint availability. Real-time and delayed US market data have additional access conditions. Check the exact function in the [API documentation](https://www.alphavantage.co/documentation/) and the current plan before choosing a workflow. No fixed subscription price is quoted here because the applicable offering and data entitlement must be checked with the provider.\n\n## When to choose it\n\nChoose this server when an agent needs Alpha Vantage data and you can validate the returned records and request budget. It is a data connection, so your own application still needs error handling, source attribution and a clear distinction between observed data and model-generated interpretation.\n\nExplore more integrations in [Developer Tools](/category/developer-tools). Setup and access details above were checked against the linked official sources on November 10, 2026; no account-level performance or trading results were tested.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "alpha vantage mcp server",
+        "alpha vantage"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/alpha-vantage-mcp-20261110.png",
+        "sha256": "c90ac21790defaf05ff21d8ff5166a0c9579b2b889030e5a02dca0aad44c7112",
+        "sourceUrl": "https://mcp.alphavantage.co/",
+        "alt": "Official Alpha Vantage MCP Server website showing connector options and quickstart instructions"
+      }
+    }
+  ]
+}
