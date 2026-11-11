@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "slug": {
+        "_type": "slug",
+        "current": "tokeneconomizer"
+      },
+      "name": "TokenEconomizer",
+      "link": "https://github.com/microsoft/TokenEconomizer",
+      "description": "Install TokenEconomizer for coding agents, check tool pruning and loop-guard defaults, and evaluate model overhead against cost per accepted task.",
+      "introduction": "## What TokenEconomizer does\n\nTokenEconomizer is an Apache-2.0 open-source plugin from the Microsoft repository for controlling coding-agent costs across repeated work in a repository. It uses three mechanisms: repository facts learned across sessions, pruning tools that go unused, and a loop guard that redirects a turn showing repeated failures. It does not replace the coding agent or its model.\n\nThe practical question is whether those mechanisms reduce the cost of your completed work while preserving the tools and checks you need. The project's reported benchmark savings are research results, not a guaranteed discount on your account. This guide focuses on installation and a small acceptance workflow rather than claiming a hands-on performance review.\n\n## Check your agent and Python first\n\nYou need Python 3.10 or newer on PATH and a signed-in supported agent. The official README lists Claude Code, Codex, GitHub Copilot CLI and Pi, with additional adapters marked experimental. Compatibility is version-specific: on November 11, 2026, its documented tested ranges include Claude Code 2.1.300–2.1.310, Codex 0.153.1–0.164.0, Copilot CLI 1.0.83–1.0.102 and Pi 1.2.0–1.3.0. Check the [current supported-versions table](https://github.com/microsoft/TokenEconomizer#supported-versions) before installing or updating.\n\nKeep the clone in a stable location: several adapters run directly from it. On Windows, the Claude Code instructions require Git for Windows' shell and an absolute marketplace path with forward slashes. Do not assume that an experimental adapter supports the same operating systems or mechanisms as Claude Code.\n\n## Install and verify in Claude Code\n\nThe [official quick start](https://github.com/microsoft/TokenEconomizer#quick-start) gives these shell commands:\n\n```bash\ngit clone https://github.com/microsoft/TokenEconomizer.git\nclaude plugin marketplace add \"$PWD/TokenEconomizer\"\nclaude plugin install tokeneconomizer@tokeneconomizer\n```\n\nReview the plugin and its hook permissions, then start a new Claude Code session in your project. Enter these commands in the agent prompt, rather than in your shell:\n\n```text\n/tokeneconomizer:status\n/tokeneconomizer:toolprune refresh-catalog\n```\n\nThe status command should return the plugin's state. Recording the catalog lets pruning consider the loaded tools; the documentation says to repeat it after Claude Code updates. The absence of an immediate deny list is expected: pruning needs usage evidence across sessions.\n\nFor Codex, the official installation uses `codex plugin marketplace add \"$PWD/TokenEconomizer\"` followed by `codex plugin add tokeneconomizer@tokeneconomizer`. Review its hook permissions and restart the agent before checking `$tokeneconomizer:status` in its prompt. Use the [agent-specific plugin guide](https://github.com/microsoft/TokenEconomizer/blob/main/plugin/README.md) for Copilot CLI, Pi and experimental adapters instead of copying Claude Code commands.\n\n## Understand the defaults and model costs\n\nTool pruning and the loop guard are enabled by default; micro-skills is disabled by default. Pruning itself makes no model calls. With the defaults, a turn that appears to loop can invoke a judge and, if needed, a redirect writer. Enabling full micro-skills adds a fact proposer. These calls use the existing agent's account or provider, and the plugin reports their overhead. No separate plugin API key does not mean no model cost.\n\nFor a cautious first trial, set pruning to propose changes before applying them:\n\n```text\n/tokeneconomizer:config set toolprune=propose\n/tokeneconomizer:toolprune\n```\n\nInspect the evidence before using `/tokeneconomizer:toolprune apply`. If a needed tool was removed, `/tokeneconomizer:toolprune restore` brings the plugin's removed tools back for subsequent sessions. The documentation says it preserves deny rules you wrote yourself.\n\n## Evaluate cost per accepted task\n\nUse one repository and a small set of similar tasks. Record the agent version, model, enabled mechanisms, input/output/cache usage, plugin overhead, completion time and whether the same acceptance checks passed. Compare completed work with an equivalent baseline; fewer tokens on an unfinished task do not establish a saving. Avoid changing models and enabling every mechanism at once.\n\nAllow for the learning period. Tool pruning requires evidence from multiple sessions, while learned facts also need repeated confirmation. Keep a short record of missing tools or incorrect injected facts. Stop the trial and restore tools if the normal development checks become harder to complete.\n\nThe loop guard can redirect and report a stuck turn; it does not stop the agent automatically. In an unattended session, an alert can therefore leave work running. Check the [documented interactive and headless limits](https://github.com/microsoft/TokenEconomizer#when-a-turn-gets-stuck) for your agent.\n\n## Troubleshooting and related tools\n\nIf status fails, check Python, the clone's location and the selected host. The official guide recommends `~/.tokeneconomizer/bin/te doctor` for diagnosis. A deny list that never forms may need a refreshed tool catalog. Some adapters cannot report session cost or prune tools; consult their specific limits before comparing results.\n\nExplore [Developer Tools](/category/developer-tools) or [Headroom](/item/headroom) for a different approach to agent context management. Setup, defaults and limitations above were checked against the [official README](https://github.com/microsoft/TokenEconomizer), [plugin documentation](https://github.com/microsoft/TokenEconomizer/blob/main/plugin/README.md) and [license](https://github.com/microsoft/TokenEconomizer/blob/main/LICENSE) on November 11, 2026. Findry AI has not installed the plugin or independently reproduced its benchmarks.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "token economizer"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/tokeneconomizer-20261111.png",
+        "sha256": "6aea625bca88a8c3df5c0d678fc8aac59e00268746c22a6e58e2913365581ab1",
+        "sourceUrl": "https://github.com/microsoft/TokenEconomizer",
+        "alt": "Official Microsoft TokenEconomizer GitHub repository showing the project name, source folders and coding-agent cost-control description"
+      }
+    }
+  ]
+}
