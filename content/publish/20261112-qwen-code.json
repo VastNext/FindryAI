@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "slug": {
+        "_type": "slug",
+        "current": "qwen-code"
+      },
+      "name": "Qwen Code",
+      "link": "https://github.com/QwenLM/qwen-code",
+      "description": "Set up Qwen Code 1.0 Preview, choose the correct native package and model connection, and verify your first coding task without mixing main-version instructions.",
+      "introduction": "## Qwen Code 1.0 is a Preview release\n\nQwen Code is an open-source coding agent that works in a terminal. It can inspect a repository, implement a change, investigate a problem and run development tools. The [official 1.0 Preview release](https://github.com/QwenLM/qwen-code/releases/tag/v1.0.0-preview) brings together the agent harness capabilities of Qoder and Qwen Code.\n\nAs checked on November 12, 2026, that release is explicitly marked as a prerelease. Its interfaces, configuration options and behavior may change. The repository's main README separately documents the main version, so use the [1.0 Preview README](https://github.com/QwenLM/qwen-code/blob/v1.0.0-preview/README.md) when following this guide. An installation command for the main npm release should not be treated as a verified way to select 1.0 Preview.\n\n## Choose the correct installation package\n\nThe official Preview release provides native packages for macOS, Linux and Windows without requiring a separate Node.js installation. In its Assets section, choose both your operating system and processor architecture:\n\n- macOS packages use the darwin name, with arm64 and x64 variants.\n- Linux packages include arm64 and x64, with separate musl variants. Match the package to your distribution's runtime rather than selecting musl solely because the processor matches.\n- Windows packages are ZIP archives with arm64 and x64 variants.\n\nUse the [release page](https://github.com/QwenLM/qwen-code/releases/tag/v1.0.0-preview) for the actual downloads and the Preview README for the official installer alternative. Keep a note of the selected release and installation method so a later update can be reproduced. If you already have another Qwen Code installation, check which executable your terminal resolves before concluding that Preview is running: `command -v qwen` on Linux or macOS, or `Get-Command qwen` in PowerShell.\n\nAfter installing, open a new terminal and start in the intended project:\n\n```sh\ncd my-project\nqwen\n```\n\nFor the command-line options available in the installed build, run `qwen --help`; inside an interactive session, use `/help`. Treat the installed build's help and matching release documentation as authoritative when an older tutorial disagrees.\n\n## Connect an account or model provider\n\nThe Preview startup dialog, or `/auth` during a session, offers account and provider connections. The official guide lists Qwen Account or Qoder, QwenCloud or Alibaba Cloud Model Studio, and other or custom compatible providers. Availability and connection requirements depend on the selected service. After connecting, use `/model` to choose an available model.\n\nThe agent's Apache-2.0 code license does not grant unlimited hosted inference. Model access and service charges depend on the provider and account. Confirm the applicable plan or API billing before starting repeated tasks; this guide does not promise a free quota or quote a subscription price. Keep credentials in the provider's supported authentication flow instead of pasting them into shared prompts or public bug reports.\n\n## Make the first task easy to verify\n\nStart with repository understanding before asking for edits. For example, ask it to identify the startup commands and test locations, cite the relevant file paths, and avoid modifying files. Check that the cited files exist and that the explanation matches the repository's actual configuration.\n\nThen choose one bounded change in a clean branch or separate working copy. A useful trial is a small input-validation change with an existing test pattern. State the required behavior, ask the agent to follow that pattern and require the relevant checks. Review tool-permission prompts in the context of that task.\n\nUse `/diff` to inspect the changes. Verify which checks actually ran and their results; a plan to test is different from completed validation. Accept the change only after reviewing the diff and the relevant checks yourself. These are suggested acceptance steps, not a claim that Findry AI ran the agent.\n\n## Resume work and use headless mode\n\nThe Preview README documents `qwen --continue` for the most recent saved session in the same project context and `qwen --resume` to select an earlier session. Confirm the project before resuming so follow-up instructions apply to the intended files.\n\nFor one non-interactive request, the documented form is:\n\n```sh\nqwen -p \"Explain the purpose of this repository. Do not modify files.\"\n```\n\nConfigure authentication and permissions before unattended execution. For an automated workflow, also define an output to inspect and a completion check; a process ending does not by itself establish that the requested development task succeeded.\n\n## When to try it\n\nQwen Code 1.0 Preview is worth a bounded trial if you want a terminal coding agent with provider choice and can accommodate a changing Preview interface. Keep a known working installation and project configuration recoverable when evaluating an upgrade.\n\nExplore more [Developer Tools](/category/developer-tools). For a separate cost-control plugin, see [TokenEconomizer](/item/tokeneconomizer); compatibility with this Preview is not established by that link.\n\nSources checked on November 12, 2026: the [official repository](https://github.com/QwenLM/qwen-code), [Preview README](https://github.com/QwenLM/qwen-code/blob/v1.0.0-preview/README.md) and [Preview release notes](https://github.com/QwenLM/qwen-code/releases/tag/v1.0.0-preview). This is a documentation-based setup guide; no installation, account connection or coding-performance benchmark was executed by Findry AI.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "open-source",
+          "ai",
+          "coding"
+        ]
+      },
+      "coverageAliases": [
+        "qwen code",
+        "qwen code 1 0",
+        "qwen-code-1-0"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/qwen-code-20261112.png",
+        "sha256": "3f905f8518d458b456246a92c9a73141ce8d165ca360724fbf0041c739250379",
+        "sourceUrl": "https://github.com/QwenLM/qwen-code",
+        "alt": "Official QwenLM qwen-code GitHub repository showing the project name, code folders and terminal coding-agent description"
+      }
+    }
+  ]
+}
