@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "_type": "item",
+      "name": "Qwen3.5 3D Coder Studio",
+      "slug": {
+        "_type": "slug",
+        "current": "qwen35-3d-coder-studio"
+      },
+      "link": "https://huggingface.co/spaces/akhaliq/qwen35-3d-coder-studio",
+      "description": "Explore a community Studio for CCORE's Three.js scene model, distinguish HTML output from GLB assets, and check hosted access, local setup and generated results.",
+      "introduction": "## What Qwen3.5 3D Coder Studio generates\n\n[Qwen3.5 3D Coder Studio](https://huggingface.co/spaces/akhaliq/qwen35-3d-coder-studio) is a community interface for generating interactive Three.js scenes from a prompt. It uses [CCORE's Qwen3.5-4B-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder), an independent fine-tune of Qwen3.5-4B. The model is an early preview, and the Studio describes itself as an unofficial front end.\n\nThe current Studio produces scene code and a downloadable HTML file. That is useful for a browser-based prototype or procedural scene experiment. If your goal is a reusable GLB asset for a game engine, the model author links a separate [GLB-3D-Coder model](https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder). Do not assume the Studio's HTML download is a mesh export.\n\n## Try one bounded scene online\n\nThe Studio has a prompt console, examples, a thinking toggle, seed and output-token controls. The [Space README](https://huggingface.co/spaces/akhaliq/qwen35-3d-coder-studio/blob/main/README.md) documents a live code pane, an iframe preview, a download link and session history. Its separate workflow canvas is available at the Space's /workflow route.\n\nStart with a scene whose requirements you can inspect visually. For example, request one HTML scene containing a small voxel island, a tree, a bridge and a clearly positioned camera. Specify the objects, their relative positions and one interaction. Treat this as a trial prompt rather than a tested example from Findry AI.\n\nKeep the first request small enough to finish before increasing complexity. If the code stops midway, check output length and errors before assuming the model cannot create the scene. If you retry, record which prompt, seed and settings changed so you can identify the useful difference.\n\n## Understand hosted access and local costs\n\nThe Space runs FP16 inference on Hugging Face ZeroGPU. Its documentation says signed-in visitors use their own quota, while signed-out requests share an anonymous allowance. The first request after idle may need a worker to start. This is shared compute access rather than an unlimited free service; availability, waiting time and account limits can change.\n\nThe model card declares Apache-2.0 licensing. Running downloaded weights still uses your own hardware, memory, storage and electricity, or a paid compute service. No fixed hosting price or guaranteed memory requirement is established by this guide.\n\n## Choose a local model path deliberately\n\nThe [model files](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder/tree/main) include FP16 Safetensors and Q4_K_M/Q8_0 GGUF variants. The model card reports verification of FP16 loading and text generation with Transformers 5.20.2; the Studio's [requirements](https://huggingface.co/spaces/akhaliq/qwen35-3d-coder-studio/blob/main/requirements.txt) pin that version. The hosted app also has ZeroGPU-specific setup, so copying its source does not establish a ready-to-run CPU installation.\n\nFor a GGUF frontend, follow the model card's generation settings and chat setup. It specifically says to disable multi-token prediction in LM Studio. For image input, the GGUF route additionally needs the matching vision projector and a frontend with multimodal support. The author's llama.cpp example was tested with b11889, with short vision tests rather than a full-context stress test. Check compatibility before reserving memory for a large configured context.\n\nThe model card's scene system prompt selects the Three.js core ES module at cdnjs version 0.160.0 and excludes addon imports. Preserve the intended import setup when diagnosing generated code. A single downloaded HTML file can still load that external module; it is not evidence that the scene works offline.\n\n## Check a downloaded result\n\nUse a small acceptance checklist before integrating generated output:\n\n- Confirm the artifact is complete HTML and contains the requested scene setup.\n- Load it in a test browser context and check the console for syntax errors, duplicate declarations and failed imports.\n- Check camera placement, object scale, visibility and the requested interaction.\n- Try a different viewport size and confirm that the canvas remains usable.\n- Inspect network dependencies before sharing or embedding the file.\n\nThese are recommended checks, not completed render tests. A plausible code pane or still image does not establish that the interaction works. The model author notes that duplicate variable names have occurred and that some scenes need a retry or correction.\n\n## When it fits\n\nUse the Studio for experimenting with browser-based procedural scenes and inspecting how a small model writes Three.js code. Choose a separate asset-export workflow when you need game-ready meshes, materials and an importable GLB.\n\nExplore more [Developer Tools](/category/developer-tools). [Qwen Code](/item/qwen-code) is a separate terminal coding agent; it is not this Studio or its fine-tuned model.\n\nIdentity, output format and setup details were checked against the linked Space README, [application source](https://huggingface.co/spaces/akhaliq/qwen35-3d-coder-studio/blob/main/app.py), requirements and creator's model card on November 13, 2026. Findry AI has not generated a scene, installed the model or independently measured speed, memory use or output quality.",
+      "taxonomy": {
+        "categories": [
+          "developer-tools"
+        ],
+        "tags": [
+          "ai",
+          "coding",
+          "open-source"
+        ]
+      },
+      "coverageAliases": [
+        "qwen35 3d coder studio",
+        "qwen3 5 4b 3d coder",
+        "qwen3-5-4b-3d-coder"
+      ],
+      "reviewedCover": {
+        "path": "content/assets/qwen35-3d-coder-20261113.png",
+        "sha256": "137eb8427dc2ba260a9e540513f0309043274a1cba9bddbbc273332f1a0742e1",
+        "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+        "alt": "CCORE's Qwen3.5-4B-3D-Coder Hugging Face model card identifying the independent fine-tune, early preview and Three.js scene-generation focus"
+      }
+    }
+  ]
+}
