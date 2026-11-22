@@ -113,6 +113,7 @@ export async function publish(itemId: string): Promise<ServerActionResponse> {
     revalidatePath("/");
     if (detail?.slug) {
       revalidatePath(`/item/${detail.slug}`);
+      revalidateTag(`item:${detail.slug}`);
     }
     for (const slug of detail?.categorySlugs ?? []) {
       if (slug) revalidatePath(`/category/${slug}`);
@@ -125,6 +126,8 @@ export async function publish(itemId: string): Promise<ServerActionResponse> {
     }
     // Banner 走 sponsor-banner 标签缓存，事件驱动统一失效一次（平时零轮询）
     revalidateTag("sponsor-banner");
+    // 赞助位列表被条目页以 48h 缓存引用，发布后必须一并失效
+    revalidateTag("sponsor-item");
     return { status: "success", message: "Successfully published!" };
   } catch (error) {
     console.log("publish, error", error);

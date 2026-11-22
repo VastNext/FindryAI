@@ -42,6 +42,18 @@ import { notFound } from "next/navigation";
 
 export const revalidate = 172800; // 48 hours ISR cache
 
+// 动态段若不提供 generateStaticParams，Next.js 会整条路由按动态渲染处理，
+// 响应头退化为 no-store，1331 个条目页每次被访问都要完整 SSR。返回空数组即可
+// 让 Next 走「按需生成 + ISR 缓存」：首次访问渲染一次，之后命中缓存直到 revalidate 到期。
+export async function generateStaticParams() {
+  return [];
+}
+
+// 注意：本页所有 sanityFetch 都不要传 disableCache。它会下发 next.revalidate=0，
+// 让 Next.js 把整条路由判定为动态渲染（响应头变成 no-store），1331 个条目页
+// 每次被爬虫访问都要重新 SSR，是 Vercel Hobby 4 小时 Active CPU 额度被耗尽的主因。
+// 需要“下架立即生效”时，改由 unpublish/publish 里的 revalidatePath 精准失效。
+
 export async function generateMetadata({
   params,
 }: {
@@ -50,7 +62,8 @@ export async function generateMetadata({
   const item = await sanityFetch<ItemInfoBySlugQueryResult>({
     query: itemInfoBySlugQuery,
     params: { slug: params.slug },
-    disableCache: true,
+    revalidate: 172800,
+    tags: [`item:${params.slug}`],
   });
   if (!item?.name) {
     console.warn(`generateMetadata, item not found for slug: ${params.slug}`);
@@ -93,14 +106,18 @@ export default async function ItemPage({ params }: ItemPageProps) {
   // });
 
   // if you support sponsor item, you can use this code
+  const itemTag = `item:${params.slug}`;
   let [item, sponsorItems] = await Promise.all([
     sanityFetch<ItemFullInfo>({
       query: itemFullInfoBySlugQuery,
       params: { slug: params.slug },
-      disableCache: true,
+      revalidate: 172800,
+      tags: [itemTag],
     }),
     sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
+      revalidate: 172800,
+      tags: ["sponsor-item"],
     }),
   ]);
 
@@ -111,6 +128,8 @@ export default async function ItemPage({ params }: ItemPageProps) {
     item = await sanityFetch<ItemFullInfo>({
       query: itemFullInfoBySlugQuery,
       params: { slug: params.slug },
+      revalidate: 172800,
+      tags: [itemTag],
     });
   }
 

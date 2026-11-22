@@ -12,7 +12,7 @@ import {
   slugify,
 } from "@/lib/utils";
 import { sanityClient } from "@/sanity/lib/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 // biome-ignore format: conditional type
 // biome-ignore lint/complexity/noBannedTypes: support item icon
@@ -180,7 +180,15 @@ export async function edit(
 
     // redirect to the updated item, but not working, still showing the old item
     revalidatePath(`/edit/${id}`);
+    // 改名会更换 slug，旧详情页的缓存也要一并失效，否则旧 URL 仍展示旧内容
+    const previousSlug = item.slug?.current;
+    if (previousSlug && previousSlug !== slug) {
+      revalidatePath(`/item/${previousSlug}`);
+      revalidateTag(`item:${previousSlug}`);
+    }
     revalidatePath(`/item/${slug}`);
+    revalidateTag(`item:${slug}`);
+    revalidateTag("sponsor-item");
     return { status: "success", message: "Successfully updated item" };
   } catch (error) {
     console.log("edit, error", error);

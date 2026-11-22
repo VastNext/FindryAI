@@ -25,11 +25,17 @@ export async function sanityFetch<QueryResponse>({
     ? "previewDrafts"
     : "published",
   disableCache,
+  revalidate = 300,
+  tags,
 }: {
   query: string;
   params?: QueryParams;
   perspective?: Omit<ClientPerspective, "raw">;
   disableCache?: boolean;
+  /** published 视角下的数据缓存秒数。页面级 ISR 取页面与 fetch 的最小值，默认 300。 */
+  revalidate?: number;
+  /** 缓存标签，配合 revalidateTag 做精准失效，替代「短 TTL + 撤回延迟」的折中。 */
+  tags?: string[];
 }) {
   // console.log('sanityFetch, perspective', perspective, 'query', query);
   if (perspective === "previewDrafts") {
@@ -47,7 +53,11 @@ export async function sanityFetch<QueryResponse>({
     perspective: "published",
     // The `published` perspective is available on the API CDN
     useCdn: !disableCache,
-    // 公开列表缩短缓存周期，避免撤回后长时间展示旧条目。
-    next: { revalidate: disableCache ? 0 : 300 },
+    // 公开列表默认 300s；详情页可传更长的 revalidate 并用 tags 精准失效，
+    // 否则短 TTL 会让每个低频页面每次被爬虫抓到都重新渲染（Active CPU 大头）。
+    next: {
+      revalidate: disableCache ? 0 : revalidate,
+      ...(tags?.length ? { tags } : {}),
+    },
   });
 }
