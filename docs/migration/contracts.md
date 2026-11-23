@@ -6,19 +6,19 @@
 
 | 键 | 已知值或状态 | 阻塞范围 |
 | --- | --- | --- |
-| platform_repo | VastNext 私有仓库；名称 UNSET，建议 site-infra | 远程创建/推送，不阻塞本地编写 |
+| platform_repo | VastNext/site-infra（私有，已创建） | 已解除 |
 | proxy | Caddy | 已确定 |
-| production_host | 用户给定 VPS；地址放私有 inventory | 生产授权之前不可写 |
+| production_host | 192.238.239.41（私有 inventory 记录） | 已解除（生产写仍受审批） |
 | architecture | linux/amd64 | ARM 不在此次范围 |
-| image_visibility / registry_ref | UNSET，建议私有 GHCR | 推送与拉取演练 |
-| preview_domain / dns_zone_id / record_ids | UNSET | TLS、外部回调、切流 |
-| cloudflare_mode / certificate_method | UNSET，须核实真实现状 | TLS、切流 |
-| staging_sanity / oauth_test / stripe_test / mail_sink | UNSET | 外部集成写测试 |
-| backup_provider / budget / credential_custodian | UNSET | 异机备份与生产放行 |
-| alert_destination | UNSET | 生产监控放行 |
-| recovery_host / accepted_single_host_outage | UNSET | 整机恢复与首次切流 |
-| maintenance_window / approver | UNSET | 生产修改 |
-| load_profile / thresholds | 由 D07 提交测量建议、用户批准 | 容量放行 |
+| image_visibility / registry_ref | ghcr.io/vastnext/findryai；镜像公开以允许 VPS 匿名拉取 | 推送与拉取演练 |
+| preview_domain / dns_zone_id / record_ids | staging 192-238-239-41.sslip.io；正式 A 记录 `1346925d…`、`4da85313…` 已切至 VPS | 已解除 |
+| cloudflare_mode / certificate_method | 橙云 + SSL strict；Caddy DNS-01（caddy-dns/cloudflare v0.2.4） | 已解除 |
+| staging_sanity / oauth_test / stripe_test / mail_sink | Sanity staging UNSET（token 无创建权限）；OAuth 未配置；Stripe 测试 endpoint 未建；mail_sink 已实现 MAIL_TRANSPORT=sink | S05 集成写测试 |
+| backup_provider / budget / credential_custodian | Cloudflare R2 `site-infra-backup`；密码已离线保存 | 已解除（整机恢复演练未做） |
+| alert_destination | Resend 管理员邮箱（`RESEND_EMAIL_ADMIN`） | 已接入，失败注入待验 |
+| recovery_host / accepted_single_host_outage | UNSET；生产已单机运行 | 整机灾备仍需用户确认 |
+| maintenance_window / approver | 用户授权 2026-11-23/24 完成 staging 与生产切流 | 已解除 |
+| load_profile / thresholds | D07 待测；硬门禁已定（无 OOM/重启/5xx，MemAvailable≥20%） | 容量放行 |
 
 开发合成夹具可用 `.test` 域名、假 token、临时目录；生产或隔离集成环境清单禁止包含 UNSET。D00 逐项记录确认者、时间和证据，不将推荐当决定。
 

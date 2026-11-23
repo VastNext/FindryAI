@@ -1,6 +1,20 @@
 # 验收规范 v1
 
-本文件定义待实现的套件 S01–S09，替代总方案 T01–T19 的概括描述。先读 contracts.md。所有用例当前 NOT_RUN；本次文档交付不声称它们已通过。
+本文件定义套件 S01–S09。生产切流后已执行部分子项，结果见下方“2026-11-24 执行结果”；未列出的仍为 NOT_RUN/BLOCKED。先读 contracts.md。
+
+## 2026-11-24 执行结果
+
+| 套件 | 状态 | 证据 |
+| --- | --- | --- |
+| S01 镜像与秘密边界 | PASS | GitHub Actions `image-check`：非 root、无 .env、无 marker、无 docker socket |
+| S02 路由、内容与缓存 | PASS | staging 与 production `app-smoke` 全 PASS；item 页 `x-nextjs-cache: STALE→HIT` |
+| S03 平台隔离与 TLS | PARTIAL | 单站点实际运行；TLS、端口、外部探测通过；双站点隔离未演练 |
+| S04 状态机与并发 | PARTIAL | `tests/release/core.test.mjs` 6/6；真实故障注入未执行 |
+| S05 业务副作用 | BLOCKED | 生产自签 webhook + 重放通过；并发/周报集成需 Sanity staging 数据集 |
+| S06 真实蓝绿集成 | PARTIAL | prepare/promote 实际通过；双版本回滚与旧浏览器资源未演练 |
+| S07 备份、告警与恢复 | PARTIAL | R2 create/check、本地 restore PASS；告警失败注入与全新主机恢复未做 |
+| S08 首次 CI 交接 | PASS | staging/production workflow 实际运行；Vercel 项目 paused、crons 停止 |
+| S09 容量与独立接手 | BLOCKED | 未做负载测试；独立代理接手演练未执行 |
 
 ## 测试输入与结果
 

@@ -16,32 +16,40 @@ Findry AI 者，以 Next.js 十四（App Router）所造之 AI 工具目录网�
 凡功能分支之改动可由网页观察（如页面、组件、样式、交互或公开路由），完成后必须依下列次序交付：
 
 1. 运行与改动相称的验证；确认通过后提交当前分支。
-2. 先将当前分支推送至远端；确认 push 成功后方可部署。
-3. 将工作树绑定到既有 Vercel 项目，执行普通 `vercel deploy` 创建 **Preview**；不得使用 `--prod`。
-4. 等待构建结束，以 `vercel inspect <preview-url>` 确认 `target=preview` 且 `status=Ready`。
-5. 将 Preview URL 明确交给用户，说明此部署不影响生产环境，并以该地址继续收集反馈、修改、验证、提交、push 与重新部署。
-6. 用户确认 Preview 符合预期后，主动询问是否合并至 `main`；仅在用户明确同意后方可合并或创建合并 PR。
+2. 将分支推送到远端并合并到 `main`（或由用户确认的集成分支）。
+3. 运行 GitHub Actions「Deploy to VPS (staging candidate)」（`deploy-staging.yml`），等待构建、prepare、promote 与冒烟全部通过。
+4. 将 `https://192-238-239-41.sslip.io` 交给用户，说明这是 noindex 验收环境，不影响生产。
+5. 用户确认后再打 tag 触发生产发布。
 
-**门禁**：Preview 地址交付之前，不得询问是否合并 `main`；用户明确确认之前，不得自行合并 `main`、提升 Preview 至 Production，亦不得运行 `vercel --prod`。
+**门禁**：staging 冒烟未 PASS 不得发布生产；生产发布必须由用户明确授权。
 
-纯文档、内部脚本、无可访问页面的后端改动，或仓库未配置 Vercel 项目时，可不部署 Preview；交付时须说明不适用原因。若 Preview 构建失败，先修复并重新走验证、提交、push、部署流程，不得以失败地址作为验收地址。
+纯文档、内部脚本、无可访问页面的后端改动可不部署 staging；交付时须说明不适用原因。
 
-## 生产部署（tag 触发）
+## 生产部署（tag 触发，VPS）
 
-生产环境**只允许**经由 GitHub Actions 部署，**禁止**手动运行 `vercel deploy --prod`（手动部署不经过 CI，会绕过本库发布门禁）。
+生产环境**只允许**经由 GitHub Actions 调用 VPS 发布工具部署；**禁止**手工 `docker compose up` 替换生产容器或绕过审批直接改 Caddy。
 
-- **工作流**：`.github/workflows/deploy.yml`（名「Deploy to Vercel」）
-- **触发条件**：推送 `v*` tag（通常基于 `main`）；另支持 `workflow_dispatch` 手动触发
-- **所需 GitHub Secrets（仓库级，勿写入代码或文档）**：`VERCEL_TOKEN`、`VERCEL_ORG_ID`、`VERCEL_PROJECT_ID`、`VERCEL_PROJECT_NAME`
+- **应用工作流**：`.github/workflows/deploy.yml`（名「Deploy to VPS (production)」）
+- **基础设施仓库**：`VastNext/site-infra`（私有）；主机 `192.238.239.41`；平台目录 `/opt/site-infra`
+- **触发条件**：推送 `v*` tag（基于 `main`）；另支持 `workflow_dispatch`
+- **发布链**：构建并推送 GHCR → 镜像审计 → 签名 request/approval → `prepare`（候选健康+深度健康+首页）→ `promote`（purge 缓存、Caddy 校验/重载、外部校验）→ 生产冒烟
+- **所需 GitHub Secrets**：`VPS_HOST`、`VPS_USER`、`VPS_SSH_KEY`、`VPS_KNOWN_HOSTS`、`APPROVAL_HMAC`、`NEXT_PUBLIC_STRIPE_PRO_PRICE_ID`、`NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID`；既有 `SANITY_API_TOKEN`、`NEXT_PUBLIC_SANITY_*` 继续用于构建
 - **发布流程**：
-  1. 确认 `main` 为最新且本地无未提交改动（`git fetch origin && git rev-parse origin/main && git status --short`）
+  1. 确认 `main` 最新且本地无未提交改动
   2. 打 annotated tag：`git tag -a vX.Y.Z -m "Release vX.Y.Z: <摘要>" <main-commit>`
-  3. 推送 tag：`git push origin vX.Y.Z`（此举触发 Actions 部署）
-  4. 以 `gh -R VastNext/FindryAI run list` 等候 Actions run 成功（留意对应 tag 与 `completed success`）
-  5. 以 `vercel inspect findryai.com` 核对生产指向：`target=production` 且部署 URL 与 Actions run 产出一致
-  6. 生产冒烟验证：如翻译器可 `curl -X POST https://findryai.com/api/translate -H "Content-Type: application/json" -d '{"text":"Hello","sourceLanguage":"auto","targetLanguage":"zh-CN","providers":["agnes-2-0"]}'`
-- **生产环境变量**（如 `AGNES_API_KEY`）以 `vercel env add <NAME> production` 配置于 Vercel 项目（类型 Sensitive）；GitHub Actions 部署到同一项目会自动采用该项目已配置的生产环境变量，无需另行传入。密钥绝不写入仓库或 GitHub Secrets 之外的明文位置。
-- **本地 `.env.local`** 仅供本地开发（已被 `.gitignore` 忽略），与生产环境变量相互独立；本地改动配置不影响线上。
+  3. `git push origin vX.Y.Z`
+  4. `gh -R VastNext/FindryAI run list` 等待对应 run `completed success`
+  5. 生产冒烟：`curl -fsS https://findryai.com/api/health` 与 `node scripts/deploy/app-smoke.mjs`（见 `docs/migration`）
+- **回滚**：由协调者生成签名审批，目标必须是 `safety_reviewed=true` 的 production release；命令：
+  `ssh deploy@192.238.239.41 'sudo -n /usr/local/sbin/site-infra-release rollback --request ... --approval ...'`
+- **状态与排障**：
+  `ssh deploy@192.238.239.41 'sudo -n /usr/local/sbin/site-infra-release status --site findryai'`
+  证据在 `/opt/site-infra/evidence/<operation-id>/`
+- **Vercel**：旧项目已 `paused` 且 crons 无法执行；禁止重新启用或把 DNS 切回 Vercel（会与 Cloudflare 代理和证书冲突）。
+- **Cloudflare**：`/item/*`、`/category/*` 的 HTML 边缘缓存 Page Rule 已停用；由 Next ISR 负责缓存，内容更新通过 `revalidatePath` 即时生效。静态资源仍由 Cloudflare 缓存。
+- **生产环境变量**：`/opt/site-infra/secrets/findryai.production.env`（0600 root）。修改后需重新 `prepare`/`promote` 容器才能生效。
+- **备份**：Cloudflare R2 `site-infra-backup`，每日 02:00 UTC；恢复步骤见 `VastNext/site-infra` 的 `docs/backup.md`。
+- 本地 `.env.local` 仅供本地开发，与生产环境变量相互独立。
 
 ## 指令
 
