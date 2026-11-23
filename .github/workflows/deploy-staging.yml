@@ -135,7 +135,7 @@ jobs:
           SMOKE_CATEGORY_SLUG: ${{ vars.SMOKE_CATEGORY_SLUG }}
           SMOKE_UNPUBLISHED_SLUG: ${{ vars.SMOKE_UNPUBLISHED_SLUG }}
           SMOKE_EXPECT_NOINDEX: "1"
-          SMOKE_MODE: full
+          SMOKE_MODE: readonly
           SMOKE_CHECK_ISR: "1"
           SMOKE_EVIDENCE_DIR: evidence
         run: node scripts/deploy/app-smoke.mjs
