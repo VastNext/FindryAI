@@ -42,6 +42,9 @@
 - 旧 Vercel 项目 `paused=true`，`*.vercel.app` 返回 402，crons 无执行条件。
 - 支付 webhook 自签事件验证：有效签名 200、账本 `needs_review`、无订单/条目写入；重放 `attempts` 不增长。
 - 调度：badges 03:00 UTC、digest 周一 09:00 UTC、resume 每 10 分钟、backup 02:00 UTC。
+- 轻量容量基线：5 并发 60s，995 请求 0 错误，p95 724ms，容器 CPU 0.73%、内存 150 MiB。
+- 告警：Resend 测试发送返回 200。
+- Cloudflare `/item/*` 与 `/category/*` HTML Page Rule 已停用，避免 3 天边缘缓存阻塞内容更新。
 
 ## 阻塞项（需要用户）
 
