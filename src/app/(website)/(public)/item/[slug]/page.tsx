@@ -55,7 +55,6 @@ export async function generateMetadata({
   const item = await sanityFetch<ItemInfoBySlugQueryResult>({
     query: itemInfoBySlugQuery,
     params: { slug: params.slug },
-    disableCache: true,
   });
   if (!item?.name) {
     console.warn(`generateMetadata, item not found for slug: ${params.slug}`);
@@ -102,7 +101,6 @@ export default async function ItemPage({ params }: ItemPageProps) {
     sanityFetch<ItemFullInfo>({
       query: itemFullInfoBySlugQuery,
       params: { slug: params.slug },
-      disableCache: true,
     }),
     sanityFetch<SponsorItemListQueryResult>({
       query: sponsorItemListQuery,
