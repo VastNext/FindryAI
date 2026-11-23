@@ -1,0 +1,30 @@
+name: Ops - ensure Sanity staging dataset
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ensure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Attempt dataset creation
+        env:
+          SANITY_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        run: |
+          echo "project=$PROJECT_ID token_len=${#SANITY_TOKEN}"
+          code=$(curl -sS -o /tmp/resp.json -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $SANITY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"aclMode":"private"}' \
+            "https://api.sanity.io/v2021-06-07/projects/$PROJECT_ID/datasets/staging")
+          echo "create_status=$code"
+          cat /tmp/resp.json
+          code2=$(curl -sS -o /tmp/list.json -w "%{http_code}" \
+            -H "Authorization: Bearer $SANITY_TOKEN" \
+            "https://api.sanity.io/v2021-06-07/projects/$PROJECT_ID/datasets")
+          echo "list_status=$code2"
+          cat /tmp/list.json
