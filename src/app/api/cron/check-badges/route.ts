@@ -1,5 +1,12 @@
 import { checkBadge } from "@/lib/badge-verification";
 import { resend } from "@/lib/mail";
+import { badgeLockId, utcDateKey } from "@/lib/side-effects/ids";
+import {
+  acquireLock,
+  heartbeatLock,
+  releaseLock,
+} from "@/lib/side-effects/lock";
+import type { LockHandle } from "@/lib/side-effects/lock";
 import { sanityClient } from "@/sanity/lib/client";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
@@ -28,8 +35,24 @@ export async function GET(request: Request) {
     return NextResponse.json({ message: "未授权" }, { status: 401 });
   }
 
+  if (process.env.CRON_WRITES_ENABLED !== "true") {
+    return NextResponse.json({ error: "WRITES_DISABLED" }, { status: 503 });
+  }
+
+  const runId = `badge-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+  const acquired = await acquireLock({
+    lockId: badgeLockId(utcDateKey(new Date())),
+    lockKey: "checkBadges",
+    owner: `findryai-${process.pid}`,
+    runId,
+  });
+  if (!acquired.ok) {
+    return NextResponse.json({ busy: true, runId }, { status: 200 });
+  }
+  let lockHandle: LockHandle = acquired.handle;
+  const counts = { verified: 0, missing: 0, unavailable: 0, failed: 0 };
+  let processed = 0;
   try {
-    const counts = { verified: 0, missing: 0, unavailable: 0, failed: 0 };
     const removedSlugs: string[] = [];
     const affectedPaths = new Set<string>();
     const items = await sanityClient.fetch<MonitoredItem[]>(
@@ -38,6 +61,12 @@ export async function GET(request: Request) {
       { useCdn: false },
     );
     for (const item of items) {
+      processed += 1;
+      if (processed % 20 === 0) {
+        const beat = await heartbeatLock(lockHandle);
+        if (!beat) throw new Error("LEASE_LOST");
+        lockHandle = beat;
+      }
       try {
         const result = await checkBadge(item.link || "");
         if (result.status === "missing") {
@@ -157,6 +186,9 @@ export async function GET(request: Request) {
             ) {
               throw new Error("未配置管理员邮件收发地址");
             }
+            const beatBeforeEmail = await heartbeatLock(lockHandle);
+            if (!beatBeforeEmail) throw new Error("LEASE_LOST");
+            lockHandle = beatBeforeEmail;
             // 先原子标记通知，避免并发巡检重复发送；邮件失败时撤销标记，下次重试。
             const notification = await sanityClient
               .patch(item._id)
@@ -215,9 +247,11 @@ export async function GET(request: Request) {
         revalidatePath(path);
       }
     }
+    await releaseLock(lockHandle, counts);
     return NextResponse.json(counts, { status: counts.failed > 0 ? 500 : 200 });
   } catch (error) {
-    console.error("徽章巡检查询失败", error);
+    console.error("徽章巡检失败", error);
+    await releaseLock(lockHandle, counts);
     return NextResponse.json({ message: "徽章巡检失败" }, { status: 500 });
   }
 }

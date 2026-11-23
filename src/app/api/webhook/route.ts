@@ -1,182 +1,64 @@
-import { getOrderByUserIdAndItemId } from "@/data/order";
-import { getUserById } from "@/data/user";
-import { sendMessageToDiscord } from "@/lib/discord";
-import {
-  sendPaymentNotifyAdminEmail,
-  sendPaymentSuccessEmail,
-} from "@/lib/mail";
+import { handleCheckoutSessionEvent } from "@/lib/side-effects/payment";
 import { stripe } from "@/lib/stripe";
-import { PricePlans, ProPlanStatus, SponsorPlanStatus } from "@/lib/submission";
-import { getItemLinkInWebsite } from "@/lib/utils";
-import { sanityClient } from "@/sanity/lib/client";
-import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
+import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+const HANDLED_EVENTS = new Set([
+  "checkout.session.completed",
+  "checkout.session.async_payment_succeeded",
+  "checkout.session.async_payment_failed",
+]);
+
 /**
- * Stripe webhook handler
- * This file handles webhook events from Stripe. It verifies the signature
- * of each request to ensure that the request is coming from Stripe. It also
- * handles the checkout.session.completed event type by creating a new purchase record in the database.
- *
- * https://github.com/mickasmt/next-saas-stripe-starter/blob/main/app/api/webhooks/stripe/route.ts
- * https://github.com/javayhu/lms-studio-antonio/blob/main/app/api/webhook/route.ts
+ * Stripe webhook：签名校验后交给幂等账本状态机。
+ * - 唯一业务键是 Checkout Session ID，event.id 只做审计。
+ * - 订单/条目以可恢复状态机推进，重复与并发投递不会二次履约。
+ * - 通知结果未知时进入人工核对，不自动重发。
  */
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = headers().get("Stripe-Signature") as string;
+  const signature = headers().get("Stripe-Signature") ?? "";
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!secret) {
+    return NextResponse.json(
+      { error: "WEBHOOK_SECRET_MISSING" },
+      { status: 500 },
+    );
+  }
 
   let event: Stripe.Event;
-
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET,
-    );
+    event = stripe.webhooks.constructEvent(body, signature, secret);
   } catch (error) {
-    console.error("Stripe webhook error:", error);
-    return new Response(`Webhook Error: ${error.message}`, { status: 400 });
-  }
-
-  // console.log('stripe webhook event:', event);
-  console.log("stripe webhook event.type:", event.type);
-
-  if (event.type === "checkout.session.completed") {
-    console.log("checkout.session.completed event");
-    const session = event.data.object as Stripe.Checkout.Session;
-    const customerId = session.customer as string;
-    const amount = session.amount_total ? session.amount_total / 100 : 0;
-
-    const userId = session?.metadata?.userId;
-    const itemId = session?.metadata?.itemId;
-    const priceId = session?.metadata?.priceId;
-    const pricePlan = session?.metadata?.pricePlan;
-    // console.log('session:', session);
-    console.log(
-      `checkout.session.completed, userId: ${userId}, itemId: ${itemId}, priceId: ${priceId}, pricePlan: ${pricePlan}`,
+    console.error(
+      "Stripe webhook signature error:",
+      error instanceof Error ? error.message : error,
     );
-
-    // check if order already exists, if so, return
-    const order = await getOrderByUserIdAndItemId(userId, itemId);
-    if (order) {
-      console.log(
-        `checkout.session.completed, order already exists: ${order._id}`,
-      );
-      return new Response(null, { status: 200 });
-    }
-
-    const user = await getUserById(session?.metadata?.userId);
-    // console.log('user:', user);
-
-    if (user) {
-      const result = await sanityClient.create({
-        _type: "order",
-        user: {
-          _type: "reference",
-          _ref: user._id,
-        },
-        item: {
-          _type: "reference",
-          _ref: itemId,
-        },
-        status: "success",
-        date: new Date().toISOString(),
-      });
-
-      if (!result) {
-        console.log("checkout.session.completed, create order failed");
-        return new Response(null, { status: 500 });
-      }
-
-      // update order & status of item
-      const res = await sanityClient
-        .patch(itemId)
-        .set({
-          paid: true,
-          featured: true,
-          pricePlan: pricePlan, // pro or sponsor
-          sponsor: pricePlan === PricePlans.SPONSOR,
-          proPlanStatus:
-            pricePlan === PricePlans.PRO
-              ? ProPlanStatus.SUCCESS
-              : ProPlanStatus.SUBMITTING,
-          sponsorPlanStatus:
-            pricePlan === PricePlans.SPONSOR
-              ? SponsorPlanStatus.SUCCESS
-              : SponsorPlanStatus.SUBMITTING,
-          ...(pricePlan === PricePlans.SPONSOR
-            ? { sponsorStartDate: new Date().toISOString() }
-            : {}),
-          order: {
-            _type: "reference",
-            _ref: result._id,
-          },
-        })
-        .commit();
-
-      if (!res) {
-        console.log("checkout.session.completed, update item failed");
-        return new Response(null, { status: 500 });
-      }
-
-      // 已发布条目付费升级为 Pro/Sponsor 时不会再次走 Publish 流程，
-      // 必须在 webhook 里失效全站 ISR，否则首页/分类最长 48h 看不到升级效果
-      revalidatePath("/", "layout");
-      // Banner 走 sponsor-banner 标签缓存，付费升级后统一失效一次（事件驱动）
-      revalidateTag("sponsor-banner");
-
-      // send thank you email to user
-      console.log(`checkout.session.completed, item: ${JSON.stringify(res)}`);
-      const itemLink = getItemLinkInWebsite(res.slug.current);
-      console.log(`checkout.session.completed, userName: ${user.name}, 
-        userEmail: ${user.email}, 
-        itemLink: ${itemLink}`);
-
-      // 付款已成功落库，通知类发送失败不应让 webhook 返回 500
-      //（否则 Stripe 重试时因订单已存在而提前返回，邮件永远不会补发）
-      try {
-        await sendPaymentSuccessEmail(user.name, user.email, itemLink);
-      } catch (emailErr) {
-        console.error(
-          "checkout.session.completed, sendPaymentSuccessEmail failed:",
-          emailErr,
-        );
-      }
-
-      // notify admin about the new payment
-      const planLabel =
-        pricePlan === PricePlans.SPONSOR ? "Sponsor" : "Pro Featured";
-      try {
-        await sendPaymentNotifyAdminEmail({
-          itemName: res.name,
-          planLabel,
-          amount,
-          payerName: user.name,
-          payerEmail: user.email,
-          itemLink,
-        });
-      } catch (adminEmailErr) {
-        console.error(
-          "checkout.session.completed, sendPaymentNotifyAdminEmail failed:",
-          adminEmailErr,
-        );
-      }
-
-      // send message to discord
-      try {
-        await sendMessageToDiscord(session.id, customerId, user.name, amount);
-      } catch (discordErr) {
-        console.error(
-          "checkout.session.completed, sendMessageToDiscord failed:",
-          discordErr,
-        );
-      }
-    } else {
-      console.log("checkout.session.completed, user not found");
-      return new Response(null, { status: 404 });
-    }
+    return NextResponse.json({ error: "SIGNATURE_INVALID" }, { status: 400 });
   }
 
-  return new Response(null, { status: 200 });
+  if (!HANDLED_EVENTS.has(event.type)) {
+    return NextResponse.json({ ignored: event.type }, { status: 200 });
+  }
+
+  const session = event.data.object as Stripe.Checkout.Session;
+  try {
+    const result = await handleCheckoutSessionEvent(event, {
+      id: session.id,
+      customer: session.customer as string | null,
+      amount_total: session.amount_total,
+      currency: session.currency,
+      payment_status: session.payment_status,
+      created: session.created,
+      metadata: session.metadata ?? undefined,
+    });
+    return NextResponse.json(result.body ?? {}, { status: result.status });
+  } catch (error) {
+    console.error("Stripe webhook processing failed:", error);
+    return NextResponse.json({ error: "PROCESSING_FAILED" }, { status: 500 });
+  }
 }

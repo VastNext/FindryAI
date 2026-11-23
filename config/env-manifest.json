@@ -3,38 +3,233 @@
   "updated_for": "vps-migration-2026-11",
   "notes": "只记录变量名与阶段约束，不包含值。phase=build 表示构建期固化或构建必需；runtime 表示容器运行必需；both 表示两阶段都需存在。空字符串按缺失处理。",
   "entries": {
-    "NEXT_PUBLIC_APP_URL": { "phase": "both", "secret": false, "validation": "url", "required_in": ["staging", "production"] },
-    "NEXT_PUBLIC_SANITY_PROJECT_ID": { "phase": "both", "secret": false, "validation": "sanity-id", "required_in": ["staging", "production"] },
-    "NEXT_PUBLIC_SANITY_DATASET": { "phase": "both", "secret": false, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "NEXT_PUBLIC_STRIPE_PRO_PRICE_ID": { "phase": "both", "secret": false, "validation": "stripe-price", "required_in": ["staging", "production"] },
-    "NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID": { "phase": "both", "secret": false, "validation": "stripe-price", "required_in": ["staging", "production"] },
-    "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID": { "phase": "both", "secret": false, "validation": "nonempty", "required_in": [] },
-    "NEXT_PUBLIC_OPENPANEL_CLIENT_ID": { "phase": "both", "secret": false, "validation": "nonempty", "required_in": [] },
-    "NEXT_PUBLIC_PLAUSIBLE_DOMAIN": { "phase": "both", "secret": false, "validation": "nonempty", "required_in": [] },
-    "NEXT_PUBLIC_PLAUSIBLE_SCRIPT": { "phase": "both", "secret": false, "validation": "nonempty", "required_in": [] },
-    "NEXT_PUBLIC_UMAMI_SCRIPT": { "phase": "both", "secret": false, "validation": "nonempty", "required_in": [] },
-    "NEXT_PUBLIC_UMAMI_WEBSITE_ID": { "phase": "both", "secret": false, "validation": "nonempty", "required_in": [] },
-    "SANITY_API_TOKEN": { "phase": "both", "secret": true, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "AUTH_SECRET": { "phase": "runtime", "secret": true, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "AUTH_TRUST_HOST": { "phase": "runtime", "secret": false, "validation": "boolean", "required_in": ["staging", "production"] },
-    "AUTH_GOOGLE_ID": { "phase": "runtime", "secret": false, "validation": "nonempty", "required_in": [] },
-    "AUTH_GOOGLE_SECRET": { "phase": "runtime", "secret": true, "validation": "nonempty", "required_in": [] },
-    "AUTH_GITHUB_ID": { "phase": "runtime", "secret": false, "validation": "nonempty", "required_in": [] },
-    "AUTH_GITHUB_SECRET": { "phase": "runtime", "secret": true, "validation": "nonempty", "required_in": [] },
-    "STRIPE_API_KEY": { "phase": "runtime", "secret": true, "validation": "stripe-key", "required_in": ["staging", "production"] },
-    "STRIPE_WEBHOOK_SECRET": { "phase": "runtime", "secret": true, "validation": "stripe-webhook", "required_in": ["staging", "production"] },
-    "CRON_SECRET": { "phase": "runtime", "secret": true, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "REVALIDATE_SECRET": { "phase": "runtime", "secret": true, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "RESEND_API_KEY": { "phase": "runtime", "secret": true, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "RESEND_EMAIL_FROM": { "phase": "runtime", "secret": false, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "RESEND_EMAIL_ADMIN": { "phase": "runtime", "secret": false, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "RESEND_AUDIENCE_ID": { "phase": "runtime", "secret": false, "validation": "nonempty", "required_in": ["staging", "production"] },
-    "DEFAULT_AI_PROVIDER": { "phase": "runtime", "secret": false, "validation": "enum", "required_in": [] },
-    "AI_BASE_URL": { "phase": "runtime", "secret": false, "validation": "url", "required_in": [] },
-    "AI_API_KEY": { "phase": "runtime", "secret": true, "validation": "nonempty", "required_in": [] },
-    "AI_MODEL": { "phase": "runtime", "secret": false, "validation": "nonempty", "required_in": [] },
-    "AGNES_API_KEY": { "phase": "runtime", "secret": true, "validation": "nonempty", "required_in": [] },
-    "DISCORD_WEBHOOK_URL": { "phase": "runtime", "secret": true, "validation": "url", "required_in": [] },
-    "GSC_RESOURCE_ID": { "phase": "scripts", "secret": false, "validation": "nonempty", "required_in": [] }
+    "NEXT_PUBLIC_APP_URL": {
+      "phase": "both",
+      "secret": false,
+      "validation": "url",
+      "required_in": ["staging", "production"]
+    },
+    "NEXT_PUBLIC_SANITY_PROJECT_ID": {
+      "phase": "both",
+      "secret": false,
+      "validation": "sanity-id",
+      "required_in": ["staging", "production"]
+    },
+    "NEXT_PUBLIC_SANITY_DATASET": {
+      "phase": "both",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "NEXT_PUBLIC_STRIPE_PRO_PRICE_ID": {
+      "phase": "both",
+      "secret": false,
+      "validation": "stripe-price",
+      "required_in": ["staging", "production"]
+    },
+    "NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID": {
+      "phase": "both",
+      "secret": false,
+      "validation": "stripe-price",
+      "required_in": ["staging", "production"]
+    },
+    "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID": {
+      "phase": "both",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "NEXT_PUBLIC_OPENPANEL_CLIENT_ID": {
+      "phase": "both",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "NEXT_PUBLIC_PLAUSIBLE_DOMAIN": {
+      "phase": "both",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "NEXT_PUBLIC_PLAUSIBLE_SCRIPT": {
+      "phase": "both",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "NEXT_PUBLIC_UMAMI_SCRIPT": {
+      "phase": "both",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "NEXT_PUBLIC_UMAMI_WEBSITE_ID": {
+      "phase": "both",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "SANITY_API_TOKEN": {
+      "phase": "both",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "AUTH_SECRET": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "AUTH_TRUST_HOST": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "boolean",
+      "required_in": ["staging", "production"]
+    },
+    "AUTH_GOOGLE_ID": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "AUTH_GOOGLE_SECRET": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "AUTH_GITHUB_ID": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "AUTH_GITHUB_SECRET": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "STRIPE_API_KEY": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "stripe-key",
+      "required_in": ["staging", "production"]
+    },
+    "STRIPE_WEBHOOK_SECRET": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "stripe-webhook",
+      "required_in": ["staging", "production"]
+    },
+    "CRON_SECRET": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "REVALIDATE_SECRET": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "RESEND_API_KEY": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "RESEND_EMAIL_FROM": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "RESEND_EMAIL_ADMIN": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "RESEND_AUDIENCE_ID": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "DEFAULT_AI_PROVIDER": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "enum",
+      "required_in": []
+    },
+    "AI_BASE_URL": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "url",
+      "required_in": []
+    },
+    "AI_API_KEY": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "AI_MODEL": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "AGNES_API_KEY": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "DISCORD_WEBHOOK_URL": {
+      "phase": "runtime",
+      "secret": true,
+      "validation": "url",
+      "required_in": []
+    },
+    "GSC_RESOURCE_ID": {
+      "phase": "scripts",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "PAYMENT_WRITES_ENABLED": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "boolean",
+      "required_in": ["staging", "production"]
+    },
+    "CRON_WRITES_ENABLED": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "boolean",
+      "required_in": ["staging", "production"]
+    },
+    "APP_SIDE_EFFECTS_CONTRACT_VERSION": {
+      "phase": "both",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": ["staging", "production"]
+    },
+    "MAIL_TRANSPORT": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "nonempty",
+      "required_in": []
+    },
+    "MAIL_SINK_URL": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "url",
+      "required_in": []
+    }
   }
 }

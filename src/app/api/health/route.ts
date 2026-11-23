@@ -11,6 +11,7 @@ type Health = {
   sha: string | null;
   environment: string | null;
   uptimeSeconds: number;
+  sideEffectsContractVersion: number | null;
   checks?: Record<string, "ok" | "failed">;
 };
 
@@ -22,6 +23,9 @@ export async function GET(request: Request) {
     sha: process.env.APP_GIT_SHA ?? null,
     environment: process.env.APP_ENV ?? process.env.NODE_ENV ?? null,
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
+    sideEffectsContractVersion: process.env.APP_SIDE_EFFECTS_CONTRACT_VERSION
+      ? Number(process.env.APP_SIDE_EFFECTS_CONTRACT_VERSION)
+      : null,
   };
 
   if (deep) {

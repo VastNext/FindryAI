@@ -10,7 +10,11 @@ import collection from "./documents/directory/collection";
 import group from "./documents/directory/group";
 import item from "./documents/directory/item";
 import tag from "./documents/directory/tag";
+import cronLock from "./documents/order/cron-lock";
+import digestRecipient from "./documents/order/digest-recipient";
 import order from "./documents/order/order";
+import sideEffectNotification from "./documents/order/side-effect-notification";
+import webhookSession from "./documents/order/webhook-session";
 import page from "./documents/page/page";
 import settings from "./documents/settings";
 
@@ -37,6 +41,10 @@ export const schemaTypes = [
 
   // order
   order,
+  webhookSession,
+  digestRecipient,
+  cronLock,
+  sideEffectNotification,
 
   // others
   settings,

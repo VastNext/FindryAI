@@ -114,6 +114,112 @@ export type Settings = {
   title?: string;
 };
 
+export type CronLock = {
+  _id: string;
+  _type: "cronLock";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  lockKey?: string;
+  runId?: string;
+  owner?: string;
+  state?: "held" | "released";
+  fence?: number;
+  acquiredAt?: string;
+  heartbeatAt?: string;
+  leaseExpiresAt?: string;
+  releasedAt?: string;
+  lastResult?: {
+    verified?: number;
+    missing?: number;
+    unavailable?: number;
+    failed?: number;
+  };
+};
+
+export type DigestRecipient = {
+  _id: string;
+  _type: "digestRecipient";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  windowKey?: string;
+  emailHash?: string;
+  email?: string;
+  status?: "pending" | "sent" | "failed" | "unknown";
+  attempts?: number;
+  firstAttemptAt?: string;
+  lastAttemptAt?: string;
+  resendBatchId?: string;
+  messageId?: string;
+  httpStatus?: number;
+  errorCode?: string;
+  errorMessage?: string;
+  contentHash?: string;
+  owner?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type WebhookSession = {
+  _id: string;
+  _type: "webhookSession";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sessionId?: string;
+  state?: "received" | "processing" | "fulfilled" | "notifications_pending" | "processed" | "needs_review" | "failed";
+  attempts?: number;
+  nextAttemptAt?: string;
+  leaseOwner?: string;
+  leaseExpiresAt?: string;
+  holdReason?: string;
+  paymentStatus?: string;
+  lastEventId?: string;
+  lastEventType?: string;
+  lastEventCreatedAt?: string;
+  eventIds?: Array<string>;
+  stripeCustomerId?: string;
+  sessionCreatedAt?: string;
+  amountTotal?: number;
+  currency?: string;
+  priceId?: string;
+  pricePlan?: string;
+  userId?: string;
+  itemId?: string;
+  orderId?: string;
+  orderSource?: string;
+  adoptedReason?: string;
+  fulfillmentCheckpoint?: string;
+  fulfilledAt?: string;
+  notifications?: {
+    paymentSuccessEmail?: SideEffectNotification;
+    adminPaymentEmail?: SideEffectNotification;
+    discord?: SideEffectNotification;
+  };
+  needsReviewReason?: string;
+  lastErrorCode?: string;
+  lastErrorMessage?: string;
+  resolvedBy?: string;
+  resolvedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type SideEffectNotification = {
+  _type: "sideEffectNotification";
+  status?: string;
+  attempts?: number;
+  firstAttemptAt?: string;
+  lastAttemptAt?: string;
+  resolvedAt?: string;
+  messageId?: string;
+  httpStatus?: number;
+  errorCode?: string;
+  errorMessage?: string;
+  reason?: string;
+};
+
 export type PasswordResetToken = {
   _id: string;
   _type: "passwordResetToken";
@@ -513,7 +619,7 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | BlockContent | Settings | PasswordResetToken | VerificationToken | Page | BlogCategory | BlogPost | Collection | Category | Group | Tag | Item | Order | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | User | Account | Code | Markdown | MediaTag | Slug;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | BlockContent | Settings | CronLock | DigestRecipient | WebhookSession | SideEffectNotification | PasswordResetToken | VerificationToken | Page | BlogCategory | BlogPost | Collection | Category | Group | Tag | Item | Order | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | User | Account | Code | Markdown | MediaTag | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: src/sanity/lib/queries.ts
 // Variable: itemByIdQuery
