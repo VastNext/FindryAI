@@ -1,13 +1,13 @@
 ---
 title: 多站点 VPS 平台与 FindryAI 迁移方案
 type: feat
-status: draft
+status: implemented
 date: 2026-11-23
 ---
 
 # 多站点 VPS 平台与 FindryAI 迁移方案
 
-> 本文保留架构背景与历史决策，不再作为直接执行指令。AI 接手时先读 [迁移任务包入口](../migration/README.md)。任务划分、接口、测试与生产操作以该任务包为准；发现与本文冲突时停止并交给协调者确认，不自行择一执行。
+> 本文保留架构背景与历史决策。2026-11-24 已完成 VPS 生产切流；当前状态见 [迁移状态](../migration/status.md) 与 `VastNext/site-infra` 的 `docs/operations-validated.md`。
 
 ## 状态与授权边界
 
