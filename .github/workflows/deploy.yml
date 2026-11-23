@@ -1,44 +1,186 @@
-name: Deploy to Vercel
+name: Deploy to VPS (production)
 
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
+    inputs:
+      ref:
+        description: Ref to build and deploy
+        required: true
+        default: main
 
 permissions:
   contents: read
+  packages: read
 
 concurrency:
-  group: vercel-production-deploy
+  group: vps-production-findryai
   cancel-in-progress: false
 
+env:
+  SITE: findryai
+  ENVIRONMENT: production
+  APP_URL: ${{ vars.PRODUCTION_APP_URL }}
+
 jobs:
+  build:
+    uses: ./.github/workflows/build-image.yml
+    with:
+      environment: production
+      public_app_url: ${{ vars.PRODUCTION_APP_URL }}
+    secrets: inherit
+
   deploy:
+    needs: build
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_APP_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ inputs.ref || github.sha }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.VPS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<EOF
+          Host vps
+            HostName ${{ secrets.VPS_HOST }}
+            User ${{ secrets.VPS_USER || 'deploy' }}
+            IdentityFile ~/.ssh/id_ed25519
+            StrictHostKeyChecking yes
+          EOF
+          chmod 600 ~/.ssh/config
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+      - name: Read current release state
+        id: state
+        run: |
+          ssh vps 'sudo -n /usr/local/sbin/site-infra-release status --site findryai' > status.json
+          cat status.json
+          node -e '
+            const fs=require("fs");
+            const s=JSON.parse(fs.readFileSync("status.json","utf8"));
+            if (s.status!=="PASS") process.exit(1);
+            const g=s.generation ?? 0;
+            const hash=s.config_hash;
+            const host=s.host_id;
+            if (!hash || !host) process.exit(1);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `generation=${g}\nconfig_hash=${hash}\nhost_id=${host}\n`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `active_release=${s.active?.release_id??""}\n`);
+          '
 
-      - name: Install Vercel CLI
-        run: pnpm add -g vercel@latest
-
-      - name: Deploy to Production
+      - name: Generate signed request and approval
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: vercel deploy --prod --token="$VERCEL_TOKEN" --yes
+          APPROVAL_HMAC: ${{ secrets.APPROVAL_HMAC }}
+        run: |
+          node scripts/deploy/make-release.mjs \
+            --site findryai \
+            --environment production \
+            --operation prepare \
+            --release-id "${{ needs.build.outputs.release_id }}" \
+            --git-sha "${{ github.sha }}" \
+            --image-digest "${{ needs.build.outputs.digest }}" \
+            --config-hash "${{ steps.state.outputs.config_hash }}" \
+            --generation "${{ steps.state.outputs.generation }}" \
+            --host-id "${{ steps.state.outputs.host_id }}" \
+            --approver "${{ github.actor }}" \
+            --evidence-run-id "${{ github.run_id }}" \
+            --safety-reviewed "false" \
+            --out-dir .release
+
+      - name: Upload request and approval
+        run: |
+          mkdir -p /tmp/release
+          cp .release/request-prepare.json /tmp/release/req.json
+          cp .release/approval-prepare.json /tmp/release/appr.json
+          scp /tmp/release/req.json "vps:/etc/site-infra/requests/${SITE}-prepare-${GITHUB_RUN_ID}.json"
+          scp /tmp/release/appr.json "vps:/etc/site-infra/approvals/${SITE}-prepare-${GITHUB_RUN_ID}.json"
+
+      - name: Prepare candidate
+        id: prepare
+        run: |
+          ssh vps "sudo -n /usr/local/sbin/site-infra-release prepare --request /etc/site-infra/requests/${SITE}-prepare-${GITHUB_RUN_ID}.json --approval /etc/site-infra/approvals/${SITE}-prepare-${GITHUB_RUN_ID}.json" | tee prepare.json
+          node -e 'const s=require("./prepare.json"); if(s.status!=="PASS") { console.error(JSON.stringify(s)); process.exit(1);}'
+
+      - name: Generate promote approval
+        env:
+          APPROVAL_HMAC: ${{ secrets.APPROVAL_HMAC }}
+        run: |
+          node scripts/deploy/make-release.mjs \
+            --site findryai \
+            --environment production \
+            --operation promote \
+            --release-id "${{ needs.build.outputs.release_id }}" \
+            --git-sha "${{ github.sha }}" \
+            --image-digest "${{ needs.build.outputs.digest }}" \
+            --config-hash "${{ steps.state.outputs.config_hash }}" \
+            --generation "${{ steps.state.outputs.generation }}" \
+            --host-id "${{ steps.state.outputs.host_id }}" \
+            --approver "${{ github.actor }}" \
+            --evidence-run-id "${{ github.run_id }}" \
+            --safety-reviewed "false" \
+            --out-dir .release
+
+      - name: Upload promote approval
+        run: |
+          cp .release/request-promote.json /tmp/release/req-promote.json
+          cp .release/approval-promote.json /tmp/release/appr-promote.json
+          scp /tmp/release/req-promote.json "vps:/etc/site-infra/requests/${SITE}-promote-${GITHUB_RUN_ID}.json"
+          scp /tmp/release/appr-promote.json "vps:/etc/site-infra/approvals/${SITE}-promote-${GITHUB_RUN_ID}.json"
+
+      - name: Promote candidate
+        id: promote
+        run: |
+          ssh vps "sudo -n /usr/local/sbin/site-infra-release promote --request /etc/site-infra/requests/${SITE}-promote-${GITHUB_RUN_ID}.json --approval /etc/site-infra/approvals/${SITE}-promote-${GITHUB_RUN_ID}.json" | tee promote.json
+          node -e 'const s=require("./promote.json"); if(s.status!=="PASS") { console.error(JSON.stringify(s)); process.exit(1);}'
+
+      - name: Cleanup uploaded request files
+        if: always()
+        run: |
+          ssh vps "sudo -n /usr/local/sbin/site-infra-release status --site findryai" >/dev/null || true
+
+      - name: External verification
+        env:
+          RELEASE_ID: ${{ needs.build.outputs.release_id }}
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 12); do
+            if curl -fsS --max-time 20 "${APP_URL}/api/health" -o health.json; then
+              break
+            fi
+            sleep 5
+          done
+          cat health.json
+          node -e '
+            const h=require("./health.json");
+            const expected=process.env.RELEASE_ID;
+            if (!h) process.exit(1);
+            if (expected && h.release !== expected) {
+              console.error(`release mismatch: ${h.release} != ${expected}`);
+              process.exit(1);
+            }
+            console.log("release verified", h.release, h.sha);
+          '
+          curl -fsS --max-time 20 "${APP_URL}/" -o home.html
+          grep -q "Findry" home.html
+
+      - name: Summary
+        run: |
+          {
+            echo "### Deployed to VPS"
+            echo ""
+            echo "- commit: ${{ github.sha }}"
+            echo "- release_id: ${{ needs.build.outputs.release_id }}"
+            echo "- digest: ${{ needs.build.outputs.digest }}"
+            echo "- previous: ${{ steps.state.outputs.active_release }}"
+            echo "- environment: production"
+          } >> "$GITHUB_STEP_SUMMARY"

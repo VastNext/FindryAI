@@ -1,0 +1,137 @@
+name: Build Image
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      public_app_url:
+        required: true
+        type: string
+    outputs:
+      digest:
+        description: Built image digest
+        value: ${{ jobs.build.outputs.digest }}
+      release_id:
+        description: Release identifier
+        value: ${{ jobs.build.outputs.release_id }}
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment baked into NEXT_PUBLIC_* values
+        required: true
+        type: choice
+        options: [staging, production]
+        default: staging
+      public_app_url:
+        description: Public URL baked into the build
+        required: true
+        type: string
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: image-${{ inputs.environment || 'production' }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/vastnext/findryai
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      release_id: ${{ steps.meta.outputs.release_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve environment
+        id: env
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            ENVIRONMENT=production
+            APP_URL="${{ vars.PRODUCTION_APP_URL }}"
+          else
+            ENVIRONMENT="${{ inputs.environment }}"
+            APP_URL="${{ inputs.public_app_url }}"
+          fi
+          if [ -z "$APP_URL" ]; then
+            echo "public app url is not configured" >&2
+            exit 1
+          fi
+          echo "environment=$ENVIRONMENT" >> "$GITHUB_OUTPUT"
+          echo "app_url=$APP_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute release id
+        id: meta
+        run: |
+          RELEASE_ID="$(echo '${{ github.sha }}' | cut -c1-7)-${{ github.run_id }}"
+          echo "release_id=$RELEASE_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare secret marker
+        run: |
+          MARKER="marker-${{ github.run_id }}-$(date +%s)"
+          echo "$MARKER" > "$RUNNER_TEMP/test-marker"
+          echo "SECRET_MARKER=$MARKER" >> "$GITHUB_ENV"
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:sha-${{ github.sha }}
+            ${{ env.IMAGE }}:${{ steps.meta.outputs.release_id }}
+          build-args: |
+            BUILD_SECRET_TEST=1
+            NEXT_PUBLIC_APP_URL=${{ steps.env.outputs.app_url }}
+            NEXT_PUBLIC_SANITY_PROJECT_ID=${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+            NEXT_PUBLIC_SANITY_DATASET=${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+            NEXT_PUBLIC_STRIPE_PRO_PRICE_ID=${{ secrets.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID }}
+            NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID=${{ secrets.NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID }}
+          secrets: |
+            sanity_token=${{ secrets.SANITY_API_TOKEN }}
+            test_marker=${{ env.SECRET_MARKER }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Pull built image
+        run: docker pull "$IMAGE@${{ steps.build.outputs.digest }}"
+
+      - name: Image audit
+        env:
+          IMAGE_REF: ${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
+        run: node scripts/deploy/image-check.mjs
+
+      - name: Record evidence
+        run: |
+          {
+            echo "### Image built"
+            echo ""
+            echo "- environment: ${{ steps.env.outputs.environment }}"
+            echo "- app_url: ${{ steps.env.outputs.app_url }}"
+            echo "- commit: ${{ github.sha }}"
+            echo "- release_id: ${{ steps.meta.outputs.release_id }}"
+            echo "- digest: ${{ steps.build.outputs.digest }}"
+          } >> "$GITHUB_STEP_SUMMARY"

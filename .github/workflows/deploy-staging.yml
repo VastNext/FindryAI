@@ -1,0 +1,160 @@
+name: Deploy to VPS (staging candidate)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: vps-staging-findryai
+  cancel-in-progress: false
+
+env:
+  SITE: findryai
+  ENVIRONMENT: staging
+  APP_URL: ${{ vars.STAGING_APP_URL }}
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-image.yml
+    with:
+      environment: staging
+      public_app_url: ${{ vars.STAGING_APP_URL }}
+    secrets: inherit
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: ${{ vars.STAGING_APP_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.VPS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<EOF
+          Host vps
+            HostName ${{ secrets.VPS_HOST }}
+            User ${{ secrets.VPS_USER || 'deploy' }}
+            IdentityFile ~/.ssh/id_ed25519
+            StrictHostKeyChecking yes
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Read current release state
+        id: state
+        run: |
+          ssh vps 'sudo -n /usr/local/sbin/site-infra-release status --site findryai' > status.json
+          cat status.json
+          node -e '
+            const fs=require("fs");
+            const s=JSON.parse(fs.readFileSync("status.json","utf8"));
+            if (s.status!=="PASS") process.exit(1);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `generation=${s.generation ?? 0}\nconfig_hash=${s.config_hash}\nhost_id=${s.host_id}\n`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `active_release=${s.active?.release_id??""}\n`);
+          '
+
+      - name: Generate prepare request and approval
+        env:
+          APPROVAL_HMAC: ${{ secrets.APPROVAL_HMAC }}
+        run: |
+          node scripts/deploy/make-release.mjs \
+            --site findryai \
+            --environment staging \
+            --operation prepare \
+            --release-id "${{ needs.build.outputs.release_id }}" \
+            --git-sha "${{ github.sha }}" \
+            --image-digest "${{ needs.build.outputs.digest }}" \
+            --config-hash "${{ steps.state.outputs.config_hash }}" \
+            --generation "${{ steps.state.outputs.generation }}" \
+            --host-id "${{ steps.state.outputs.host_id }}" \
+            --approver "${{ github.actor }}" \
+            --evidence-run-id "${{ github.run_id }}" \
+            --safety-reviewed "true" \
+            --out-dir .release
+
+      - name: Upload prepare files
+        run: |
+          mkdir -p /tmp/release
+          cp .release/request-prepare.json /tmp/release/req.json
+          cp .release/approval-prepare.json /tmp/release/appr.json
+          scp /tmp/release/req.json "vps:/etc/site-infra/requests/${SITE}-prepare-${GITHUB_RUN_ID}.json"
+          scp /tmp/release/appr.json "vps:/etc/site-infra/approvals/${SITE}-prepare-${GITHUB_RUN_ID}.json"
+
+      - name: Prepare candidate
+        run: |
+          ssh vps "sudo -n /usr/local/sbin/site-infra-release prepare --request /etc/site-infra/requests/${SITE}-prepare-${GITHUB_RUN_ID}.json --approval /etc/site-infra/approvals/${SITE}-prepare-${GITHUB_RUN_ID}.json" | tee prepare.json
+          node -e 'const s=require("./prepare.json"); if(s.status!=="PASS") { console.error(JSON.stringify(s)); process.exit(1);}'
+
+      - name: Generate promote approval
+        env:
+          APPROVAL_HMAC: ${{ secrets.APPROVAL_HMAC }}
+        run: |
+          node scripts/deploy/make-release.mjs \
+            --site findryai \
+            --environment staging \
+            --operation promote \
+            --release-id "${{ needs.build.outputs.release_id }}" \
+            --git-sha "${{ github.sha }}" \
+            --image-digest "${{ needs.build.outputs.digest }}" \
+            --config-hash "${{ steps.state.outputs.config_hash }}" \
+            --generation "${{ steps.state.outputs.generation }}" \
+            --host-id "${{ steps.state.outputs.host_id }}" \
+            --approver "${{ github.actor }}" \
+            --evidence-run-id "${{ github.run_id }}" \
+            --safety-reviewed "true" \
+            --out-dir .release
+
+      - name: Upload promote files
+        run: |
+          cp .release/request-promote.json /tmp/release/req-promote.json
+          cp .release/approval-promote.json /tmp/release/appr-promote.json
+          scp /tmp/release/req-promote.json "vps:/etc/site-infra/requests/${SITE}-promote-${GITHUB_RUN_ID}.json"
+          scp /tmp/release/appr-promote.json "vps:/etc/site-infra/approvals/${SITE}-promote-${GITHUB_RUN_ID}.json"
+
+      - name: Promote candidate
+        run: |
+          ssh vps "sudo -n /usr/local/sbin/site-infra-release promote --request /etc/site-infra/requests/${SITE}-promote-${GITHUB_RUN_ID}.json --approval /etc/site-infra/approvals/${SITE}-promote-${GITHUB_RUN_ID}.json" | tee promote.json
+          node -e 'const s=require("./promote.json"); if(s.status!=="PASS") { console.error(JSON.stringify(s)); process.exit(1);}'
+
+      - name: App smoke (staging)
+        env:
+          SMOKE_BASE_URL: ${{ vars.STAGING_APP_URL }}
+          SMOKE_EXPECTED_RELEASE: ${{ needs.build.outputs.release_id }}
+          SMOKE_ITEM_SLUG: ${{ vars.SMOKE_ITEM_SLUG }}
+          SMOKE_CATEGORY_SLUG: ${{ vars.SMOKE_CATEGORY_SLUG }}
+          SMOKE_UNPUBLISHED_SLUG: ${{ vars.SMOKE_UNPUBLISHED_SLUG }}
+          SMOKE_EXPECT_NOINDEX: "1"
+          SMOKE_MODE: full
+          SMOKE_CHECK_ISR: "1"
+          SMOKE_EVIDENCE_DIR: evidence
+        run: node scripts/deploy/app-smoke.mjs
+
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-smoke-${{ github.run_id }}
+          path: evidence/
+          if-no-files-found: ignore
+
+      - name: Summary
+        run: |
+          {
+            echo "### Staging candidate deployed"
+            echo ""
+            echo "- url: ${APP_URL}"
+            echo "- release_id: ${{ needs.build.outputs.release_id }}"
+            echo "- digest: ${{ needs.build.outputs.digest }}"
+            echo "- previous: ${{ steps.state.outputs.active_release }}"
+          } >> "$GITHUB_STEP_SUMMARY"

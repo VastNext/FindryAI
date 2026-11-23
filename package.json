@@ -40,7 +40,11 @@
     "batch:import": "tsx scripts/batch-all.ts import",
     "batch:update": "tsx scripts/batch-all.ts update",
     "agent-skills:sync": "tsx scripts/sync-agent-skills-from-moge.ts",
-    "tweet-feed:sync": "tsx scripts/sync-tweet-feed.ts"
+    "tweet-feed:sync": "tsx scripts/sync-tweet-feed.ts",
+    "deploy:env-check": "node scripts/deploy/env-check.mjs",
+    "deploy:smoke": "node scripts/deploy/app-smoke.mjs",
+    "deploy:image-check": "node scripts/deploy/image-check.mjs",
+    "deploy:make-release": "node scripts/deploy/make-release.mjs"
   },
   "dependencies": {
     "@ai-sdk/deepseek": "^0.1.0",
