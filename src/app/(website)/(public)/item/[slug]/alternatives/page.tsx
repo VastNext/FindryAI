@@ -42,6 +42,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const revalidate = 172800; // 48 hours ISR cache
+// 返回空数组：所有 slug 首次访问时按需静态生成并进入 ISR 缓存，
+// 避免每个请求都走完整 SSR（VPS 迁移后仍需控制 CPU 与渲染成本）。
+export async function generateStaticParams() {
+  return [] as { slug: string }[];
+}
 
 interface AlternativesPageProps {
   params: { slug: string };
