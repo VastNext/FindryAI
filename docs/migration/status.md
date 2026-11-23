@@ -16,7 +16,7 @@
 | D06 CI 交接 | PASS | staging/production workflow 均实际运行；旧 Vercel Preview 冻结；旧 Vercel 项目已 paused，crons 不再执行 |
 | D07 验收 | PARTIAL | staging/production 冒烟全 PASS；真实 TLS/DNS 已验；S09 容量与独立接手演练未完成 |
 | D08 生产准备 | PASS | DNS 记录快照、生产候选、备份、旧调度冻结、切流授权均已记录 |
-| D09 切流与观察 | IN_PROGRESS | 生产已切流并冒烟通过；24–48h 观察与周报窗口待验 |
+| D09 切流与观察 | IN_PROGRESS | 生产已切流；完整 GitHub Actions 生产 workflow（构建→prepare→promote→冒烟）success；24–48h 观察与周报窗口待验 |
 
 ## 主机事实
 
@@ -36,7 +36,7 @@
 
 ## 生产事实
 
-- 生产 release：`30f4485-45252587912`，generation=4，环境 production。
+- 生产 release：`52577d1-45255914517`，generation=5，环境 production；digest `sha256:ec1d6707…`。
 - `https://findryai.com` 与 `www.findryai.com` 均指向 `192.238.239.41`，Cloudflare 橙云、SSL strict。
 - `/item/*`、`/category/*` 的 Cloudflare HTML Page Rule 已停用；`cf-cache-status: DYNAMIC`，由 Next ISR 返回 HIT。
 - 旧 Vercel 项目 `paused=true`，`*.vercel.app` 返回 402，crons 无执行条件。
