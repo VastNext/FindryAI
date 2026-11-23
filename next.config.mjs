@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 仅自托管镜像构建启用 standalone；Vercel 保持平台默认行为。
+  output: process.env.NEXT_OUTPUT_MODE === "standalone" ? "standalone" : undefined,
+
   async rewrites() {
     return {
       // Serve the sitemap index at /sitemap.xml (the URL declared in robots.ts
