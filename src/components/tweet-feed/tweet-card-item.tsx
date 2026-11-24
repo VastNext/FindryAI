@@ -8,7 +8,11 @@ interface TweetCardItemProps {
 }
 
 export function TweetCardItem({ tweetId }: TweetCardItemProps) {
-  const { data, error, isLoading } = useTweet(tweetId);
+  // 走本站代理，避免浏览器直接访问 react-tweet.vercel.app 在部分网络不可达。
+  const { data, error, isLoading } = useTweet(
+    tweetId,
+    `/api/tweet/${encodeURIComponent(tweetId)}`,
+  );
 
   if (isLoading) {
     return (
