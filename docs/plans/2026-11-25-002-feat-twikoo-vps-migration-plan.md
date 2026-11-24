@@ -1,13 +1,43 @@
 ---
 title: Twikoo 评论系统迁移到 VPS 方案
 type: feat
-status: draft
+status: superseded
 date: 2026-11-25
+superseded_at: 2026-11-25
+superseded_reason: 实际评论后端是 Netlify，不是 Vercel；用户决定不迁移
 ---
 
 # Twikoo 评论系统迁移到 VPS 方案
 
-> 本文是**实施计划书**，不是生产变更授权。文中 `UNSET` 表示必须先由用户确认才能执行，不得猜测、不得先用占位值跑通再说。
+> ## ⛔ 本方案已作废，不要执行
+>
+> **作废原因**：计划的前提错了。
+>
+> 调研中发现，Hexo 博客（`FountainChan/SourceHexoBlog` → `blog.vastnext.com`）的评论后端**不是** Vercel 上的 `twikoo_4_blog`，而是 Netlify：
+>
+> ```yaml
+> # SourceHexoBlog/_config.anzhiyu.yml:371
+> twikoo:
+>   envId: https://delightful-haupia-ebcadd.netlify.app/.netlify/functions/twikoo
+> ```
+>
+> 实测该后端**完全正常**，2026-11-25 复核：
+>
+> | 检查 | 结果 |
+> | --- | --- |
+> | `GET /` 健康页 | `200`，`{"code":100,"message":"Twikoo 云函数运行正常",...,"version":"1.7.14"}` |
+> | `POST {"event":"GET_FUNC_VERSION"}` | `{"code":0,"version":{"VERSION":"1.7.14"}}` |
+> | 评论读取 | `/tech/65164.html` 8 条、`/` 1 条，最新一条为 2026-11-24 |
+>
+> 也就是说：**博客评论从未因 Vercel 封禁而中断。** `twikoo_4_blog` 是早期部署的遗留项目，前端早已切到 Netlify，早就不在被引用的链路上。
+>
+> 用户决定：**不迁移**。本文件保留作为后续参考（其中的 CORS 规则、容器坑位、MongoDB 备份设计在将来真正需要自建时仍然有效），但 Phase 与待确认项**不再作为执行清单**。
+>
+> 将来什么情况下要重新启用本方案：Netlify 免费额度耗尽、需要对评论数据做完全自主掌控、或需要脱离第三方函数平台。届时先用本文件第 2.6 节和第 6 节，并重新核实版本（当前线上是 1.7.14，本方案写的是 2.0.17）。
+
+> 以下是作废前的原始计划内容，未做删改。
+
+文中 `UNSET` 表示必须先由用户确认才能执行，不得猜测、不得先用占位值跑通再说。
 > 与 [多站点 VPS 平台与 FindryAI 迁移方案](2026-11-23-001-feat-multi-site-vps-migration-plan.md) 和 [迁移任务包](../migration/README.md) 共用同一台主机、同一个 Caddy 入口和同一套契约，冲突时以任务包为准。
 
 ## 0. 状态与授权边界
@@ -33,7 +63,9 @@ https://twikoo4blog-inky.vercel.app  →  402 DEPLOYMENT_DISABLED
 
 ## 2. 已核实现状
 
-### 2.1 Vercel 项目
+> **本节第 2.1–2.3 描述的是 Vercel 侧的历史部署，不是博客当前使用的后端。** 当前后端见顶部作废说明（Netlify，1.7.14）。以下内容保留，是因为将来真要自建时仍需要知道这些项目的历史。
+
+### 2.1 Vercel 项目（历史部署，非当前后端）
 
 | 项 | 值 | 来源 |
 | --- | --- | --- |
@@ -61,6 +93,8 @@ vercel.json         → 全量 rewrite: "/(.*)" → "api/index"
 **结论**：这是 Twikoo 官方 Vercel 模板 `templates/vercel-min` 的原样部署，源码里除了依赖声明没有任何业务逻辑、没有自定义路由、没有自建数据层。
 
 ### 2.3 运行时版本
+
+> 注意：博客线上后端实际版本是 **1.7.14**（Netlify 部署），下表是 Vercel 侧 2.0.17 与 VPS 目标镜像的版本关系。若将来迁移，需要处理 1.x → 2.x 的跨大版本升级，不能假设数据格式完全一致。
 
 | 组件 | 版本 | 说明 |
 | --- | --- | --- |
