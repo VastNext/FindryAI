@@ -1,17 +1,15 @@
 # 迁移交接与剩余动作
 
-生产已运行于 VPS：`https://findryai.com`（release `52577d1-45255914517`，generation 5）。以下动作需要用户输入或后续观察。
+生产已运行于 VPS：`https://findryai.com`（release `744bd30-45323470762`，generation 7）。OAuth 已恢复；Sanity 集成测试按用户决定暂缓。以下为仍需后续处理的事项。
 
-## 1. Sanity staging 数据集（阻塞 S05）
+## 1. Sanity 集成测试（用户已暂缓）
 
 现状：
 - 项目 `8pdw6hih` 只有 `production` dataset。
 - 项目 token 与 GitHub `SANITY_API_TOKEN` 均返回 `missing_grant sanity.project.datasets/create`。
 - 因此 S05 的并发支付、周报去重集成测试无法执行。
 
-用户动作（二选一）：
-1. 在 Sanity 控制台为本项目创建 dataset `staging`，并确保 token 可读写该 dataset；或
-2. 运行 `pnpm exec sanity login` 后告知，由执行者在本地/服务器创建。
+用户已确认：生产直接沿用原 `production` dataset 即可，暂不跑隔离集成测试。若以后恢复 S05，执行以下步骤。
 
 完成后：
 ```bash
@@ -32,12 +30,12 @@ R2 仓库 `site-infra-backup` 已有快照；尚未在全新主机执行：
 `clone site-infra → restore secrets → 安装 Caddy/Compose → restic restore → prepare/promote → 验证`
 建议在维护窗口执行并记录 RTO。
 
-## 4. OAuth 登录
+## 4. OAuth 登录（已完成）
 
-Vercel 生产环境存在 `AUTH_GOOGLE_*`、`AUTH_GITHUB_*`，但 API 不回显敏感值。若需要 OAuth：
-- 在 Google/GitHub 控制台确认回调为 `https://findryai.com/api/auth/callback/<provider>`；
-- 将新凭证写入 `/opt/site-infra/secrets/findryai.production.env`；
-- 重新发布一个 release 使容器读取新变量。
+- `.env.local` 中已有的 Google/GitHub 凭证已注入 `/opt/site-infra/secrets/findryai.production.env`；
+- 已补充 `AUTH_URL` / `NEXTAUTH_URL=https://findryai.com`；
+- `/api/auth/providers` 与授权跳转的 `redirect_uri` 均已验证为 `https://findryai.com/api/auth/callback/<provider>`；
+- 仍需确认 Google/GitHub 控制台登记了上述回调地址。
 
 ## 5. GHCR 拉取凭据
 

@@ -12,7 +12,7 @@
 | D03 发布工具 | PASS | staging 与 production prepare/promote 均通过；`tests/release/core.test.mjs` 6/6；HMAC 审批、generation、锁、Caddy 切换已验证 |
 | D04 备份 | PARTIAL | Cloudflare R2 `site-infra-backup` create/check PASS；本机隔离 restore PASS；全新主机整机恢复未演练 |
 | D05a 副作用契约 | PASS | `docs/deployment/side-effects-contract.md` |
-| D05b 支付/调度实现 | CODE READY, S05 BLOCKED | 生产 webhook 自签事件 + 重放验证通过；并发/周报集成测试仍需独立 Sanity dataset |
+| D05b 支付/调度实现 | CODE READY, S05 DEFERRED | 生产 webhook 自签事件 + 重放验证通过；按用户决定暂缓独立 dataset 集成测试 |
 | D06 CI 交接 | PASS | staging/production workflow 均实际运行；旧 Vercel Preview 冻结；旧 Vercel 项目已 paused，crons 不再执行 |
 | D07 验收 | PARTIAL | staging/production 冒烟全 PASS；真实 TLS/DNS 已验；S09 容量与独立接手演练未完成 |
 | D08 生产准备 | PASS | DNS 记录快照、生产候选、备份、旧调度冻结、切流授权均已记录 |
@@ -36,7 +36,7 @@
 
 ## 生产事实
 
-- 生产 release：`52577d1-45255914517`，generation=5，环境 production；digest `sha256:ec1d6707…`。
+- 生产 release：`744bd30-45323470762`，generation=7，环境 production；digest `sha256:de7d6bc3…`。
 - `https://findryai.com` 与 `www.findryai.com` 均指向 `192.238.239.41`，Cloudflare 橙云、SSL strict。
 - `/item/*`、`/category/*` 的 Cloudflare HTML Page Rule 已停用；`cf-cache-status: DYNAMIC`，由 Next ISR 返回 HIT。
 - 旧 Vercel 项目 `paused=true`，`*.vercel.app` 返回 402，crons 无执行条件。
@@ -48,12 +48,12 @@
 
 ## 阻塞项（需要用户）
 
-1. **Sanity staging 数据集**：项目 token 与 GitHub Secret token 均缺 `sanity.project.datasets/create`；需要用户在 Sanity 控制台创建独立 dataset（或提供管理 token）。
+1. **Sanity 集成测试（已由用户暂缓）**：生产沿用原 `production` dataset，无需创建新 dataset；并发/周报集成测试留待后续。
 2. **DNS / Cloudflare**：已使用系统 `CF_API_TOKEN` 完成 DNS 切换与 DNS-01 证书。
 3. **整机恢复演练**：R2 异机仓库已建立，但未在全新主机执行从零恢复。
 4. **告警验证**：已接入 Resend 管理员邮箱，但未做真实失败注入。
 5. **单机故障风险**：无备用主机；生产已切流，用户尚未书面接受该风险。
-6. **OAuth 生产凭证**：Vercel 中存在但不可解密导出；当前仅邮箱密码登录可用。
+6. **OAuth**：已从 `.env.local` 注入并完成验证；补充 `AUTH_URL=https://findryai.com` 修正反向代理下的回调域名。
 
 ## 下一次执行入口
 
