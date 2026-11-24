@@ -3,6 +3,22 @@ const nextConfig = {
   // 仅自托管镜像构建启用 standalone；Vercel 保持平台默认行为。
   output: process.env.NEXT_OUTPUT_MODE === "standalone" ? "standalone" : undefined,
 
+  async headers() {
+    return [
+      {
+        // 该页面依赖客户端拉取推文；避免浏览器缓存旧 HTML/旧 JS 导致组件继续请求旧 API。
+        source: "/ai-daily-feeds",
+        headers: [
+          {
+            key: "Cache-Control",
+            value:
+              "public, max-age=0, s-maxage=600, stale-while-revalidate=3600",
+          },
+        ],
+      },
+    ];
+  },
+
   async rewrites() {
     return {
       // Serve the sitemap index at /sitemap.xml (the URL declared in robots.ts
