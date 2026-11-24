@@ -7,31 +7,46 @@
       "phase": "both",
       "secret": false,
       "validation": "url",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "NEXT_PUBLIC_SANITY_PROJECT_ID": {
       "phase": "both",
       "secret": false,
       "validation": "sanity-id",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "NEXT_PUBLIC_SANITY_DATASET": {
       "phase": "both",
       "secret": false,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "NEXT_PUBLIC_STRIPE_PRO_PRICE_ID": {
       "phase": "both",
       "secret": false,
       "validation": "stripe-price",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID": {
       "phase": "both",
       "secret": false,
       "validation": "stripe-price",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID": {
       "phase": "both",
@@ -73,19 +88,28 @@
       "phase": "both",
       "secret": true,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "AUTH_SECRET": {
       "phase": "runtime",
       "secret": true,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "AUTH_TRUST_HOST": {
       "phase": "runtime",
       "secret": false,
       "validation": "boolean",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "AUTH_GOOGLE_ID": {
       "phase": "runtime",
@@ -115,49 +139,73 @@
       "phase": "runtime",
       "secret": true,
       "validation": "stripe-key",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "STRIPE_WEBHOOK_SECRET": {
       "phase": "runtime",
       "secret": true,
       "validation": "stripe-webhook",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "CRON_SECRET": {
       "phase": "runtime",
       "secret": true,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "REVALIDATE_SECRET": {
       "phase": "runtime",
       "secret": true,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "RESEND_API_KEY": {
       "phase": "runtime",
       "secret": true,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "RESEND_EMAIL_FROM": {
       "phase": "runtime",
       "secret": false,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "RESEND_EMAIL_ADMIN": {
       "phase": "runtime",
       "secret": false,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "RESEND_AUDIENCE_ID": {
       "phase": "runtime",
       "secret": false,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "DEFAULT_AI_PROVIDER": {
       "phase": "runtime",
@@ -205,19 +253,28 @@
       "phase": "runtime",
       "secret": false,
       "validation": "boolean",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "CRON_WRITES_ENABLED": {
       "phase": "runtime",
       "secret": false,
       "validation": "boolean",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "APP_SIDE_EFFECTS_CONTRACT_VERSION": {
       "phase": "both",
       "secret": false,
       "validation": "nonempty",
-      "required_in": ["staging", "production"]
+      "required_in": [
+        "staging",
+        "production"
+      ]
     },
     "MAIL_TRANSPORT": {
       "phase": "runtime",
@@ -230,6 +287,24 @@
       "secret": false,
       "validation": "url",
       "required_in": []
+    },
+    "AUTH_URL": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "url",
+      "required_in": [
+        "staging",
+        "production"
+      ]
+    },
+    "NEXTAUTH_URL": {
+      "phase": "runtime",
+      "secret": false,
+      "validation": "url",
+      "required_in": [
+        "staging",
+        "production"
+      ]
     }
   }
 }
