@@ -36,7 +36,7 @@
 
 ## 生产事实
 
-- 生产 release：`744bd30-45323470762`，generation=7，环境 production；digest `sha256:de7d6bc3…`。
+- 生产 release：`e0cb473-45436317731`，generation=8，环境 production；AI Daily Feeds 推文改由本站 `/api/tweet/[id]` 代理加载。
 - `https://findryai.com` 与 `www.findryai.com` 均指向 `192.238.239.41`，Cloudflare 橙云、SSL strict。
 - `/item/*`、`/category/*` 的 Cloudflare HTML Page Rule 已停用；`cf-cache-status: DYNAMIC`，由 Next ISR 返回 HIT。
 - 旧 Vercel 项目 `paused=true`，`*.vercel.app` 返回 402，crons 无执行条件。
