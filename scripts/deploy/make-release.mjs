@@ -49,6 +49,7 @@ if (!hmcKey) {
 
 const outDir = required("out-dir", ".release");
 const site = required("site", "findryai");
+const imageRepo = required("image-repo", `ghcr.io/vastnext/${site}`);
 const environment = required("environment", "production");
 const operation = required("operation", "promote");
 const releaseId = required("release-id");
@@ -88,7 +89,7 @@ const request = {
   release_id: releaseId,
   git_sha: gitSha,
   image_digest: digest,
-  image_repo: `ghcr.io/vastnext/${site}`,
+  image_repo: imageRepo,
   config_hash: configHash,
   expected_generation: generation,
   evidence_run_id: evidenceRunId,

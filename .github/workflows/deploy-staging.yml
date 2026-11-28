@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SITE: findryai
+  SITE: findryai-staging
   ENVIRONMENT: staging
   APP_URL: ${{ vars.STAGING_APP_URL }}
   IMAGE: ghcr.io/vastnext/findryai
@@ -116,7 +116,7 @@ jobs:
       - name: Read current release state
         id: state
         run: |
-          ssh vps 'sudo -n /usr/local/sbin/site-infra-release status --site findryai' > status.json
+          ssh vps 'sudo -n /usr/local/sbin/site-infra-release status --site findryai-staging' > status.json
           cat status.json
           node -e '
             const fs=require("fs");
@@ -131,7 +131,8 @@ jobs:
           APPROVAL_HMAC: ${{ secrets.APPROVAL_HMAC }}
         run: |
           node scripts/deploy/make-release.mjs \
-            --site findryai \
+            --site findryai-staging \
+            --image-repo "${{ env.IMAGE }}" \
             --environment staging \
             --operation prepare \
             --release-id "${{ steps.meta.outputs.release_id }}" \
@@ -163,7 +164,8 @@ jobs:
           APPROVAL_HMAC: ${{ secrets.APPROVAL_HMAC }}
         run: |
           node scripts/deploy/make-release.mjs \
-            --site findryai \
+            --site findryai-staging \
+            --image-repo "${{ env.IMAGE }}" \
             --environment staging \
             --operation promote \
             --release-id "${{ steps.meta.outputs.release_id }}" \
