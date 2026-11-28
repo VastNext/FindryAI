@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { isAlternativesEnabled } from "@/config/alternatives-whitelist";
 import { siteConfig } from "@/config/site";
 import { fakefaceCuratedData } from "@/data/item-curated/fakeface";
+import { indexingPilotNotes } from "@/data/item-curated/indexing-pilot";
 import { unsummaryCuratedData } from "@/data/item-curated/unsummary";
 import { urlForIcon, urlForImage } from "@/lib/image";
 import { constructMetadata } from "@/lib/metadata";
@@ -149,6 +150,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
     curatedData?.serviceStatusNotice?.isInactive,
   );
   const hasAlternatives = isAlternativesEnabled(params.slug);
+  const pilotNote = indexingPilotNotes[params.slug];
 
   const breadcrumbItems = [
     {
@@ -429,6 +431,29 @@ export default async function ItemPage({ params }: ItemPageProps) {
             <h2 className="text-lg font-semibold mb-4">Introduction</h2>
             <ItemCustomMdx source={item.introduction} />
           </div>
+
+          {pilotNote && (
+            <section className="mt-6 rounded-lg border bg-card p-6 mr-0 lg:mr-8">
+              <h2 className="text-lg font-semibold">{pilotNote.title}</h2>
+              <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                {pilotNote.points.map((point) => (
+                  <p key={point}>{point}</p>
+                ))}
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground">
+                Source:{" "}
+                <a
+                  href={pilotNote.source}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-foreground"
+                >
+                  Official product website
+                </a>
+                . Product details may change; this is not a hands-on review.
+              </p>
+            </section>
+          )}
 
           <div className="flex items-center justify-start mt-16">
             <BackButton />
